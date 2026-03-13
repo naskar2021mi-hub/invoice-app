@@ -770,6 +770,56 @@ if('serviceWorker' in navigator){
     console.log('SW not available (run from server):', e.message);
   });
 }
+</script><!-- LOGIN SYSTEM START -->
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+
+let user = localStorage.getItem("user");
+
+if(!user){
+showLogin();
+}
+
+});
+  
+
+function showLogin(){
+
+document.body.innerHTML = `
+<div style="text-align:center;margin-top:120px;font-family:sans-serif">
+
+<h2>Login</h2>
+
+<input id="username" placeholder="Username"><br><br>
+<input id="password" type="password" placeholder="Password"><br><br>
+
+<button onclick="login()">Login</button>
+
+</div>
+`;
+
+}
+
+function login(){
+
+let u=document.getElementById("username").value;
+
+if(u){
+localStorage.setItem("user",u);
+location.reload();
+}
+
+}
+
+function logout(){
+
+localStorage.removeItem("user");
+location.reload();
+
+}
 </script>
+
+<!-- LOGIN SYSTEM END -->
 </body>
 </html>
