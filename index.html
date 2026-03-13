@@ -771,6 +771,23 @@ if('serviceWorker' in navigator){
   });
 }
 </script><!-- LOGIN SYSTEM START -->
+  
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+
+  <script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBEXXbE-hcudblX84yS8K8JUX0iHwDZidA",
+  authDomain: "invoice-b3b3b.firebaseapp.com",
+  projectId: "invoice-b3b3b",
+  storageBucket: "invoice-b3b3b.firebasestorage.app",
+  messagingSenderId: "183641875422",
+  appId: "1:183641875422:web:418724bb838ed9405a734f",
+  measurementId: "G-PNHDHQMDXB"
+};
+
+firebase.initializeApp(firebaseConfig);
+</script>
 
 <script>
 document.addEventListener("DOMContentLoaded", function(){
@@ -788,11 +805,8 @@ function showLogin(){
 
 document.body.innerHTML = `
 <div style="text-align:center;margin-top:120px;font-family:sans-serif">
-
 <h2>Login</h2>
-
-<input id="username" placeholder="Username"><br><br>
-<input id="password" type="password" placeholder="Password"><br><br>
+<input id="phone" type="tel" placeholder="Enter phone number"><br><br>
 
 <button onclick="login()">Login</button>
 
@@ -803,7 +817,7 @@ document.body.innerHTML = `
 
 function login(){
 
-let u=document.getElementById("username").value;
+let phone=document.getElementById("phone").value;
 
 if(u){
 localStorage.setItem("user",u);
