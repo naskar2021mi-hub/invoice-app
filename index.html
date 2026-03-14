@@ -423,7 +423,9 @@ function getDeviceKey(){
 async function loadData(){
   const key=getDeviceKey();
   try{
-    const doc=await db.collection('invoiceApp').doc(key).get();
+    const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),5000));
+    const docPromise=db.collection('invoiceApp').doc(key).get();
+    const doc=await Promise.race([docPromise,timeout]);
     if(doc.exists){
       const d=doc.data();
       company=d.company||company;
@@ -1038,4 +1040,37 @@ function printInv(id){
   .tr{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;color:#64748b}
   .tf{font-size:17px;font-weight:700;border-top:2px solid #FF6B00;padding-top:9px;margin-top:6px;color:#FF6B00}
   .badge{background:#ecfdf5;color:#16a34a;border-radius:99px;padding:2px 10px;font-size:11px;font-weight:700}
-  .ft{margin-top:24px;display:flex;justify-content:space-between;border-top:1px solid #e2e8f0;padding-top:14px;fon
+  .ft{margin-top:24px;display:flex;justify-content:space-between;border-top:1px solid #e2e8f0;padding-top:14px;font-size:11px;color:#94a3b8}
+  .sg{border-top:1px solid #1e293b;padding-top:5px;text-align:center;font-weight:700;font-size:12px;min-width:130px}</style></head><body>
+  <div class="hd">${company.logo?`<img src="${company.logo}" class="lg"/>`:`<div class="lp">🏢</div>`}
+  <div><h1>${company.name}</h1><div class="sub">${company.address||''}</div>${company.phone?`<div class="sub">📞 ${company.phone}</div>`:''}</div>
+  <div class="ir"><div style="font-size:11px;opacity:.8">Invoice</div><div style="font-size:17px;font-weight:700;font-family:monospace">${inv.no}</div>${inv.status==='paid'?'<div style="margin-top:5px"><span class="badge">✓ Paid</span></div>':''}</div></div>
+  <div class="card"><div class="sec">Customer</div>
+  <div style="font-size:15px;font-weight:700;margin-bottom:4px">${inv.cname}</div>${inv.cphone?`<div style="color:#64748b">📞 ${inv.cphone}</div>`:''}
+  <div style="display:flex;gap:24px;margin-top:10px"><div><div style="font-size:10px;color:#94a3b8;font-weight:700;margin-bottom:3px">Date</div><div style="font-weight:600">${inv.date}</div></div>${inv.dueDate?`<div><div style="font-size:10px;color:#94a3b8;font-weight:700;margin-bottom:3px">Due</div><div style="font-weight:600;color:#dc2626">${inv.dueDate}</div></div>`:''}</div></div>
+  <div class="card"><div class="sec">Items</div>
+  <table><thead><tr><th>Description</th><th class="r">Qty</th><th class="r">Price</th><th class="r">Total</th></tr></thead><tbody>${rows}</tbody></table>
+  <div style="display:flex;justify-content:flex-end;margin-top:12px"><div style="min-width:240px">
+  <div class="tr"><span>Subtotal</span><span>₹${inv.total.toFixed(2)}</span></div>
+  ${inv.prevDue>0?`<div class="tr"><span>Prev Due</span><span style="color:#FF6B00">+₹${inv.prevDue.toFixed(2)}</span></div>`:''}
+  <div class="tr tf"><span>Grand Total</span><span>₹${inv.net.toFixed(2)}</span></div>
+  </div></div></div>
+  <div class="ft"><span>Computer Generated</span><div class="sg">Authorised Signatory<br><span style="font-weight:400;font-size:11px">${company.name}</span></div></div>
+  </body></html>`);
+  w.document.close();setTimeout(()=>w.print(),600);
+}
+
+// ══ SERVICE WORKER ══
+if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(e=>console.log('SW:',e.message));}
+
+// ══ INIT ══
+document.addEventListener('DOMContentLoaded', function(){
+  if(sessionStorage.getItem('inv_session')){
+    enterApp();
+  } else {
+    initLogin();
+  }
+});
+</script>
+</body>
+</html>
