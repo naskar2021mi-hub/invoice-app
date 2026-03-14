@@ -842,32 +842,39 @@ function openPayModal(id){
   const inv = invoices.find(i=>i.id===id);
   if(!inv) return;
   _payInvId = id;
-  const thisAmt = inv.net; // এই invoice-এর বাকি
-  const prevAmt = +inv.prevDue||0; // আগের বাকি
-  
+
+  // partial হলে remainingDue, নইলে পুরো net
+  const currentDue = inv.status==='partial' ? (inv.remainingDue||0) : inv.net;
+  const prevAmt = +inv.prevDue||0;
+  const alreadyPaid = inv.paidAmt||0;
+
   document.getElementById('payModalTitle').textContent = lang==='bn'?'কত টাকা পেয়েছেন?':'How much received?';
   document.getElementById('payModalSub').textContent = inv.cname + (inv.cphone?' • '+inv.cphone:'');
-  
+
   // Breakdown
   document.getElementById('payModalBreakdown').innerHTML = `
+    ${alreadyPaid>0?`<div style="display:flex;justify-content:space-between;padding:3px 0">
+      <span style="color:var(--green)">${lang==='bn'?'আগে পেয়েছেন:':'Already received:'}</span>
+      <span class="mono" style="color:var(--green);font-weight:700">₹${alreadyPaid.toFixed(2)}</span>
+    </div>`:''}
     <div style="display:flex;justify-content:space-between;padding:3px 0">
-      <span style="color:#64748b">${lang==='bn'?'এই invoice-এর মোট:':'This invoice total:'}</span>
-      <span class="mono" style="font-weight:700">₹${thisAmt.toFixed(2)}</span>
+      <span style="color:#64748b">${lang==='bn'?'এখনো বাকি:':'This invoice total:'}</span>
+      <span class="mono" style="font-weight:700">₹${currentDue.toFixed(2)}</span>
     </div>
-    ${prevAmt>0?`<div style="display:flex;justify-content:space-between;padding:3px 0;border-top:1px dashed #e2e8f0;margin-top:4px">
+    ${prevAmt>0&&inv.status!=='partial'?`<div style="display:flex;justify-content:space-between;padding:3px 0;border-top:1px dashed #e2e8f0;margin-top:4px">
       <span style="color:var(--red)">${lang==='bn'?'আগের বাকি যোগ:':'Prev due added:'}</span>
       <span class="mono" style="color:var(--red);font-weight:700">+ ₹${prevAmt.toFixed(2)}</span>
     </div>
     <div style="display:flex;justify-content:space-between;padding:4px 0;border-top:1px solid #e2e8f0;margin-top:4px">
       <span style="font-weight:700">${lang==='bn'?'সর্বমোট দেওয়ার কথা:':'Total payable:'}</span>
-      <span class="mono" style="font-weight:700;color:var(--or)">₹${thisAmt.toFixed(2)}</span>
+      <span class="mono" style="font-weight:700;color:var(--or)">₹${currentDue.toFixed(2)}</span>
     </div>`:''}`;
-  
+
   document.getElementById('payAmt').value = '';
   document.getElementById('payError').textContent = '';
-  // Quick fill buttons
-  document.getElementById('payFullBtn').textContent = (lang==='bn'?'সব দিয়েছে ':'Full ')+'₹'+thisAmt.toFixed(2);
-  document.getElementById('payThisBtn').textContent = (lang==='bn'?'শুধু invoice ':'Invoice only ')+'₹'+(thisAmt-prevAmt>0?thisAmt-prevAmt:thisAmt).toFixed(2);
+  document.getElementById('payFullBtn').textContent = (lang==='bn'?'সব দিয়েছে ':'Full ')+'₹'+currentDue.toFixed(2);
+  const onlyInv = inv.net - prevAmt;
+  document.getElementById('payThisBtn').textContent = (lang==='bn'?'শুধু invoice ':'Invoice only ')+'₹'+(onlyInv>0?onlyInv:currentDue).toFixed(2);
   document.getElementById('payModal').style.display = 'flex';
   setTimeout(()=>document.getElementById('payAmt').focus(), 300);
 }
@@ -875,7 +882,8 @@ function openPayModal(id){
 function setPayFull(){
   const inv = invoices.find(i=>i.id===_payInvId);
   if(!inv) return;
-  document.getElementById('payAmt').value = inv.net.toFixed(2);
+  const currentDue = inv.status==='partial' ? (inv.remainingDue||0) : inv.net;
+  document.getElementById('payAmt').value = currentDue.toFixed(2);
 }
 function setPayThis(){
   const inv = invoices.find(i=>i.id===_payInvId);
@@ -887,28 +895,39 @@ function setPayThis(){
 function confirmPayment(){
   const inv = invoices.find(i=>i.id===_payInvId);
   if(!inv) return;
-  const paid = parseFloat(document.getElementById('payAmt').value)||0;
-  if(paid<=0){document.getElementById('payError').textContent=lang==='bn'?'পরিমাণ দিন!':'Enter amount!';return;}
-  
-  const totalDue = inv.net; // grand total
-  const remaining = totalDue - paid;
-  
-  if(paid >= totalDue){
+  const newPayment = parseFloat(document.getElementById('payAmt').value)||0;
+  if(newPayment<=0){document.getElementById('payError').textContent=lang==='bn'?'পরিমাণ দিন!':'Enter amount!';return;}
+
+  // এখন পর্যন্ত যা বাকি আছে সেটা হিসাব করি
+  // partial হলে remainingDue থেকে, নইলে inv.net থেকে
+  const currentDue = inv.status==='partial' ? (inv.remainingDue||0) : inv.net;
+  const alreadyPaid = inv.paidAmt||0;
+  const totalPaid = alreadyPaid + newPayment;
+  const remaining = Math.max(0, currentDue - newPayment);
+
+  if(newPayment >= currentDue){
     // সব শোধ
-    invoices = invoices.map(i=>i.id===_payInvId?{...i,status:'paid',paidAmt:paid}:i);
+    invoices = invoices.map(i=>i.id===_payInvId?{...i,status:'paid',paidAmt:totalPaid,remainingDue:0}:i);
+    // কাস্টমার লেজার থেকেও বাদ দিই যদি বেশি দেয়
+    const extra = newPayment - currentDue;
+    if(extra>0){
+      const key=getCustKey(inv.cname,inv.cphone||'');
+      if(customers[key]){
+        customers[key].balance=Math.max(0,customers[key].balance-extra);
+        customers[key].history.unshift({type:'payment',amt:extra,date:todayStr(),id:Math.random().toString(36).slice(2)});
+      }
+    }
     showToast('✅ '+(lang==='bn'?'সম্পূর্ণ পরিশোধিত!':'Fully paid!'));
   } else {
-    // আংশিক পেমেন্ট — বাকি থাকবে
+    // আংশিক পেমেন্ট — বাকি আপডেট
     invoices = invoices.map(i=>i.id===_payInvId?{...i,
       status:'partial',
-      paidAmt:paid,
+      paidAmt:totalPaid,
       remainingDue:remaining,
-      // আগের বাকি আলাদা ট্র্যাক
-      prevDueRemaining: Math.max(0, (+i.prevDue||0) - Math.max(0, paid - (i.total||0)))
     }:i);
     showToast('⚠️ '+(lang==='bn'?`বাকি আছে ₹${remaining.toFixed(2)}`:`₹${remaining.toFixed(2)} still due`));
   }
-  
+
   save();
   document.getElementById('payModal').style.display='none';
   renderList();
