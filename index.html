@@ -157,7 +157,8 @@ td.r,th.r{text-align:right}
 <div id="topbar" style="display:none">
   <div class="logo-box" id="topLogoBox">₹</div>
   <div class="co-name" id="topCoName">ইনভয়েস অ্যাপ</div>
-  <div style="display:flex;gap:8px">
+  <div style="display:flex;gap:8px;align-items:center">
+    <button onclick="toggleExpenseMode()" id="expenseSwitch" style="background:#f1f5f9;color:#64748b;padding:8px 12px;font-size:13px;font-weight:700;border-radius:9px">💸</button>
     <button onclick="showView('settings')" style="background:#f1f5f9;color:#64748b;padding:8px 12px;font-size:18px;line-height:1">⚙</button>
     <button id="newBtn" onclick="openNew()" style="background:var(--or);color:#fff;padding:8px 14px;font-size:13px">+ <span class="t" data-bn="নতুন" data-en="New">নতুন</span></button>
   </div>
@@ -168,6 +169,45 @@ td.r,th.r{text-align:right}
   <div class="stats" id="statsGrid"></div>
   <input id="search-input" type="text" oninput="renderList()" style="margin-bottom:14px;padding:11px 16px;border-radius:12px"/>
   <div id="invList"></div>
+</div>
+
+<!-- ══ EXPENSE VIEW ══ -->
+<div class="view" id="view-expense">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+    <button onclick="toggleExpenseMode()" style="background:#f1f5f9;color:#64748b;padding:10px 16px;font-size:16px;border-radius:12px;font-weight:700">←</button>
+    <div style="font-size:18px;font-weight:700">💸 <span class="t" data-bn="খরচ ট্র্যাকার" data-en="Expense Tracker">খরচ ট্র্যাকার</span></div>
+  </div>
+
+  <!-- Date picker -->
+  <div class="card" style="margin-bottom:14px">
+    <div style="display:flex;align-items:center;gap:8px">
+      <button onclick="changeExpDate(-1)" style="background:#f1f5f9;color:#64748b;padding:8px 12px;font-size:16px;border-radius:8px">◀</button>
+      <input type="date" id="expDate" style="flex:1;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-size:13px;font-weight:600" onchange="renderExpenses()"/>
+      <button onclick="changeExpDate(1)" style="background:#f1f5f9;color:#64748b;padding:8px 12px;font-size:16px;border-radius:8px">▶</button>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div id="expSummary" style="margin-bottom:14px"></div>
+
+  <!-- Add Expense -->
+  <div class="card" style="border-color:#fecaca">
+    <div class="sec-title" style="color:#dc2626">➕ <span class="t" data-bn="নতুন খরচ যোগ" data-en="Add Expense">নতুন খরচ যোগ</span></div>
+    <div style="margin-bottom:10px"><label class="label"><span class="t" data-bn="জিনিসের নাম" data-en="Item Name">জিনিসের নাম</span></label><input id="exp-name" placeholder=""/></div>
+    <div class="g2" style="margin-bottom:10px">
+      <div><label class="label"><span class="t" data-bn="পরিমাণ" data-en="Qty">পরিমাণ</span></label><input id="exp-qty" type="number" placeholder="1"/></div>
+      <div><label class="label"><span class="t" data-bn="দাম (₹)" data-en="Price (₹)">দাম (₹)</span></label><input id="exp-price" type="number" placeholder="0.00" oninput="calcExpTotal()"/></div>
+    </div>
+    <div class="g2" style="margin-bottom:10px">
+      <div><label class="label"><span class="t" data-bn="মোট খরচ (₹)" data-en="Total (₹)">মোট খরচ (₹)</span></label><input id="exp-total" type="number" placeholder="0.00" style="font-weight:700;color:var(--red)"/></div>
+      <div><label class="label"><span class="t" data-bn="দোকানদার পাবে (₹)" data-en="Due to Shop (₹)">দোকানদার পাবে (₹)</span></label><input id="exp-due" type="number" placeholder="0.00"/></div>
+    </div>
+    <div style="margin-bottom:12px"><label class="label"><span class="t" data-bn="দোকানের নাম / নোট" data-en="Shop / Note">দোকানের নাম / নোট</span></label><input id="exp-note" placeholder=""/></div>
+    <button onclick="addExpense()" style="background:#dc2626;color:#fff;width:100%;padding:12px;border-radius:10px;font-weight:700">➕ <span class="t" data-bn="যোগ করুন" data-en="Add">যোগ করুন</span></button>
+  </div>
+
+  <!-- Expense List -->
+  <div id="expList"></div>
 </div>
 
 <!-- ══ FORM VIEW ══ -->
@@ -465,7 +505,8 @@ const db = firebase.firestore();
 // ══ STATE ══
 let company = {name:'',address:'',phone:'',logo:null};
 let invoices = [];
-let customers = {}; // {phone/name: {name, phone, balance}} — customer ledger
+let customers = {};
+let expenses = {}; // {date: [{id,name,qty,price,total,due,note}]}
 let editId = null;
 let items = [];
 let returnItems = [];
@@ -584,7 +625,7 @@ function changePassword(){
   showToast('✅ '+(lang==='bn'?'পাসওয়ার্ড পরিবর্তন হয়েছে!':'Password changed!'));
 }
 
-const _ADMIN_CODE = 'Megh';
+const _ADMIN_CODE = '@Megh';
 
 function checkAdminCode(){
   const code = document.getElementById('adminCodeInput').value;
@@ -633,7 +674,110 @@ async function loadAdminStats(){
   }
 }
 
-async function pickContact(){
+async // ══ EXPENSE TRACKER ══
+function toggleExpenseMode(){
+  const sw = document.getElementById('expenseSwitch');
+  const isExp = document.getElementById('view-expense').classList.contains('active');
+  if(isExp){
+    sw.style.background='#f1f5f9';sw.style.color='#64748b';
+    showView('list');renderList();
+  } else {
+    sw.style.background='#fef2f2';sw.style.color='#dc2626';
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    document.getElementById('view-expense').classList.add('active');
+    document.getElementById('newBtn').style.display='none';
+    const ed=document.getElementById('expDate');
+    if(ed&&!ed.value) ed.value=todayStr();
+    renderExpenses();
+  }
+}
+
+function changeExpDate(delta){
+  const el=document.getElementById('expDate');
+  const d=new Date(el.value||todayStr());
+  d.setDate(d.getDate()+delta);
+  el.value=d.toISOString().split('T')[0];
+  renderExpenses();
+}
+
+function calcExpTotal(){
+  const qty=parseFloat(document.getElementById('exp-qty').value)||1;
+  const price=parseFloat(document.getElementById('exp-price').value)||0;
+  document.getElementById('exp-total').value=(qty*price).toFixed(2);
+}
+
+function addExpense(){
+  const name=document.getElementById('exp-name').value.trim();
+  const qty=parseFloat(document.getElementById('exp-qty').value)||1;
+  const price=parseFloat(document.getElementById('exp-price').value)||0;
+  const total=parseFloat(document.getElementById('exp-total').value)||(qty*price);
+  const due=parseFloat(document.getElementById('exp-due').value)||0;
+  const note=document.getElementById('exp-note').value.trim();
+  if(!name){showToast(lang==='bn'?'জিনিসের নাম দিন!':'Enter item name!');return;}
+  const date=document.getElementById('expDate').value||todayStr();
+  if(!expenses[date]) expenses[date]=[];
+  expenses[date].unshift({id:Math.random().toString(36).slice(2),name,qty,price,total,due,note,date});
+  document.getElementById('exp-name').value='';
+  document.getElementById('exp-qty').value='';
+  document.getElementById('exp-price').value='';
+  document.getElementById('exp-total').value='';
+  document.getElementById('exp-due').value='';
+  document.getElementById('exp-note').value='';
+  save();
+  renderExpenses();
+  showToast('✅ '+(lang==='bn'?'খরচ যোগ হয়েছে!':'Expense added!'));
+}
+
+function deleteExpense(date,id){
+  if(!expenses[date]) return;
+  expenses[date]=expenses[date].filter(e=>e.id!==id);
+  save();renderExpenses();
+}
+
+function renderExpenses(){
+  const date=document.getElementById('expDate').value||todayStr();
+  const list=expenses[date]||[];
+  const totalSpent=list.reduce((s,e)=>s+e.total,0);
+  const totalDue=list.reduce((s,e)=>s+e.due,0);
+
+  // Summary
+  document.getElementById('expSummary').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="stat-card" style="border:1.5px solid #fecaca;background:#fff5f5">
+        <div class="stat-label" style="color:var(--red)">${lang==='bn'?'মোট খরচ':'Total Spent'}</div>
+        <div class="stat-val mono" style="color:var(--red);font-size:15px">${fmtINR(totalSpent)}</div>
+      </div>
+      <div class="stat-card" style="border:1.5px solid #fed7aa;background:#fff7ed">
+        <div class="stat-label" style="color:#92400e">${lang==='bn'?'দোকানদার পাবে':'Due to Shops'}</div>
+        <div class="stat-val mono" style="color:#92400e;font-size:15px">${fmtINR(totalDue)}</div>
+      </div>
+    </div>`;
+
+  // List
+  if(list.length===0){
+    document.getElementById('expList').innerHTML=`<div class="empty"><div class="icon">💸</div><div style="font-weight:600;color:#94a3b8">${lang==='bn'?'এই দিনে কোনো খরচ নেই':'No expenses for this day'}</div></div>`;
+    return;
+  }
+  document.getElementById('expList').innerHTML=list.map(e=>`
+    <div class="card" style="border-left:4px solid var(--red);margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:15px">${e.name}</div>
+          <div style="font-size:12px;color:#64748b;margin-top:3px">
+            ${lang==='bn'?'পরিমাণ':'Qty'}: ${e.qty} × ₹${e.price.toFixed(2)}
+            ${e.note?` • ${e.note}`:''}
+          </div>
+          ${e.due>0?`<div style="font-size:12px;color:#92400e;margin-top:3px">🏪 ${lang==='bn'?'দোকানদার পাবে':'Due to shop'}: <strong>${fmtINR(e.due)}</strong></div>`:''}
+        </div>
+        <div style="text-align:right;flex-shrink:0;margin-left:10px">
+          <div class="mono" style="font-size:17px;font-weight:700;color:var(--red)">${fmtINR(e.total)}</div>
+          <button onclick="deleteExpense('${date}','${e.id}')" style="background:#fef2f2;color:var(--red);padding:3px 8px;font-size:11px;border-radius:6px;margin-top:4px">🗑</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function pickContact(){
   try {
     // Contact Picker API — Android Chrome এ কাজ করে
     if('contacts' in navigator && 'ContactsManager' in window){
@@ -695,11 +839,13 @@ async function loadData(){
       company=d.company||company;
       invoices=d.invoices||[];
       customers=d.customers||{};
+      expenses=d.expenses||{};
     }
   }catch(e){
     company=JSON.parse(localStorage.getItem('inv_co')||'{"name":"","address":"","phone":"","logo":null}');
     invoices=JSON.parse(localStorage.getItem('inv_list')||'[]');
     customers=JSON.parse(localStorage.getItem('inv_customers')||'{}');
+    expenses=JSON.parse(localStorage.getItem('inv_expenses')||'{}');
   }
   setLang(lang);
   updateTopBar();
@@ -712,9 +858,10 @@ async function save(){
   localStorage.setItem('inv_co',JSON.stringify(company));
   localStorage.setItem('inv_list',JSON.stringify(invoices));
   localStorage.setItem('inv_customers',JSON.stringify(customers));
+  localStorage.setItem('inv_expenses',JSON.stringify(expenses));
   try{
     await db.collection('invoiceApp').doc(getDeviceKey()).set({
-      company,invoices,customers,updated:new Date().toISOString()
+      company,invoices,customers,expenses,updated:new Date().toISOString()
     });
   }catch(e){ console.log('Cloud save failed, local only'); }
 }
