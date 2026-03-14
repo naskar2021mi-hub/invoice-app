@@ -824,13 +824,22 @@ function openDetail(id){
       </div></div>
     </div>`;
 
+  const _did = inv.id;
   document.getElementById('detailActions').innerHTML=`
     <button onclick="goList()" style="background:#f1f5f9;color:#64748b">← ${lang==='bn'?'ফিরে যান':'Back'}</button>
-    <button onclick="openEdit('${inv.id}')" style="background:#f1f5f9;color:#64748b">✏ ${lang==='bn'?'সম্পাদনা':'Edit'}</button>
-    ${inv.status==='paid'?'':`<button onclick="markPaid('${inv.id}')" style="background:${inv.status==='partial'?'#fff7ed':'#ecfdf5'};color:${inv.status==='partial'?'#92400e':'var(--green)'}">💵 ${inv.status==='partial'?(lang==='bn'?`বাকি ₹${(inv.remainingDue||0).toFixed(2)}`:`Due ₹${(inv.remainingDue||0).toFixed(2)}`):lang==='bn'?'পেমেন্ট নিন':'Receive Payment'}</button>`}
-    <button onclick="printInv('${inv.id}')" style="background:var(--or);color:#fff">🖨 ${lang==='bn'?'প্রিন্ট':'Print'}</button>
-    ${inv.cphone?`<button onclick="openSendModal(invoices.find(i=>i.id==='${inv.id}'))" style="background:#25D366;color:#fff">📤 ${lang==='bn'?'পাঠান':'Send'}</button>`:''}
-    <button onclick="deleteInv('${inv.id}')" style="background:#fef2f2;color:var(--red);margin-left:auto">🗑</button>`;
+    <button id="da-edit" style="background:#f1f5f9;color:#64748b">✏ ${lang==='bn'?'সম্পাদনা':'Edit'}</button>
+    ${inv.status==='paid'?'':`<button id="da-pay" style="background:${inv.status==='partial'?'#fff7ed':'#ecfdf5'};color:${inv.status==='partial'?'#92400e':'var(--green)'};font-weight:700">💵 ${inv.status==='partial'?(lang==='bn'?`বাকি ₹${(inv.remainingDue||0).toFixed(2)}`:`Due ₹${(inv.remainingDue||0).toFixed(2)}`):lang==='bn'?'পেমেন্ট নিন':'Receive Payment'}</button>`}
+    <button id="da-print" style="background:var(--or);color:#fff">🖨 ${lang==='bn'?'প্রিন্ট':'Print'}</button>
+    ${inv.cphone?`<button id="da-send" style="background:#25D366;color:#fff">📤 ${lang==='bn'?'পাঠান':'Send'}</button>`:''}
+    <button id="da-del" style="background:#fef2f2;color:var(--red);margin-left:auto">🗑</button>`;
+
+  document.getElementById('da-edit').onclick = ()=>openEdit(_did);
+  const payBtn = document.getElementById('da-pay');
+  if(payBtn) payBtn.onclick = ()=>openPayModal(_did);
+  document.getElementById('da-print').onclick = ()=>printInv(_did);
+  const sendBtn = document.getElementById('da-send');
+  if(sendBtn) sendBtn.onclick = ()=>openSendModal(invoices.find(i=>i.id===_did));
+  document.getElementById('da-del').onclick = ()=>deleteInv(_did);
   showView('detail');
 }
 
