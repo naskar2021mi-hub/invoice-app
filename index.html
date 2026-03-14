@@ -777,7 +777,7 @@ function renderExpenses(){
     </div>`).join('');
 }
 
-function pickContact(){
+async function pickContact(){
   try {
     // Contact Picker API — Android Chrome এ কাজ করে
     if('contacts' in navigator && 'ContactsManager' in window){
