@@ -424,14 +424,17 @@ td.r,th.r{text-align:right}
     <div id="payModalBreakdown" style="background:#fff7ed;border-radius:10px;padding:10px 14px;margin-bottom:14px;text-align:left;font-size:13px"></div>
     <!-- Amount input -->
     <input id="payAmt" type="number" placeholder="₹ পরিমাণ লিখুন" style="font-size:20px;text-align:center;font-weight:700;margin-bottom:10px;color:var(--or)"/>
-    <!-- Payment Method -->
     <div style="display:flex;gap:8px;margin-bottom:12px">
-      <button id="payMethodCash" onclick="setPayMethod('cash')" style="flex:1;padding:10px;border-radius:10px;font-size:13px;font-weight:700;background:#ecfdf5;color:#16a34a;border:2px solid #16a34a">💵 Cash</button>
-      <button id="payMethodOnline" onclick="setPayMethod('online')" style="flex:1;padding:10px;border-radius:10px;font-size:13px;font-weight:700;background:#f1f5f9;color:#64748b;border:2px solid transparent">📱 Online</button>
-    </div>
-    <div style="display:flex;gap:8px;margin-bottom:14px">
       <button id="payFullBtn" onclick="setPayFull()" style="background:#f1f5f9;color:#64748b;flex:1;padding:9px;font-size:12px;border-radius:8px">সব দিয়েছে</button>
       <button id="payThisBtn" onclick="setPayThis()" style="background:#f1f5f9;color:#64748b;flex:1;padding:9px;font-size:12px;border-radius:8px">শুধু এটা</button>
+    </div>
+    <!-- Payment Method Toggle — Confirm এর উপরে -->
+    <div onclick="togglePayMethod()" style="display:flex;align-items:center;gap:14px;margin-bottom:14px;background:#f8fafc;border-radius:12px;padding:12px 16px;cursor:pointer;border:2px solid #e2e8f0;transition:border .2s" id="payMethodBox">
+      <div id="payMethodCircle" style="width:28px;height:28px;border-radius:50%;border:2.5px solid #cbd5e1;background:#fff;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;font-size:14px"></div>
+      <div style="text-align:left">
+        <div id="payMethodLabel" style="font-size:14px;font-weight:700;color:#64748b">💵 Cash / Offline</div>
+        <div style="font-size:11px;color:#94a3b8" id="payMethodSub">টিক করলে Online হবে</div>
+      </div>
     </div>
     <button onclick="confirmPayment()" style="background:var(--or);color:#fff;width:100%;padding:13px;font-size:15px;border-radius:12px;margin-bottom:8px" class="t" data-bn="✓ নিশ্চিত করুন" data-en="✓ Confirm">✓ নিশ্চিত করুন</button>
     <button onclick="document.getElementById('payModal').style.display='none'" style="background:#f1f5f9;color:#64748b;width:100%;padding:10px" class="t" data-bn="বাতিল" data-en="Cancel">বাতিল</button>
@@ -1149,16 +1152,31 @@ let _payInvId = null;
 
 let _payMethod = 'cash';
 
-function setPayMethod(method){
-  _payMethod = method;
-  const cashBtn = document.getElementById('payMethodCash');
-  const onlineBtn = document.getElementById('payMethodOnline');
-  if(method==='cash'){
-    cashBtn.style.background='#ecfdf5';cashBtn.style.color='#16a34a';cashBtn.style.borderColor='#16a34a';
-    onlineBtn.style.background='#f1f5f9';onlineBtn.style.color='#64748b';onlineBtn.style.borderColor='transparent';
+function togglePayMethod(){
+  _payMethod = _payMethod==='cash' ? 'online' : 'cash';
+  const circle = document.getElementById('payMethodCircle');
+  const label = document.getElementById('payMethodLabel');
+  const sub = document.getElementById('payMethodSub');
+  const box = document.getElementById('payMethodBox');
+  if(_payMethod==='online'){
+    circle.style.background='#2563eb';
+    circle.style.borderColor='#2563eb';
+    circle.innerHTML='✓';
+    circle.style.color='#fff';
+    label.textContent='📱 Online';
+    label.style.color='#2563eb';
+    sub.textContent=lang==='bn'?'অনলাইনে পেমেন্ট নেওয়া হয়েছে':'Online payment received';
+    box.style.borderColor='#2563eb';
+    box.style.background='#eff6ff';
   } else {
-    onlineBtn.style.background='#eff6ff';onlineBtn.style.color='#2563eb';onlineBtn.style.borderColor='#2563eb';
-    cashBtn.style.background='#f1f5f9';cashBtn.style.color='#64748b';cashBtn.style.borderColor='transparent';
+    circle.style.background='#fff';
+    circle.style.borderColor='#cbd5e1';
+    circle.innerHTML='';
+    label.textContent='💵 Cash / Offline';
+    label.style.color='#64748b';
+    sub.textContent=lang==='bn'?'টিক করলে Online হবে':'Check for Online payment';
+    box.style.borderColor='#e2e8f0';
+    box.style.background='#f8fafc';
   }
 }
 
@@ -1197,8 +1215,16 @@ function openPayModal(id){
 
   document.getElementById('payAmt').value = '';
   document.getElementById('payError').textContent = '';
-  // Default: cash
-  setPayMethod('cash');
+  // Default: cash — reset করি
+  _payMethod = 'cash';
+  const circle = document.getElementById('payMethodCircle');
+  const label = document.getElementById('payMethodLabel');
+  const sub = document.getElementById('payMethodSub');
+  const box = document.getElementById('payMethodBox');
+  if(circle){circle.style.background='#fff';circle.style.borderColor='#cbd5e1';circle.innerHTML='';}
+  if(label){label.textContent='💵 Cash / Offline';label.style.color='#64748b';}
+  if(sub){sub.textContent=lang==='bn'?'টিক করলে Online হবে':'Check for Online payment';}
+  if(box){box.style.borderColor='#e2e8f0';box.style.background='#f8fafc';}
   document.getElementById('payFullBtn').textContent = (lang==='bn'?'সব ':'Full ')+'₹'+currentDue.toFixed(2);
   const onlyInv = Math.max(0, inv.net - prevAmt);
   document.getElementById('payThisBtn').textContent = (lang==='bn'?'শুধু আজকের ':'Invoice only ')+'₹'+(onlyInv>0?onlyInv:currentDue).toFixed(2);
@@ -1379,13 +1405,19 @@ async function shareInvImage(inv, ph){
         <div style="display:flex;justify-content:space-between;font-size:12px;color:#64748b;margin-bottom:4px"><span>${lang==='bn'?'বিক্রয় মোট':'Subtotal'}</span><span>₹${inv.total.toFixed(2)}</span></div>
         ${(inv.retAmt||0)>0?`<div style="display:flex;justify-content:space-between;font-size:12px;color:#dc2626;margin-bottom:4px"><span>↩ ${lang==='bn'?'রিটার্ন':'Return'}</span><span>-₹${inv.retAmt.toFixed(2)}</span></div>`:''}
         ${(inv.prevDue||0)>0?`<div style="display:flex;justify-content:space-between;font-size:12px;color:#FF6B00;margin-bottom:4px"><span>⚠️ ${lang==='bn'?'আগের বাকি':'Prev Due'} (${inv.dueDate||inv.date})</span><span>+₹${inv.prevDue.toFixed(2)}</span></div>`:''}
-        ${(inv.payments||[]).map(p=>`<div style="display:flex;justify-content:space-between;font-size:12px;color:#16a34a;margin-bottom:4px"><span>${p.method==='online'?'📱':'💵'} ${lang==='bn'?'পেয়েছি':'Received'} (${p.date}) • ${p.method==='online'?(lang==='bn'?'Online':'Online'):(lang==='bn'?'Cash':'Cash')}</span><span>-₹${p.amt.toFixed(2)}</span></div>`).join('')}
+        ${(inv.payments||[]).map(p=>`<div style="display:flex;justify-content:space-between;font-size:12px;color:#16a34a;margin-bottom:4px;padding:4px 8px;background:${p.method==='online'?'#eff6ff':'#f0fdf4'};border-radius:6px">
+          <span>${p.method==='online'?'📱':'💵'} ${lang==='bn'?'পেয়েছি':'Received'} (${p.date})</span>
+          <span style="font-weight:700;color:${p.method==='online'?'#2563eb':'#16a34a'}">-₹${p.amt.toFixed(2)} • ${p.method==='online'?'Online':'Cash'}</span>
+        </div>`).join('')}
         <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700;border-top:2px solid ${stillDue>0?'#dc2626':'#16a34a'};padding-top:8px;margin-top:4px;color:${stillDue>0?'#dc2626':'#16a34a'}">
           <span>${stillDue>0?(lang==='bn'?'⏳ এখনো বাকি':'⏳ Still Due'):(lang==='bn'?'✅ পরিশোধিত':'✅ Paid')}</span>
           <span>₹${stillDue.toFixed(2)}</span>
         </div>
       </div>
     </div>
+    ${(inv.payments||[]).length>0?`<div style="padding:8px 16px;text-align:center;font-size:13px;font-weight:700;background:${(inv.payments||[]).slice(-1)[0]?.method==='online'?'#dbeafe':'#dcfce7'};color:${(inv.payments||[]).slice(-1)[0]?.method==='online'?'#1d4ed8':'#15803d'}">
+      ${(inv.payments||[]).slice(-1)[0]?.method==='online'?'📱 Online Payment':'💵 Cash Payment'}
+    </div>`:''}
     <div style="padding:10px 16px;background:#f8fafc;text-align:center;font-size:11px;color:#94a3b8">Thank you! 🙏 • ${company.name||''}</div>
   </div>`;
 
