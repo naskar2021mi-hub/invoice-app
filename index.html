@@ -711,8 +711,17 @@ function renderList(){
     document.getElementById('invList').innerHTML=`<div class="empty"><div class="icon">🧾</div><div style="font-size:16px;font-weight:600;color:var(--gray);margin-bottom:6px">${invoices.length===0?(lang==='bn'?'কোনো ইনভয়েস নেই':'No invoices yet'):(lang==='bn'?'কিছু পাওয়া যায়নি':'Nothing found')}</div><p>${invoices.length===0?(lang==='bn'?'"+ নতুন" বাটনে চাপুন':'"+ New" to create'):''}  </p></div>`;
     return;
   }
-  document.getElementById('invList').innerHTML=filtered.map(inv=>`
-    <div class="inv-item" onclick="openDetail('${inv.id}')" style="border-color:${inv.status==='paid'?'#e2e8f0':'#fecaca'}">
+  document.getElementById('invList').innerHTML=filtered.map(inv=>{
+    // কাস্টমারের লেজার বাকি বের করি
+    const custKey = getCustKey(inv.cname, inv.cphone||'');
+    const custBal = (customers[custKey]&&customers[custKey].balance>0) ? customers[custKey].balance : 0;
+    // ইনভয়েসের বাকি
+    const invDue = inv.status==='paid' ? 0 : inv.status==='partial' ? (inv.remainingDue||0) : inv.net;
+    // মোট বাকি = ইনভয়েস বাকি + কাস্টমার লেজার বাকি
+    const totalDue = invDue + custBal;
+    const isPaid = inv.status==='paid' && custBal<=0;
+    return `
+    <div class="inv-item" onclick="openDetail('${inv.id}')" style="border-color:${isPaid?'#e2e8f0':'#fecaca'}">
       <div style="flex:1">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
           <span class="mono" style="font-size:12px;color:#94a3b8">${inv.no}</span>
@@ -721,12 +730,18 @@ function renderList(){
         </div>
         <div style="font-weight:700;font-size:15px">${inv.cname}</div>
         ${inv.cphone?`<div style="font-size:12px;color:#94a3b8;margin-top:2px">📞 ${inv.cphone}</div>`:''}
+        ${totalDue>0?`<div style="margin-top:6px;display:inline-block;background:#fef2f2;border:1.5px solid #fecaca;border-radius:8px;padding:3px 10px">
+          <span style="font-size:11px;font-weight:700;color:var(--red)">⏳ ${lang==='bn'?'মোট বাকি':'Total Due'}: </span>
+          <span class="mono" style="font-size:13px;font-weight:700;color:var(--red)">${fmtINR(totalDue)}</span>
+          ${custBal>0&&invDue>0?`<span style="font-size:10px;color:#b91c1c;margin-left:4px">(${lang==='bn'?'আজ':'Invoice'}: ${fmtINR(invDue)} + ${lang==='bn'?'আগের':'Prev'}: ${fmtINR(custBal)})</span>`:''}
+        </div>`:''}
       </div>
       <div style="text-align:right;flex-shrink:0">
-        <div class="mono" style="font-size:17px;font-weight:700;color:${inv.status==='paid'?'var(--green)':'var(--red)'}">${fmtINR(inv.net)}</div>
+        <div class="mono" style="font-size:17px;font-weight:700;color:${isPaid?'var(--green)':'var(--red)'}">${fmtINR(inv.net)}</div>
         <div style="font-size:11px;color:#94a3b8;margin-top:2px">${inv.items.length}${lang==='bn'?' টি আইটেম':' items'}</div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 // ══ DETAIL ══
