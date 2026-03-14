@@ -860,30 +860,31 @@ function openPayModal(id){
   document.getElementById('payModalTitle').textContent = lang==='bn'?'কত টাকা পেয়েছেন?':'How much received?';
   document.getElementById('payModalSub').textContent = inv.cname + (inv.cphone?' • '+inv.cphone:'');
 
-  // Breakdown
+  // Breakdown — সহজ করা হয়েছে
   document.getElementById('payModalBreakdown').innerHTML = `
     ${alreadyPaid>0?`<div style="display:flex;justify-content:space-between;padding:3px 0">
       <span style="color:var(--green)">${lang==='bn'?'আগে পেয়েছেন:':'Already received:'}</span>
       <span class="mono" style="color:var(--green);font-weight:700">₹${alreadyPaid.toFixed(2)}</span>
     </div>`:''}
+    ${inv.status!=='partial'&&prevAmt>0?`
     <div style="display:flex;justify-content:space-between;padding:3px 0">
-      <span style="color:#64748b">${lang==='bn'?'এখনো বাকি:':'This invoice total:'}</span>
-      <span class="mono" style="font-weight:700">₹${currentDue.toFixed(2)}</span>
+      <span style="color:#64748b">${lang==='bn'?'আজকের মাল:':'Invoice:'}</span>
+      <span class="mono" style="font-weight:700">₹${(inv.net-prevAmt).toFixed(2)}</span>
     </div>
-    ${prevAmt>0&&inv.status!=='partial'?`<div style="display:flex;justify-content:space-between;padding:3px 0;border-top:1px dashed #e2e8f0;margin-top:4px">
-      <span style="color:var(--red)">${lang==='bn'?'আগের বাকি যোগ:':'Prev due added:'}</span>
+    <div style="display:flex;justify-content:space-between;padding:3px 0">
+      <span style="color:var(--red)">${lang==='bn'?'আগের বাকি:':'Prev due:'}</span>
       <span class="mono" style="color:var(--red);font-weight:700">+ ₹${prevAmt.toFixed(2)}</span>
-    </div>
-    <div style="display:flex;justify-content:space-between;padding:4px 0;border-top:1px solid #e2e8f0;margin-top:4px">
-      <span style="font-weight:700">${lang==='bn'?'সর্বমোট দেওয়ার কথা:':'Total payable:'}</span>
-      <span class="mono" style="font-weight:700;color:var(--or)">₹${currentDue.toFixed(2)}</span>
-    </div>`:''}`;
+    </div>`:''}
+    <div style="display:flex;justify-content:space-between;padding:5px 0;border-top:2px solid #fecaca;margin-top:4px">
+      <span style="font-weight:700;color:var(--red)">${lang==='bn'?'এখন বাকি:':'Now due:'}</span>
+      <span class="mono" style="font-weight:700;color:var(--red);font-size:20px">₹${currentDue.toFixed(2)}</span>
+    </div>`;
 
   document.getElementById('payAmt').value = '';
   document.getElementById('payError').textContent = '';
-  document.getElementById('payFullBtn').textContent = (lang==='bn'?'সব দিয়েছে ':'Full ')+'₹'+currentDue.toFixed(2);
-  const onlyInv = inv.net - prevAmt;
-  document.getElementById('payThisBtn').textContent = (lang==='bn'?'শুধু invoice ':'Invoice only ')+'₹'+(onlyInv>0?onlyInv:currentDue).toFixed(2);
+  document.getElementById('payFullBtn').textContent = (lang==='bn'?'সব ':'Full ')+'₹'+currentDue.toFixed(2);
+  const onlyInv = Math.max(0, inv.net - prevAmt);
+  document.getElementById('payThisBtn').textContent = (lang==='bn'?'শুধু আজকের ':'Invoice only ')+'₹'+(onlyInv>0?onlyInv:currentDue).toFixed(2);
   document.getElementById('payModal').style.display = 'flex';
   setTimeout(()=>document.getElementById('payAmt').focus(), 300);
 }
@@ -901,7 +902,7 @@ function setPayThis(){
   document.getElementById('payAmt').value = (onlyThis>0?onlyThis:inv.net).toFixed(2);
 }
 
-function confirmPayment(){
+async function confirmPayment(){
   const inv = invoices.find(i=>i.id===_payInvId);
   if(!inv) return;
   const newPayment = parseFloat(document.getElementById('payAmt').value)||0;
@@ -937,7 +938,7 @@ function confirmPayment(){
     showToast('⚠️ '+(lang==='bn'?`বাকি আছে ₹${remaining.toFixed(2)}`:`₹${remaining.toFixed(2)} still due`));
   }
 
-  save();
+  await save();
   document.getElementById('payModal').style.display='none';
   renderList();
   openDetail(_payInvId);
