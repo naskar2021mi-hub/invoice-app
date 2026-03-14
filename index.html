@@ -135,8 +135,12 @@ td.r,th.r{text-align:right}
   </div>
   <div class="card">
     <div class="sec-title">👤 <span class="t" data-bn="ক্রেতার তথ্য" data-en="Customer Info">ক্রেতার তথ্য</span></div>
-    <div style="margin-bottom:12px"><label class="label"><span class="t" data-bn="ক্রেতার নাম" data-en="Customer Name">ক্রেতার নাম</span> *</label><input id="f-cname"/></div>
-    <div><label class="label"><span class="t" data-bn="ফোন নম্বর" data-en="Phone">ফোন নম্বর</span></label><input id="f-cphone" type="tel"/></div>
+    <div style="margin-bottom:12px"><label class="label"><span class="t" data-bn="ক্রেতার নাম" data-en="Customer Name">ক্রেতার নাম</span> *</label><input id="f-cname" oninput="autoFillPrevDue()"/></div>
+    <div><label class="label"><span class="t" data-bn="ফোন নম্বর" data-en="Phone">ফোন নম্বর</span></label><input id="f-cphone" type="tel" oninput="autoFillPrevDue()"/></div>
+    <div id="f-cust-due-info" style="display:none;margin-top:10px;background:#fef2f2;border:1.5px solid #fecaca;border-radius:10px;padding:10px 14px">
+      <span style="font-size:12px;font-weight:700;color:var(--red)">⏳ এই কাস্টমারের আগের মোট বাকি: </span>
+      <span id="f-cust-due-val" class="mono" style="font-size:14px;font-weight:700;color:var(--red)"></span>
+    </div>
   </div>
   <div class="card">
     <div class="sec-title">📦 <span class="t" data-bn="পণ্য / সেবা" data-en="Items">পণ্য / সেবা</span></div>
@@ -615,6 +619,35 @@ function updateFormTotals(){
     ${lang==='bn'?`<div style="font-size:11px;color:#94a3b8;font-style:italic;margin-top:4px">${n2bn(Math.round(net>0?net:0))} টাকা মাত্র</div>`:''}`;
 }
 
+function autoFillPrevDue(){
+  if(editId) return; // edit mode-এ auto fill করব না
+  const cname = document.getElementById('f-cname').value.trim();
+  const cphone = document.getElementById('f-cphone').value.trim();
+  if(!cname){ 
+    document.getElementById('f-cust-due-info').style.display='none';
+    document.getElementById('f-due-amt').value='';
+    updateFormTotals();
+    return;
+  }
+  // কাস্টমার লেজার থেকে বাকি বের করি
+  const custKey = getCustKey(cname, cphone);
+  const custBal = (customers[custKey]&&customers[custKey].balance>0) ? customers[custKey].balance : 0;
+  // এই কাস্টমারের unpaid ইনভয়েস বাকি
+  const invDue = invoices
+    .filter(i=>i.cname.toLowerCase()===cname.toLowerCase()&&i.status!=='paid')
+    .reduce((s,i)=>s+(i.status==='partial'?(i.remainingDue||0):i.net),0);
+  const totalDue = custBal + invDue;
+  if(totalDue > 0){
+    document.getElementById('f-cust-due-info').style.display='block';
+    document.getElementById('f-cust-due-val').textContent = fmtINR(totalDue);
+    document.getElementById('f-due-amt').value = totalDue.toFixed(2);
+  } else {
+    document.getElementById('f-cust-due-info').style.display='none';
+    document.getElementById('f-due-amt').value='';
+  }
+  updateFormTotals();
+}
+
 function saveInvoice(){
   const cname=document.getElementById('f-cname').value.trim();
   if(!cname){showToast(lang==='bn'?'ক্রেতার নাম দিন!':'Enter customer name!');return;}
@@ -645,8 +678,7 @@ function renderList(){
   const filtered=invoices.filter(i=>i.cname.toLowerCase().includes(q)||i.no.toLowerCase().includes(q)||i.date.includes(q));
   const totalRev=invoices.reduce((s,i)=>s+i.total,0);
   const paid=invoices.filter(i=>i.status==='paid').reduce((s,i)=>s+(i.paidAmt||i.net),0)+invoices.filter(i=>i.status==='partial').reduce((s,i)=>s+(i.paidAmt||0),0);
-  const totalRemainingDue = invoices.filter(i=>i.status==='partial').reduce((s,i)=>s+(i.remainingDue||0),0);
-  const due=totalRev-paid;
+  const due=Math.max(0, invoices.filter(i=>i.status!=='paid').reduce((s,i)=>s+(i.status==='partial'?(i.remainingDue||0):i.net),0));
   const now=new Date();
   const mbn=['জানু','ফেব্রু','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টে','অক্টো','নভে','ডিসে'];
   const men=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
