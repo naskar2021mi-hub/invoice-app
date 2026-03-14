@@ -268,7 +268,14 @@ td.r,th.r{text-align:right}
 
   <!-- Daily Report -->
   <div class="card">
-    <div class="sec-title">📊 <span class="t" data-bn="আজকের রিপোর্ট" data-en="Today's Report">আজকের রিপোর্ট</span></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div class="sec-title" style="margin-bottom:0">📊 <span class="t" data-bn="রিপোর্ট" data-en="Report">রিপোর্ট</span></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button onclick="changeReportDate(-1)" style="background:#f1f5f9;color:#64748b;padding:6px 10px;font-size:16px;border-radius:8px">◀</button>
+        <input type="date" id="reportDate" style="border:1.5px solid var(--border);border-radius:8px;padding:6px 10px;font-size:13px;font-weight:600;color:#1e293b;width:140px" onchange="renderDailyReport()"/>
+        <button onclick="changeReportDate(1)" style="background:#f1f5f9;color:#64748b;padding:6px 10px;font-size:16px;border-radius:8px">▶</button>
+      </div>
+    </div>
     <div id="dailyReport"></div>
   </div>
 
@@ -605,6 +612,8 @@ function showView(id){
     document.getElementById('s-addr').value=company.address||'';
     const lp=document.getElementById('logoPreview');
     lp.innerHTML=company.logo?`<img src="${company.logo}" style="width:100%;height:100%;object-fit:contain"/>`:'🏢';
+    const rd=document.getElementById('reportDate');
+    if(rd&&!rd.value) rd.value=todayStr();
     renderDailyReport();
   }
 }
@@ -629,22 +638,42 @@ function handleLogo(input){
 }
 
 // ══ DAILY REPORT ══
+function changeReportDate(delta){
+  const el = document.getElementById('reportDate');
+  const d = new Date(el.value || todayStr());
+  d.setDate(d.getDate() + delta);
+  el.value = d.toISOString().split('T')[0];
+  renderDailyReport();
+}
+
 function renderDailyReport(){
-  const today=todayStr();
-  const ti=invoices.filter(i=>i.date===today);
-  if(ti.length===0){document.getElementById('dailyReport').innerHTML=`<div style="text-align:center;color:#94a3b8;padding:16px">${lang==='bn'?'আজ কোনো বিক্রয় নেই':'No sales today'}</div>`;return;}
+  const dateEl = document.getElementById('reportDate');
+  const selectedDate = dateEl ? (dateEl.value || todayStr()) : todayStr();
+  const isToday = selectedDate === todayStr();
+  const ti=invoices.filter(i=>i.date===selectedDate);
+
+  // date label বাংলায়
+  const d = new Date(selectedDate);
+  const mbn=['জানু','ফেব্রু','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টে','অক্টো','নভে','ডিসে'];
+  const men=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const dateLabel = d.getDate()+' '+(lang==='bn'?mbn:men)[d.getMonth()]+' '+d.getFullYear();
+
+  if(ti.length===0){
+    document.getElementById('dailyReport').innerHTML=`<div style="text-align:center;color:#94a3b8;padding:16px">${isToday?(lang==='bn'?'আজ কোনো বিক্রয় নেই':'No sales today'):(dateLabel+' — '+(lang==='bn'?'কোনো বিক্রয় নেই':'No sales'))}</div>`;
+    return;
+  }
   const ts=ti.reduce((s,i)=>s+i.total,0);
   const tp=ti.filter(i=>i.status==='paid').reduce((s,i)=>s+(i.paidAmt||i.net),0)+ti.filter(i=>i.status==='partial').reduce((s,i)=>s+(i.paidAmt||0),0);
   const td=ti.filter(i=>i.status!=='paid'&&i.status!=='partial').reduce((s,i)=>s+i.net,0)+ti.filter(i=>i.status==='partial').reduce((s,i)=>s+(i.remainingDue||0),0);
-  // আগের বাকি থেকে কত আদায় হয়েছে আজ
   const prevDueRecovered = ti.filter(i=>i.prevDue>0&&(i.status==='paid'||i.status==='partial')).reduce((s,i)=>{
     const paid = i.paidAmt||0;
-    const todayAmt = i.total - (i.retAmt||0); // শুধু আজকের মালের দাম
+    const todayAmt = i.total - (i.retAmt||0);
     const fromPrev = Math.max(0, paid - todayAmt);
     return s + Math.min(fromPrev, i.prevDue||0);
   },0);
   document.getElementById('dailyReport').innerHTML=`
-    <div class="rep-row"><span>${lang==='bn'?'আজকের ইনভয়েস':'Invoices'}</span><strong>${ti.length}${lang==='bn'?'টি':''}</strong></div>
+    <div style="font-size:12px;font-weight:700;color:var(--or);margin-bottom:10px;text-align:center">${isToday?(lang==='bn'?'📅 আজকের রিপোর্ট':'📅 Today'):('📅 '+dateLabel)}</div>
+    <div class="rep-row"><span>${lang==='bn'?'ইনভয়েস':'Invoices'}</span><strong>${ti.length}${lang==='bn'?'টি':''}</strong></div>
     <div class="rep-row"><span>${lang==='bn'?'মোট বিক্রয়':'Total Sales'}</span><strong class="mono">${fmtINR(ts)}</strong></div>
     <div class="rep-row"><span>${lang==='bn'?'আদায়':'Collected'}</span><strong class="mono" style="color:var(--green)">${fmtINR(tp)}</strong></div>
     ${prevDueRecovered>0?`<div class="rep-row"><span>↩ ${lang==='bn'?'আগের বাকি আদায়':'Prev Due Recovered'}</span><strong class="mono" style="color:#7c3aed">${fmtINR(prevDueRecovered)}</strong></div>`:''}
@@ -654,7 +683,7 @@ function renderDailyReport(){
         <div><span style="font-weight:600">${inv.cname}</span> <span style="font-size:11px;color:#94a3b8">${inv.no}</span></div>
         <div style="display:flex;align-items:center;gap:8px">
           <span class="mono" style="font-weight:700;color:${inv.status==='paid'?'var(--green)':'var(--red)'}">${fmtINR(inv.net)}</span>
-          ${inv.status!=='paid'?`<button onclick="markPaid('${inv.id}');renderDailyReport()" style="background:#ecfdf5;color:var(--green);padding:3px 8px;font-size:11px;border-radius:6px">✓</button>`:'<span style="color:var(--green);font-size:12px">✓</span>'}
+          ${inv.status!=='paid'&&isToday?`<button onclick="markPaid('${inv.id}');renderDailyReport()" style="background:#ecfdf5;color:var(--green);padding:3px 8px;font-size:11px;border-radius:6px">✓</button>`:'<span style="color:var(--green);font-size:12px">${inv.status==="paid"?"✓":""}</span>'}
         </div>
       </div>`).join('')}
     </div>`;
@@ -1081,9 +1110,12 @@ async function confirmPayment(){
   const remaining = Math.max(0, currentDue - newPayment);
 
   if(newPayment >= currentDue){
-    // সব শোধ
-    invoices = invoices.map(i=>i.id===_payInvId?{...i,status:'paid',paidAmt:totalPaid,remainingDue:0}:i);
-    // কাস্টমার লেজার থেকেও বাদ দিই যদি বেশি দেয়
+    invoices = invoices.map(i=>i.id===_payInvId?{...i,
+      status:'paid',
+      paidAmt:totalPaid,
+      remainingDue:0,
+      payments:[...(i.payments||[]),{amt:newPayment,date:todayStr()}]
+    }:i);
     const extra = newPayment - currentDue;
     if(extra>0){
       const key=getCustKey(inv.cname,inv.cphone||'');
@@ -1094,11 +1126,11 @@ async function confirmPayment(){
     }
     showToast('✅ '+(lang==='bn'?'সম্পূর্ণ পরিশোধিত!':'Fully paid!'));
   } else {
-    // আংশিক পেমেন্ট — বাকি আপডেট
     invoices = invoices.map(i=>i.id===_payInvId?{...i,
       status:'partial',
       paidAmt:totalPaid,
       remainingDue:remaining,
+      payments:[...(i.payments||[]),{amt:newPayment,date:todayStr()}]
     }:i);
     showToast('⚠️ '+(lang==='bn'?`বাকি আছে ₹${remaining.toFixed(2)}`:`₹${remaining.toFixed(2)} still due`));
   }
@@ -1110,6 +1142,16 @@ async function confirmPayment(){
   document.getElementById('payModal').style.display='none';
   renderList();
   openDetail(_payInvId);
+
+  // payment এর পরে share করার option দিই
+  const updatedInv = invoices.find(i=>i.id===_payInvId);
+  if(updatedInv && updatedInv.cphone){
+    setTimeout(()=>{
+      if(confirm(lang==='bn'?'কাস্টমারকে payment receipt পাঠাবেন?':'Send payment receipt to customer?')){
+        openSendModal(updatedInv);
+      }
+    }, 600);
+  }
 }
 function deleteInv(id){if(!confirm(lang==='bn'?'মুছে দেবেন?':'Delete?'))return;invoices=invoices.filter(i=>i.id!==id);save();goList();}
 
@@ -1161,7 +1203,16 @@ async function shareInvImage(inv, ph){
   const stillDue = inv.status==='partial' ? (inv.remainingDue||0) : inv.status==='paid' ? 0 : inv.net;
   // Return rows with date
   const il=inv.items.map(it=>`<tr><td style="padding:6px 4px;border-bottom:1px solid #f1f5f9">${it.desc||'-'}</td><td style="padding:6px 4px;border-bottom:1px solid #f1f5f9;text-align:center">${it.qty}</td><td style="padding:6px 4px;border-bottom:1px solid #f1f5f9;text-align:right">₹${(+it.rate||0).toFixed(2)}</td><td style="padding:6px 4px;border-bottom:1px solid #f1f5f9;text-align:right;font-weight:700">₹${((+it.qty||0)*(+it.rate||0)).toFixed(2)}</td></tr>`).join('');
-  const retRows=(inv.returnItems||[]).filter(r=>r.desc||r.qty).map(r=>`<tr><td style="padding:5px 4px;color:#dc2626">↩ ${r.desc||'-'}</td><td style="padding:5px 4px;text-align:center;color:#dc2626">${r.qty||0}</td><td style="padding:5px 4px;text-align:right;color:#dc2626">₹${(+r.price||0).toFixed(2)}</td><td style="padding:5px 4px;text-align:right;font-size:10px;color:#94a3b8">${r.date||''}</td></tr>`).join('');
+  const retRows=(inv.returnItems||[]).filter(r=>r.desc||r.qty).map(r=>`
+    <tr>
+      <td style="padding:5px 4px;color:#dc2626">
+        ↩ ${r.desc||'-'}
+        ${r.date?`<div style="font-size:10px;color:#94a3b8">📅 ${r.date}</div>`:''}
+      </td>
+      <td style="padding:5px 4px;text-align:center;color:#dc2626">${r.qty||0}</td>
+      <td style="padding:5px 4px;text-align:right;color:#dc2626">₹${(+r.price||0).toFixed(2)}</td>
+      <td style="padding:5px 4px;text-align:right;color:#dc2626;font-weight:700">-₹${((+r.qty||0)*(+r.price||0)).toFixed(2)}</td>
+    </tr>`).join('');
   const logoHtml = company.logo ? `<img src="${company.logo}" style="width:50px;height:50px;border-radius:8px;object-fit:contain;background:#fff;padding:4px"/>` : `<div style="width:50px;height:50px;border-radius:8px;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:22px">🏢</div>`;
 
   const html = `<div style="font-family:sans-serif;width:380px;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.15)">
@@ -1185,8 +1236,8 @@ async function shareInvImage(inv, ph){
       <div style="margin-top:10px;padding-top:8px;border-top:1px solid #e2e8f0">
         <div style="display:flex;justify-content:space-between;font-size:12px;color:#64748b;margin-bottom:4px"><span>Subtotal</span><span>₹${inv.total.toFixed(2)}</span></div>
         ${(inv.retAmt||0)>0?`<div style="display:flex;justify-content:space-between;font-size:12px;color:#dc2626;margin-bottom:4px"><span>↩ Return</span><span>-₹${inv.retAmt.toFixed(2)}</span></div>`:''}
-        ${(inv.prevDue||0)>0?`<div style="display:flex;justify-content:space-between;font-size:12px;color:#FF6B00;margin-bottom:4px"><span>⚠️ আগের বাকি${inv.dueDate?' ('+inv.dueDate+')':''}</span><span>+₹${inv.prevDue.toFixed(2)}</span></div>`:''}
-        ${(inv.paidAmt||0)>0?`<div style="display:flex;justify-content:space-between;font-size:12px;color:#16a34a;margin-bottom:4px"><span>✅ পেয়েছি</span><span>-₹${inv.paidAmt.toFixed(2)}</span></div>`:''}
+        ${(inv.prevDue||0)>0?`<div style="display:flex;justify-content:space-between;font-size:12px;color:#FF6B00;margin-bottom:4px"><span>⚠️ আগের বাকি (${inv.dueDate||inv.date})</span><span>+₹${inv.prevDue.toFixed(2)}</span></div>`:''}
+        ${(inv.payments||[]).map(p=>`<div style="display:flex;justify-content:space-between;font-size:12px;color:#16a34a;margin-bottom:4px"><span>✅ পেয়েছি (${p.date})</span><span>-₹${p.amt.toFixed(2)}</span></div>`).join('')}
         <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700;border-top:2px solid ${stillDue>0?'#dc2626':'#16a34a'};padding-top:8px;margin-top:4px;color:${stillDue>0?'#dc2626':'#16a34a'}">
           <span>${stillDue>0?'⏳ এখনো বাকি':'✅ পরিশোধিত'}</span>
           <span>₹${stillDue.toFixed(2)}</span>
@@ -1224,7 +1275,8 @@ async function shareInvImage(inv, ph){
 function buildWAText(inv, stillDue){
   const il=inv.items.map(it=>(it.desc||'-')+' x'+it.qty+'=₹'+(((+it.qty||0)*(+it.rate||0)).toFixed(2))).join('\n');
   const retLines=(inv.returnItems||[]).filter(r=>r.desc||r.qty).map(r=>`↩ ${r.desc||'-'} x${r.qty||0}${r.date?' ('+r.date+')':''}`).join('\n');
-  return '🧾 *'+inv.no+'*\n🏢 *'+(company.name||'')+'*\n👤 *'+inv.cname+'*\n📅 '+inv.date+'\n\n📦 *মাল:*\n'+il+(retLines?'\n\n↩ *রিটার্ন:*\n'+retLines:'')+(inv.prevDue>0?'\n\n⚠️ আগের বাকি'+(inv.dueDate?' ('+inv.dueDate+')':'')+': ₹'+inv.prevDue.toFixed(2):'')+'\n━━━━━━━━\n'+(stillDue>0?'⏳ *এখনো বাকি: ₹'+stillDue.toFixed(2)+'*':'✅ *সম্পূর্ণ পরিশোধিত*')+'\n\nThank you! 🙏';
+  const payLines=(inv.payments||[]).map(p=>`✅ পেয়েছি (${p.date}): ₹${p.amt.toFixed(2)}`).join('\n');
+  return '🧾 *'+inv.no+'*\n🏢 *'+(company.name||'')+'*\n👤 *'+inv.cname+'*\n📅 '+inv.date+'\n\n📦 *মাল:*\n'+il+(retLines?'\n\n↩ *রিটার্ন:*\n'+retLines:'')+(inv.prevDue>0?'\n\n⚠️ আগের বাকি ('+(inv.dueDate||inv.date)+'): ₹'+inv.prevDue.toFixed(2):'')+(payLines?'\n\n'+payLines:'')+'\n━━━━━━━━\n'+(stillDue>0?'⏳ *এখনো বাকি: ₹'+stillDue.toFixed(2)+'*':'✅ *সম্পূর্ণ পরিশোধিত*')+'\n\nThank you! 🙏';
 }
 
 
