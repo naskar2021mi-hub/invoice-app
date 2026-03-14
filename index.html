@@ -625,7 +625,7 @@ function changePassword(){
   showToast('✅ '+(lang==='bn'?'পাসওয়ার্ড পরিবর্তন হয়েছে!':'Password changed!'));
 }
 
-const _ADMIN_CODE = '@Megh';
+const _ADMIN_CODE = 'Megh';
 
 function checkAdminCode(){
   const code = document.getElementById('adminCodeInput').value;
@@ -674,7 +674,7 @@ async function loadAdminStats(){
   }
 }
 
-async // ══ EXPENSE TRACKER ══
+// ══ EXPENSE TRACKER ══
 function toggleExpenseMode(){
   const sw = document.getElementById('expenseSwitch');
   const isExp = document.getElementById('view-expense').classList.contains('active');
