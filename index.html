@@ -237,7 +237,7 @@ td.r,th.r{text-align:right}
 <!-- ══ SETTINGS VIEW ══ -->
 <div class="view" id="view-settings">
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
-    <button onclick="goList()" style="background:#f1f5f9;color:#64748b;padding:8px 14px">←</button>
+    <button onclick="goList()" style="background:#f1f5f9;color:#64748b;padding:12px 20px;font-size:20px;border-radius:12px;font-weight:700;min-width:52px">←</button>
     <div style="font-size:20px;font-weight:700">⚙️ <span class="t" data-bn="সেটিংস" data-en="Settings">সেটিংস</span></div>
   </div>
 
@@ -286,6 +286,43 @@ td.r,th.r{text-align:right}
     <input id="newPassA" type="password" placeholder="নতুন পাসওয়ার্ড" style="margin-bottom:10px"/>
     <input id="newPassB" type="password" placeholder="নতুন পাসওয়ার্ড আবার" style="margin-bottom:12px"/>
     <button onclick="changePassword()" style="background:#1e293b;color:#fff;width:100%"><span class="t" data-bn="পরিবর্তন করুন" data-en="Change">পরিবর্তন করুন</span></button>
+  </div>
+
+  <!-- Terms of Conditions -->
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="toggleTermsCard()">
+      <div class="sec-title" style="margin-bottom:0">📋 <span class="t" data-bn="ব্যবহারের সুবিধা ও শর্তাবলী" data-en="Features & Terms">ব্যবহারের সুবিধা ও শর্তাবলী</span></div>
+      <span id="termsCardArrow" style="color:#94a3b8;font-size:18px">▼</span>
+    </div>
+    <div id="termsCardBody" style="display:none;margin-top:14px">
+      <div style="font-size:13px;color:#1e293b;line-height:1.8">
+
+        <div style="font-weight:700;color:var(--or);margin-bottom:8px">✨ <span class="t" data-bn="কাস্টমারকে যা সুবিধা দিতে পারবেন:" data-en="Benefits you can offer customers:">কাস্টমারকে যা সুবিধা দিতে পারবেন:</span></div>
+
+        <div style="margin-bottom:6px">📦 <span class="t" data-bn="প্রতিটি মালের বিস্তারিত হিসাব — পরিমাণ ও মূল্যসহ invoice পাঠাতে পারবেন" data-en="Detailed item-wise invoice with quantity and price">প্রতিটি মালের বিস্তারিত হিসাব — পরিমাণ ও মূল্যসহ invoice পাঠাতে পারবেন</div>
+
+        <div style="margin-bottom:6px">💬 <span class="t" data-bn="WhatsApp বা SMS এ সুন্দর invoice card পাঠাতে পারবেন" data-en="Send beautiful invoice cards via WhatsApp or SMS">WhatsApp বা SMS এ সুন্দর invoice card পাঠাতে পারবেন</span></div>
+
+        <div style="margin-bottom:6px">💰 <span class="t" data-bn="কাস্টমারের বাকির হিসাব রাখতে পারবেন এবং কতটুকু পরিশোধ হয়েছে তা দেখাতে পারবেন" data-en="Track customer dues and show payment history">কাস্টমারের বাকির হিসাব রাখতে পারবেন এবং কতটুকু পরিশোধ হয়েছে তা দেখাতে পারবেন</span></div>
+
+        <div style="margin-bottom:6px">📅 <span class="t" data-bn="প্রতিটি payment এর তারিখসহ রসিদ পাঠাতে পারবেন" data-en="Send receipts with date for every payment">প্রতিটি payment এর তারিখসহ রসিদ পাঠাতে পারবেন</span></div>
+
+        <div style="margin-bottom:6px">↩ <span class="t" data-bn="রিটার্ন মালের হিসাব রাখতে পারবেন এবং সেটা invoice থেকে বাদ দেওয়া যাবে" data-en="Track returned goods and deduct from invoice">রিটার্ন মালের হিসাব রাখতে পারবেন এবং সেটা invoice থেকে বাদ দেওয়া যাবে</span></div>
+
+        <div style="margin-bottom:6px">🖨️ <span class="t" data-bn="যেকোনো invoice PDF বা print করে দিতে পারবেন" data-en="Print or save any invoice as PDF">যেকোনো invoice PDF বা print করে দিতে পারবেন</span></div>
+
+        <div style="margin-bottom:14px">📊 <span class="t" data-bn="দৈনিক বিক্রয়ের সম্পূর্ণ রিপোর্ট যেকোনো দিনের দেখতে পারবেন" data-en="View complete daily sales report for any date">দৈনিক বিক্রয়ের সম্পূর্ণ রিপোর্ট যেকোনো দিনের দেখতে পারবেন</span></div>
+
+        <div style="border-top:1px solid var(--border);padding-top:12px;font-weight:700;color:#dc2626;margin-bottom:8px">⚠️ <span class="t" data-bn="গুরুত্বপূর্ণ শর্তাবলী:" data-en="Important Terms:">গুরুত্বপূর্ণ শর্তাবলী:</span></div>
+
+        <div style="margin-bottom:6px;color:#64748b">🔑 <span class="t" data-bn="Recovery Code সংরক্ষণ করুন — না থাকলে পাসওয়ার্ড reset এ সব data মুছে যাবে" data-en="Keep your Recovery Code safe — losing it means data loss on password reset">Recovery Code সংরক্ষণ করুন — না থাকলে পাসওয়ার্ড reset এ সব data মুছে যাবে</span></div>
+
+        <div style="margin-bottom:6px;color:#64748b">☁️ <span class="t" data-bn="Data Firebase Cloud এ সংরক্ষিত হয় — internet না থাকলে local এ সেভ হবে" data-en="Data saved to Firebase Cloud — saves locally when offline">Data Firebase Cloud এ সংরক্ষিত হয় — internet না থাকলে local এ সেভ হবে</span></div>
+
+        <div style="color:#64748b">📱 <span class="t" data-bn="এই অ্যাপ শুধুমাত্র ব্যক্তিগত ব্যবসায়িক ব্যবহারের জন্য" data-en="This app is for personal business use only">এই অ্যাপ শুধুমাত্র ব্যক্তিগত ব্যবসায়িক ব্যবহারের জন্য</span></div>
+
+      </div>
+    </div>
   </div>
 
   <!-- Logout -->
@@ -374,8 +411,8 @@ td.r,th.r{text-align:right}
       <button id="payFullBtn" onclick="setPayFull()" style="background:#f1f5f9;color:#64748b;flex:1;padding:9px;font-size:12px;border-radius:8px">সব দিয়েছে</button>
       <button id="payThisBtn" onclick="setPayThis()" style="background:#f1f5f9;color:#64748b;flex:1;padding:9px;font-size:12px;border-radius:8px">শুধু এটা</button>
     </div>
-    <button onclick="confirmPayment()" style="background:var(--or);color:#fff;width:100%;padding:13px;font-size:15px;border-radius:12px;margin-bottom:8px">✓ নিশ্চিত করুন</button>
-    <button onclick="document.getElementById('payModal').style.display='none'" style="background:#f1f5f9;color:#64748b;width:100%;padding:10px">বাতিল</button>
+    <button onclick="confirmPayment()" style="background:var(--or);color:#fff;width:100%;padding:13px;font-size:15px;border-radius:12px;margin-bottom:8px" class="t" data-bn="✓ নিশ্চিত করুন" data-en="✓ Confirm">✓ নিশ্চিত করুন</button>
+    <button onclick="document.getElementById('payModal').style.display='none'" style="background:#f1f5f9;color:#64748b;width:100%;padding:10px" class="t" data-bn="বাতিল" data-en="Cancel">বাতিল</button>
     <div id="payError" style="color:var(--red);font-size:12px;margin-top:8px"></div>
   </div>
 </div>
@@ -519,6 +556,14 @@ function changePassword(){
   showToast('✅ '+(lang==='bn'?'পাসওয়ার্ড পরিবর্তন হয়েছে!':'Password changed!'));
 }
 
+function toggleTermsCard(){
+  const body = document.getElementById('termsCardBody');
+  const arrow = document.getElementById('termsCardArrow');
+  const isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  arrow.textContent = isOpen ? '▼' : '▲';
+}
+
 function doLogout(){
   if(!confirm(lang==='bn'?'লগআউট করবেন?':'Logout?'))return;
   sessionStorage.removeItem('inv_session');
@@ -583,6 +628,12 @@ function setLang(l){
   document.getElementById('search-input').placeholder=l==='bn'?'🔍 নাম বা ইনভয়েস খুঁজুন...':'🔍 Search by name or invoice...';
   document.getElementById('btnBn').className='lang-btn'+(l==='bn'?' active':'');
   document.getElementById('btnEn').className='lang-btn'+(l==='en'?' active':'');
+  // Payment modal static texts
+  document.getElementById('payModalTitle').textContent=l==='bn'?'কত টাকা পেয়েছেন?':'How much received?';
+  document.getElementById('payAmt').placeholder=l==='bn'?'₹ পরিমাণ লিখুন':'₹ Enter amount';
+  // Login screen
+  const ls=document.getElementById('loginSubtitle');
+  if(ls&&ls.textContent) ls.textContent=l==='bn'?'পাসওয়ার্ড দিয়ে প্রবেশ করুন':'Enter your password';
   renderList();
 }
 
@@ -1229,17 +1280,17 @@ async function shareInvImage(inv, ph){
     <div style="padding:14px 16px">
       <table style="width:100%;border-collapse:collapse;font-size:12px">
         <thead><tr style="color:#94a3b8;font-size:10px;font-weight:700">
-          <th style="padding:4px;text-align:left">বিবরণ</th><th style="padding:4px;text-align:center">Qty</th><th style="padding:4px;text-align:right">মূল্য</th><th style="padding:4px;text-align:right">মোট</th>
+          <th style="padding:4px;text-align:left">${lang==='bn'?'বিবরণ':'Description'}</th><th style="padding:4px;text-align:center">${lang==='bn'?'পরিমাণ':'Qty'}</th><th style="padding:4px;text-align:right">${lang==='bn'?'মূল্য':'Price'}</th><th style="padding:4px;text-align:right">${lang==='bn'?'মোট':'Total'}</th>
         </tr></thead>
         <tbody>${il}${retRows}</tbody>
       </table>
       <div style="margin-top:10px;padding-top:8px;border-top:1px solid #e2e8f0">
-        <div style="display:flex;justify-content:space-between;font-size:12px;color:#64748b;margin-bottom:4px"><span>Subtotal</span><span>₹${inv.total.toFixed(2)}</span></div>
-        ${(inv.retAmt||0)>0?`<div style="display:flex;justify-content:space-between;font-size:12px;color:#dc2626;margin-bottom:4px"><span>↩ Return</span><span>-₹${inv.retAmt.toFixed(2)}</span></div>`:''}
-        ${(inv.prevDue||0)>0?`<div style="display:flex;justify-content:space-between;font-size:12px;color:#FF6B00;margin-bottom:4px"><span>⚠️ আগের বাকি (${inv.dueDate||inv.date})</span><span>+₹${inv.prevDue.toFixed(2)}</span></div>`:''}
-        ${(inv.payments||[]).map(p=>`<div style="display:flex;justify-content:space-between;font-size:12px;color:#16a34a;margin-bottom:4px"><span>✅ পেয়েছি (${p.date})</span><span>-₹${p.amt.toFixed(2)}</span></div>`).join('')}
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:#64748b;margin-bottom:4px"><span>${lang==='bn'?'বিক্রয় মোট':'Subtotal'}</span><span>₹${inv.total.toFixed(2)}</span></div>
+        ${(inv.retAmt||0)>0?`<div style="display:flex;justify-content:space-between;font-size:12px;color:#dc2626;margin-bottom:4px"><span>↩ ${lang==='bn'?'রিটার্ন':'Return'}</span><span>-₹${inv.retAmt.toFixed(2)}</span></div>`:''}
+        ${(inv.prevDue||0)>0?`<div style="display:flex;justify-content:space-between;font-size:12px;color:#FF6B00;margin-bottom:4px"><span>⚠️ ${lang==='bn'?'আগের বাকি':'Prev Due'} (${inv.dueDate||inv.date})</span><span>+₹${inv.prevDue.toFixed(2)}</span></div>`:''}
+        ${(inv.payments||[]).map(p=>`<div style="display:flex;justify-content:space-between;font-size:12px;color:#16a34a;margin-bottom:4px"><span>✅ ${lang==='bn'?'পেয়েছি':'Received'} (${p.date})</span><span>-₹${p.amt.toFixed(2)}</span></div>`).join('')}
         <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700;border-top:2px solid ${stillDue>0?'#dc2626':'#16a34a'};padding-top:8px;margin-top:4px;color:${stillDue>0?'#dc2626':'#16a34a'}">
-          <span>${stillDue>0?'⏳ এখনো বাকি':'✅ পরিশোধিত'}</span>
+          <span>${stillDue>0?(lang==='bn'?'⏳ এখনো বাকি':'⏳ Still Due'):(lang==='bn'?'✅ পরিশোধিত':'✅ Paid')}</span>
           <span>₹${stillDue.toFixed(2)}</span>
         </div>
       </div>
