@@ -181,7 +181,10 @@ td.r,th.r{text-align:right}
     </div>
   </div>
   <div class="card">
-    <div class="sec-title">👤 <span class="t" data-bn="ক্রেতার তথ্য" data-en="Customer Info">ক্রেতার তথ্য</span></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div class="sec-title" style="margin-bottom:0">👤 <span class="t" data-bn="ক্রেতার তথ্য" data-en="Customer Info">ক্রেতার তথ্য</span></div>
+      <button onclick="pickContact()" style="background:#f0fdf4;color:#16a34a;padding:7px 14px;font-size:12px;font-weight:700;border-radius:10px;border:1.5px solid #86efac">📞 <span class="t" data-bn="Contact বেছে নিন" data-en="Pick Contact">Contact বেছে নিন</span></button>
+    </div>
     <div style="margin-bottom:12px"><label class="label"><span class="t" data-bn="ক্রেতার নাম" data-en="Customer Name">ক্রেতার নাম</span> *</label><input id="f-cname" oninput="autoFillPrevDue()"/></div>
     <div><label class="label"><span class="t" data-bn="ফোন নম্বর" data-en="Phone">ফোন নম্বর</span></label><input id="f-cphone" type="tel" oninput="autoFillPrevDue()"/></div>
     <div id="f-cust-due-info" style="display:none;margin-top:10px;background:#fef2f2;border:1.5px solid #fecaca;border-radius:10px;padding:10px 14px">
@@ -627,6 +630,29 @@ async function loadAdminStats(){
       <button onclick="loadAdminStats()" style="background:#ede9fe;color:#7c3aed;width:100%;margin-top:12px;padding:8px;border-radius:8px;font-size:12px">🔄 Refresh</button>`;
   } catch(e){
     el.innerHTML=`<div style="color:var(--red);font-size:13px">❌ লোড করা যায়নি।</div>`;
+  }
+}
+
+async function pickContact(){
+  try {
+    // Contact Picker API — Android Chrome এ কাজ করে
+    if('contacts' in navigator && 'ContactsManager' in window){
+      const contacts = await navigator.contacts.select(['name','tel'],{multiple:false});
+      if(contacts && contacts.length>0){
+        const c = contacts[0];
+        const name = (c.name&&c.name[0]) || '';
+        const phone = (c.tel&&c.tel[0]) || '';
+        document.getElementById('f-cname').value = name;
+        document.getElementById('f-cphone').value = phone.replace(/\s+/g,'');
+        autoFillPrevDue();
+        showToast('✅ '+(lang==='bn'?'Contact যোগ হয়েছে!':'Contact added!'));
+      }
+    } else {
+      // fallback — browser support নেই
+      showToast(lang==='bn'?'📞 এই browser এ Contact picker কাজ করে না — নিজে লিখুন':'📞 Contact picker not supported — type manually');
+    }
+  } catch(e){
+    showToast(lang==='bn'?'Contact access বাতিল হয়েছে':'Contact access cancelled');
   }
 }
 
@@ -1311,15 +1337,7 @@ async function confirmPayment(){
   renderList();
   openDetail(_payInvId);
 
-  // payment এর পরে share করার option দিই
-  const updatedInv = invoices.find(i=>i.id===_payInvId);
-  if(updatedInv && updatedInv.cphone){
-    setTimeout(()=>{
-      if(confirm(lang==='bn'?'কাস্টমারকে payment receipt পাঠাবেন?':'Send payment receipt to customer?')){
-        openSendModal(updatedInv);
-      }
-    }, 600);
-  }
+  // payment এর পরে আর popup দেখাব না
 }
 function deleteInv(id){if(!confirm(lang==='bn'?'মুছে দেবেন?':'Delete?'))return;invoices=invoices.filter(i=>i.id!==id);save();goList();}
 
