@@ -54,7 +54,7 @@ td.r,th.r{text-align:right}
 .items-head{display:grid;grid-template-columns:2fr 65px 90px 28px;gap:6px;margin-bottom:6px}
 .items-row{display:grid;grid-template-columns:2fr 65px 90px 28px;gap:6px;margin-bottom:8px;align-items:center}
 .items-head span{font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase}
-.return-row{display:grid;grid-template-columns:2fr 65px 105px 28px;gap:6px;margin-bottom:8px;align-items:center}
+.return-row{display:grid;grid-template-columns:2fr 55px 75px 75px 28px;gap:6px;margin-bottom:8px;align-items:center}
 /* LOGIN */
 #loginScreen{position:fixed;inset:0;background:linear-gradient(135deg,#FF6B00,#ff8c38);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
 .login-box{background:#fff;border-radius:24px;padding:32px 24px;width:100%;max-width:360px;text-align:center}
@@ -156,7 +156,7 @@ td.r,th.r{text-align:right}
   </div>
   <div class="card" style="border-color:#fecaca">
     <div class="sec-title" style="color:var(--red)">↩ <span class="t" data-bn="রিটার্ন মাল" data-en="Returns">রিটার্ন মাল</span></div>
-    <div class="items-head"><span class="t" data-bn="বিবরণ" data-en="Desc">বিবরণ</span><span class="t" data-bn="পরিমাণ" data-en="Qty">পরিমাণ</span><span class="t" data-bn="তারিখ" data-en="Date">তারিখ</span><span></span></div>
+    <div class="items-head" style="grid-template-columns:2fr 55px 75px 75px 28px"><span class="t" data-bn="বিবরণ" data-en="Desc">বিবরণ</span><span class="t" data-bn="পরিমাণ" data-en="Qty">পরিমাণ</span><span class="t" data-bn="মূল্য" data-en="Price">মূল্য</span><span class="t" data-bn="তারিখ" data-en="Date">তারিখ</span><span></span></div>
     <div id="returnContainer"></div>
     <button onclick="addReturn()" style="background:none;border:1.5px dashed #fca5a5;color:var(--red);width:100%;margin-top:6px;padding:9px;border-radius:9px">+ <span class="t" data-bn="রিটার্ন যোগ" data-en="Add Return">রিটার্ন যোগ</span></button>
   </div>
@@ -599,16 +599,17 @@ function renderReturn(){
     <div class="return-row">
       <input value="${r.desc||''}" oninput="returnItems[${i}].desc=this.value" placeholder="${lang==='en'?'Item':'পণ্য'}" style="border-color:#fca5a5"/>
       <input type="number" value="${r.qty||''}" oninput="returnItems[${i}].qty=this.value;updateFormTotals()" placeholder="1" style="text-align:center;border-color:#fca5a5"/>
+      <input type="number" value="${r.price||''}" oninput="returnItems[${i}].price=this.value;updateFormTotals()" placeholder="0.00" style="border-color:#fca5a5"/>
       <input type="date" value="${r.date||''}" oninput="returnItems[${i}].date=this.value" style="border-color:#fca5a5;font-size:12px;padding:8px 6px"/>
       <button onclick="removeReturn(${i})" style="background:#fef2f2;color:var(--red);padding:0;width:28px;height:36px;border-radius:8px;font-size:16px;display:flex;align-items:center;justify-content:center">×</button>
     </div>`).join('');
 }
-function addReturn(){returnItems.push({desc:'',qty:'',date:''});renderReturn();updateFormTotals();}
+function addReturn(){returnItems.push({desc:'',qty:'',price:'',date:''});renderReturn();updateFormTotals();}
 function removeReturn(i){returnItems.splice(i,1);renderReturn();updateFormTotals();}
 
 function updateFormTotals(){
   const sub=calcTotal(items);
-  const retAmt=returnItems.reduce((s,r)=>{const qty=+r.qty||0;const m=items.find(it=>it.desc&&r.desc&&it.desc.trim().toLowerCase()===r.desc.trim().toLowerCase());return s+qty*(m?+m.rate||0:0);},0);
+  const retAmt=returnItems.reduce((s,r)=>{const qty=+r.qty||0;const price=+r.price>0?+r.price:(()=>{const m=items.find(it=>it.desc&&r.desc&&it.desc.trim().toLowerCase()===r.desc.trim().toLowerCase());return m?+m.rate||0:0;})();return s+qty*price;},0);
   const prevDue=parseFloat(document.getElementById('f-due-amt').value)||0;
   const net=sub-retAmt+prevDue;
   document.getElementById('formTotals').innerHTML=`
@@ -653,7 +654,7 @@ function saveInvoice(){
   if(!cname){showToast(lang==='bn'?'ক্রেতার নাম দিন!':'Enter customer name!');return;}
   const sub=calcTotal(items);
   const prevDue=parseFloat(document.getElementById('f-due-amt').value)||0;
-  const retAmt=returnItems.reduce((s,r)=>{const qty=+r.qty||0;const m=items.find(it=>it.desc&&r.desc&&it.desc.trim().toLowerCase()===r.desc.trim().toLowerCase());return s+qty*(m?+m.rate||0:0);},0);
+  const retAmt=returnItems.reduce((s,r)=>{const qty=+r.qty||0;const price=+r.price>0?+r.price:(()=>{const m=items.find(it=>it.desc&&r.desc&&it.desc.trim().toLowerCase()===r.desc.trim().toLowerCase());return m?+m.rate||0:0;})();return s+qty*price;},0);
   const net=sub-retAmt+prevDue;
   const inv={
     id:editId||Math.random().toString(36).slice(2),
