@@ -85,6 +85,29 @@ td.r,th.r{text-align:right}
     <div style="font-size:22px;font-weight:700;margin-bottom:4px">ইনভয়েস অ্যাপ</div>
     <div style="font-size:13px;color:#94a3b8;margin-bottom:24px" id="loginSubtitle">পাসওয়ার্ড দিয়ে প্রবেশ করুন</div>
 
+    <!-- Terms & Conditions (first time) -->
+    <div id="termsStep" style="display:none">
+      <div style="font-size:16px;font-weight:700;margin-bottom:12px;color:#1e293b">📋 ব্যবহারের শর্তাবলী</div>
+      <div style="background:#f8fafc;border-radius:12px;padding:14px;margin-bottom:16px;text-align:left;max-height:220px;overflow-y:auto">
+        <div style="font-size:13px;color:#1e293b;line-height:1.7">
+          <div style="font-weight:700;color:var(--or);margin-bottom:8px">🔑 Recovery Code সম্পর্কে জানুন:</div>
+          <div style="margin-bottom:8px">✅ পাসওয়ার্ড তৈরির পরে আপনাকে একটি <strong>Recovery Code</strong> দেওয়া হবে।</div>
+          <div style="margin-bottom:8px">📝 এই code টি অবশ্যই <strong>কোথাও লিখে রাখুন</strong> — যেমন: নোটপ্যাড, ডায়েরি বা ফোনের notes এ।</div>
+          <div style="margin-bottom:8px">🔒 পাসওয়ার্ড ভুলে গেলে এই code দিয়ে <strong>কোনো data না মুছেই</strong> reset করতে পারবেন।</div>
+          <div style="margin-bottom:8px;color:#dc2626">⚠️ Recovery Code হারিয়ে গেলে পাসওয়ার্ড reset করতে <strong>সব data মুছে যাবে।</strong></div>
+          <div style="border-top:1px solid #e2e8f0;margin-top:10px;padding-top:10px;font-weight:700;color:var(--or)">💾 Data সুরক্ষার টিপস:</div>
+          <div style="margin-top:6px">• Recovery Code স্ক্রিনশট নিন</div>
+          <div>• ডায়েরিতে লিখে রাখুন</div>
+          <div>• বিশ্বস্ত কারো কাছে রাখুন</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;background:#f0fdf4;border-radius:10px;padding:12px;cursor:pointer" onclick="document.getElementById('termsCheck').checked=!document.getElementById('termsCheck').checked">
+        <input type="checkbox" id="termsCheck" style="width:20px;height:20px;cursor:pointer;accent-color:var(--or)"/>
+        <span style="font-size:13px;color:#166534;font-weight:600">আমি বুঝেছি এবং শর্তাবলী মানছি</span>
+      </div>
+      <button onclick="acceptTerms()" style="background:var(--or);color:#fff;width:100%;padding:14px;font-size:16px;border-radius:12px">পরবর্তী →</button>
+    </div>
+
     <!-- Set Password (first time) -->
     <div id="setPassStep" style="display:none">
       <div style="background:#fff7ed;border-radius:10px;padding:12px;margin-bottom:16px;font-size:13px;color:#92400e">
@@ -99,7 +122,27 @@ td.r,th.r{text-align:right}
     <div id="enterPassStep" style="display:none">
       <input id="enterPass" type="password" placeholder="পাসওয়ার্ড লিখুন" style="margin-bottom:16px;font-size:18px;text-align:center;letter-spacing:4px" onkeydown="if(event.key==='Enter')checkPassword()"/>
       <button onclick="checkPassword()" style="background:var(--or);color:#fff;width:100%;padding:14px;font-size:16px;border-radius:12px">প্রবেশ করুন →</button>
-      <button onclick="forgotPass()" style="background:none;color:#94a3b8;width:100%;padding:10px;margin-top:8px;font-size:12px">পাসওয়ার্ড ভুলে গেছেন?</button>
+      <button onclick="showRecovery()" style="background:none;color:#94a3b8;width:100%;padding:10px;margin-top:8px;font-size:12px">পাসওয়ার্ড ভুলে গেছেন?</button>
+    </div>
+
+    <!-- Recovery Step -->
+    <div id="recoveryStep" style="display:none">
+      <div style="background:#fff7ed;border-radius:10px;padding:12px;margin-bottom:16px;font-size:13px;color:#92400e">
+        🔑 Recovery Code দিন — কোনো data মুছবে না
+      </div>
+      <input id="recoveryInput" type="text" placeholder="Recovery Code লিখুন" style="margin-bottom:16px;font-size:16px;text-align:center;letter-spacing:2px"/>
+      <button onclick="checkRecovery()" style="background:var(--or);color:#fff;width:100%;padding:14px;font-size:16px;border-radius:12px">✓ যাচাই করুন</button>
+      <button onclick="backToLogin()" style="background:none;color:#94a3b8;width:100%;padding:10px;margin-top:8px;font-size:12px">← ফিরে যান</button>
+    </div>
+
+    <!-- New Password after recovery -->
+    <div id="newPassAfterRecovery" style="display:none">
+      <div style="background:#f0fdf4;border-radius:10px;padding:12px;margin-bottom:16px;font-size:13px;color:#166534">
+        ✅ যাচাই সফল! নতুন পাসওয়ার্ড দিন
+      </div>
+      <input id="recNewPass1" type="password" placeholder="নতুন পাসওয়ার্ড" style="margin-bottom:10px;font-size:16px;text-align:center"/>
+      <input id="recNewPass2" type="password" placeholder="আবার লিখুন" style="margin-bottom:16px;font-size:16px;text-align:center"/>
+      <button onclick="resetPassWithRecovery()" style="background:var(--or);color:#fff;width:100%;padding:14px;font-size:16px;border-radius:12px">পাসওয়ার্ড সেট করুন →</button>
     </div>
 
     <div id="loginErr" style="color:var(--red);font-size:13px;margin-top:10px;min-height:20px"></div>
@@ -155,10 +198,17 @@ td.r,th.r{text-align:right}
     <div id="formTotals" style="margin-top:16px"></div>
   </div>
   <div class="card" style="border-color:#fecaca">
-    <div class="sec-title" style="color:var(--red)">↩ <span class="t" data-bn="রিটার্ন মাল" data-en="Returns">রিটার্ন মাল</span></div>
-    <div class="items-head" style="grid-template-columns:2fr 55px 75px 75px 28px"><span class="t" data-bn="বিবরণ" data-en="Desc">বিবরণ</span><span class="t" data-bn="পরিমাণ" data-en="Qty">পরিমাণ</span><span class="t" data-bn="মূল্য" data-en="Price">মূল্য</span><span class="t" data-bn="তারিখ" data-en="Date">তারিখ</span><span></span></div>
-    <div id="returnContainer"></div>
-    <button onclick="addReturn()" style="background:none;border:1.5px dashed #fca5a5;color:var(--red);width:100%;margin-top:6px;padding:9px;border-radius:9px">+ <span class="t" data-bn="রিটার্ন যোগ" data-en="Add Return">রিটার্ন যোগ</span></button>
+    <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="toggleReturn()">
+      <div class="sec-title" style="color:var(--red);margin-bottom:0">↩ <span class="t" data-bn="রিটার্ন মাল" data-en="Returns">রিটার্ন মাল</span></div>
+      <div id="returnToggle" style="width:44px;height:24px;border-radius:99px;background:#e2e8f0;position:relative;transition:background .2s;flex-shrink:0">
+        <div id="returnToggleBtn" style="width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div>
+      </div>
+    </div>
+    <div id="returnSection" style="display:none;margin-top:14px">
+      <div class="items-head" style="grid-template-columns:2fr 55px 75px 75px 28px"><span class="t" data-bn="বিবরণ" data-en="Desc">বিবরণ</span><span class="t" data-bn="পরিমাণ" data-en="Qty">পরিমাণ</span><span class="t" data-bn="মূল্য" data-en="Price">মূল্য</span><span class="t" data-bn="তারিখ" data-en="Date">তারিখ</span><span></span></div>
+      <div id="returnContainer"></div>
+      <button onclick="addReturn()" style="background:none;border:1.5px dashed #fca5a5;color:var(--red);width:100%;margin-top:6px;padding:9px;border-radius:9px">+ <span class="t" data-bn="রিটার্ন যোগ" data-en="Add Return">রিটার্ন যোগ</span></button>
+    </div>
   </div>
   <div class="card">
     <div class="sec-title">💰 <span class="t" data-bn="আগের বাকি" data-en="Previous Due">আগের বাকি</span></div>
@@ -322,6 +372,7 @@ td.r,th.r{text-align:right}
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
 // ══ FIREBASE ══
@@ -351,13 +402,24 @@ function hashPass(p){ let h=0;for(let i=0;i<p.length;i++){h=(Math.imul(31,h)+p.c
 function initLogin(){
   const stored = localStorage.getItem('inv_pass');
   if(!stored){
-    document.getElementById('loginSubtitle').textContent = lang==='bn'?'প্রথমবার — পাসওয়ার্ড তৈরি করুন':'First time — create a password';
-    document.getElementById('setPassStep').style.display='block';
+    document.getElementById('loginSubtitle').textContent = lang==='bn'?'স্বাগতম! প্রথমে শর্তাবলী পড়ুন':'Welcome! Please read terms first';
+    document.getElementById('termsStep').style.display='block';
   } else {
     document.getElementById('loginSubtitle').textContent = lang==='bn'?'পাসওয়ার্ড দিয়ে প্রবেশ করুন':'Enter your password';
     document.getElementById('enterPassStep').style.display='block';
     setTimeout(()=>document.getElementById('enterPass').focus(),300);
   }
+}
+
+function acceptTerms(){
+  if(!document.getElementById('termsCheck').checked){
+    document.getElementById('loginErr').textContent='✋ শর্তাবলী মানার জন্য checkbox টিক দিন!';
+    return;
+  }
+  document.getElementById('loginErr').textContent='';
+  document.getElementById('termsStep').style.display='none';
+  document.getElementById('loginSubtitle').textContent='🔐 নতুন পাসওয়ার্ড তৈরি করুন';
+  document.getElementById('setPassStep').style.display='block';
 }
 
 function createPassword(){
@@ -366,6 +428,48 @@ function createPassword(){
   if(p1.length<4){document.getElementById('loginErr').textContent=lang==='bn'?'কমপক্ষে ৪ অক্ষর দিন!':'Min 4 characters!';return;}
   if(p1!==p2){document.getElementById('loginErr').textContent=lang==='bn'?'পাসওয়ার্ড মিলছে না!':'Passwords do not match!';return;}
   localStorage.setItem('inv_pass',hashPass(p1));
+  // Recovery code তৈরি করি
+  const rc = Math.random().toString(36).slice(2,8).toUpperCase();
+  localStorage.setItem('inv_recovery', rc);
+  alert('🔑 আপনার Recovery Code:\n\n' + rc + '\n\nএটা কোথাও লিখে রাখুন! পাসওয়ার্ড ভুললে এই code দিয়ে reset করতে পারবেন।');
+  enterApp();
+}
+
+function showRecovery(){
+  document.getElementById('enterPassStep').style.display='none';
+  document.getElementById('recoveryStep').style.display='block';
+  document.getElementById('loginErr').textContent='';
+}
+
+function backToLogin(){
+  document.getElementById('recoveryStep').style.display='none';
+  document.getElementById('newPassAfterRecovery').style.display='none';
+  document.getElementById('enterPassStep').style.display='block';
+  document.getElementById('loginErr').textContent='';
+}
+
+function checkRecovery(){
+  const code = document.getElementById('recoveryInput').value.trim().toUpperCase();
+  const stored = localStorage.getItem('inv_recovery');
+  if(code === stored){
+    document.getElementById('recoveryStep').style.display='none';
+    document.getElementById('newPassAfterRecovery').style.display='block';
+    document.getElementById('loginErr').textContent='';
+  } else {
+    document.getElementById('loginErr').textContent='❌ ভুল Recovery Code!';
+  }
+}
+
+function resetPassWithRecovery(){
+  const p1=document.getElementById('recNewPass1').value;
+  const p2=document.getElementById('recNewPass2').value;
+  if(p1.length<4){document.getElementById('loginErr').textContent=lang==='bn'?'কমপক্ষে ৪ অক্ষর দিন!':'Min 4 characters!';return;}
+  if(p1!==p2){document.getElementById('loginErr').textContent=lang==='bn'?'পাসওয়ার্ড মিলছে না!':'Passwords do not match!';return;}
+  localStorage.setItem('inv_pass',hashPass(p1));
+  // নতুন recovery code তৈরি
+  const rc = Math.random().toString(36).slice(2,8).toUpperCase();
+  localStorage.setItem('inv_recovery', rc);
+  alert('✅ পাসওয়ার্ড reset হয়েছে!\n\n🔑 নতুন Recovery Code:\n' + rc + '\n\nএটা লিখে রাখুন!');
   enterApp();
 }
 
@@ -526,12 +630,20 @@ function renderDailyReport(){
   const ti=invoices.filter(i=>i.date===today);
   if(ti.length===0){document.getElementById('dailyReport').innerHTML=`<div style="text-align:center;color:#94a3b8;padding:16px">${lang==='bn'?'আজ কোনো বিক্রয় নেই':'No sales today'}</div>`;return;}
   const ts=ti.reduce((s,i)=>s+i.total,0);
-  const tp=ti.filter(i=>i.status==='paid').reduce((s,i)=>s+i.net,0);
-  const td=ti.filter(i=>i.status!=='paid').reduce((s,i)=>s+i.net,0);
+  const tp=ti.filter(i=>i.status==='paid').reduce((s,i)=>s+(i.paidAmt||i.net),0)+ti.filter(i=>i.status==='partial').reduce((s,i)=>s+(i.paidAmt||0),0);
+  const td=ti.filter(i=>i.status!=='paid'&&i.status!=='partial').reduce((s,i)=>s+i.net,0)+ti.filter(i=>i.status==='partial').reduce((s,i)=>s+(i.remainingDue||0),0);
+  // আগের বাকি থেকে কত আদায় হয়েছে আজ
+  const prevDueRecovered = ti.filter(i=>i.prevDue>0&&(i.status==='paid'||i.status==='partial')).reduce((s,i)=>{
+    const paid = i.paidAmt||0;
+    const todayAmt = i.total - (i.retAmt||0); // শুধু আজকের মালের দাম
+    const fromPrev = Math.max(0, paid - todayAmt);
+    return s + Math.min(fromPrev, i.prevDue||0);
+  },0);
   document.getElementById('dailyReport').innerHTML=`
     <div class="rep-row"><span>${lang==='bn'?'আজকের ইনভয়েস':'Invoices'}</span><strong>${ti.length}${lang==='bn'?'টি':''}</strong></div>
     <div class="rep-row"><span>${lang==='bn'?'মোট বিক্রয়':'Total Sales'}</span><strong class="mono">${fmtINR(ts)}</strong></div>
     <div class="rep-row"><span>${lang==='bn'?'আদায়':'Collected'}</span><strong class="mono" style="color:var(--green)">${fmtINR(tp)}</strong></div>
+    ${prevDueRecovered>0?`<div class="rep-row"><span>↩ ${lang==='bn'?'আগের বাকি আদায়':'Prev Due Recovered'}</span><strong class="mono" style="color:#7c3aed">${fmtINR(prevDueRecovered)}</strong></div>`:''}
     <div class="rep-row" style="border:none"><span>${lang==='bn'?'বাকি':'Pending'}</span><strong class="mono" style="color:var(--red)">${fmtINR(td)}</strong></div>
     <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
       ${ti.map(inv=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f8fafc;font-size:13px">
@@ -561,6 +673,11 @@ function headerHTML(){
 function openNew(){
   if(!company.name){document.getElementById('firstSetup').style.display='flex';return;}
   editId=null;items=[{desc:'',qty:'',rate:''}];returnItems=[];
+  // Return toggle reset
+  const rs=document.getElementById('returnSection');
+  const rt=document.getElementById('returnToggle');
+  const rb=document.getElementById('returnToggleBtn');
+  if(rs){rs.style.display='none';rt.style.background='#e2e8f0';rb.style.left='2px';}
   document.getElementById('f-no').value=genNo();
   document.getElementById('f-date').value=todayStr();
   document.getElementById('f-cname').value='';
@@ -578,6 +695,11 @@ function openEdit(id){
   document.getElementById('f-cname').value=inv.cname;document.getElementById('f-cphone').value=inv.cphone||'';
   document.getElementById('f-due-amt').value=inv.prevDue||'';document.getElementById('f-due-date').value=inv.dueDate||'';
   document.getElementById('formHeader').innerHTML=headerHTML();
+  const rs=document.getElementById('returnSection');
+  const rt=document.getElementById('returnToggle');
+  const rb=document.getElementById('returnToggleBtn');
+  if(returnItems.length>0&&rs){rs.style.display='block';rt.style.background='var(--red)';rb.style.left='22px';}
+  else if(rs){rs.style.display='none';rt.style.background='#e2e8f0';rb.style.left='2px';}
   renderItems();renderReturn();updateFormTotals();showView('form');
 }
 
@@ -592,6 +714,25 @@ function renderItems(){
 }
 function addItem(){items.push({desc:'',qty:'',rate:''});renderItems();updateFormTotals();}
 function removeItem(i){if(items.length===1)return;items.splice(i,1);renderItems();updateFormTotals();}
+
+function toggleReturn(){
+  const sec = document.getElementById('returnSection');
+  const tog = document.getElementById('returnToggle');
+  const btn = document.getElementById('returnToggleBtn');
+  const isOn = sec.style.display !== 'none';
+  if(isOn){
+    sec.style.display='none';
+    tog.style.background='#e2e8f0';
+    btn.style.left='2px';
+    returnItems=[];
+    updateFormTotals();
+  } else {
+    sec.style.display='block';
+    tog.style.background='var(--red)';
+    btn.style.left='22px';
+    if(returnItems.length===0){returnItems=[{desc:'',qty:'',price:'',date:''}];renderReturn();}
+  }
+}
 
 function renderReturn(){
   const c=document.getElementById('returnContainer');if(!c)return;
@@ -903,11 +1044,14 @@ function setPayThis(){
   document.getElementById('payAmt').value = (onlyThis>0?onlyThis:inv.net).toFixed(2);
 }
 
+let _payProcessing = false;
 async function confirmPayment(){
+  if(_payProcessing) return;
+  _payProcessing = true;
   const inv = invoices.find(i=>i.id===_payInvId);
-  if(!inv) return;
+  if(!inv){_payProcessing=false;return;}
   const newPayment = parseFloat(document.getElementById('payAmt').value)||0;
-  if(newPayment<=0){document.getElementById('payError').textContent=lang==='bn'?'পরিমাণ দিন!':'Enter amount!';return;}
+  if(newPayment<=0){document.getElementById('payError').textContent=lang==='bn'?'পরিমাণ দিন!':'Enter amount!';_payProcessing=false;return;}
 
   // এখন পর্যন্ত যা বাকি আছে সেটা হিসাব করি
   // partial হলে remainingDue থেকে, নইলে inv.net থেকে
@@ -940,6 +1084,7 @@ async function confirmPayment(){
   }
 
   await save();
+  _payProcessing = false;
   document.getElementById('payModal').style.display='none';
   renderList();
   openDetail(_payInvId);
@@ -981,12 +1126,76 @@ function openSendModal(inv){
   const il=inv.items.map(it=>(it.desc||'-')+' x'+it.qty+'=Rs.'+(((+it.qty||0)*(+it.rate||0)).toFixed(2))).join(', ');
   const co=company.name||'';
   const sms=co+' | '+inv.no+' | '+inv.cname+' | '+il+(inv.prevDue>0?' | Prev:Rs.'+inv.prevDue.toFixed(2):'')+' | Total:Rs.'+inv.net.toFixed(2)+' | '+inv.date+' | Thank you!';
-  const wa='🧾 *'+inv.no+'*\n🏢 *'+co+'*\n👤 *'+inv.cname+'*\n\n📦 '+il+(inv.prevDue>0?'\n⚠️ Prev Due: Rs.'+inv.prevDue.toFixed(2):'')+'\n━━━━━━━━\n✅ *Total: Rs.'+inv.net.toFixed(2)+'*\n📅 '+inv.date+'\n\nThank you! 🙏';
   let ph=inv.cphone.replace(/\D/g,'');if(ph.length===10)ph='91'+ph;
   document.getElementById('sendTo').textContent=inv.cname+' — '+inv.cphone;
   document.getElementById('btnSMS').onclick=()=>{window.location.href='sms:'+ph+'?body='+encodeURIComponent(sms);document.getElementById('sendModal').style.display='none';};
-  document.getElementById('btnWA').onclick=()=>{window.open('https://wa.me/'+ph+'?text='+encodeURIComponent(wa),'_blank');document.getElementById('sendModal').style.display='none';};
+  document.getElementById('btnWA').onclick=()=>shareInvImage(inv,ph);
   document.getElementById('sendModal').style.display='flex';
+}
+
+async function shareInvImage(inv, ph){
+  document.getElementById('sendModal').style.display='none';
+  // Invoice card HTML তৈরি করি
+  const il=inv.items.map(it=>`<tr><td style="padding:6px 4px;border-bottom:1px solid #f1f5f9">${it.desc||'-'}</td><td style="padding:6px 4px;border-bottom:1px solid #f1f5f9;text-align:center">${it.qty}</td><td style="padding:6px 4px;border-bottom:1px solid #f1f5f9;text-align:right">₹${(+it.rate||0).toFixed(2)}</td><td style="padding:6px 4px;border-bottom:1px solid #f1f5f9;text-align:right;font-weight:700">₹${((+it.qty||0)*(+it.rate||0)).toFixed(2)}</td></tr>`).join('');
+  const logoHtml = company.logo ? `<img src="${company.logo}" style="width:50px;height:50px;border-radius:8px;object-fit:contain;background:#fff;padding:4px"/>` : `<div style="width:50px;height:50px;border-radius:8px;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:22px">🏢</div>`;
+
+  const html = `<div style="font-family:sans-serif;width:380px;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.15)">
+    <div style="background:linear-gradient(135deg,#FF6B00,#ff8c38);color:#fff;padding:16px 20px;display:flex;align-items:center;gap:12px">
+      ${logoHtml}
+      <div style="flex:1"><div style="font-size:17px;font-weight:700">${company.name||'Invoice'}</div><div style="font-size:11px;opacity:.85">${company.address||''}</div></div>
+      <div style="text-align:right"><div style="font-size:10px;opacity:.8">Invoice</div><div style="font-size:15px;font-weight:700;font-family:monospace">${inv.no}</div></div>
+    </div>
+    <div style="padding:14px 16px;background:#f8fafc;border-bottom:1px solid #e2e8f0">
+      <div style="font-size:13px;font-weight:700">${inv.cname}</div>
+      ${inv.cphone?`<div style="font-size:11px;color:#64748b">📞 ${inv.cphone}</div>`:''}
+      <div style="font-size:11px;color:#94a3b8;margin-top:2px">📅 ${inv.date}</div>
+    </div>
+    <div style="padding:14px 16px">
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead><tr style="color:#94a3b8;font-size:10px;font-weight:700">
+          <th style="padding:4px;text-align:left">বিবরণ</th><th style="padding:4px;text-align:center">Qty</th><th style="padding:4px;text-align:right">মূল্য</th><th style="padding:4px;text-align:right">মোট</th>
+        </tr></thead>
+        <tbody>${il}</tbody>
+      </table>
+      <div style="margin-top:10px;padding-top:8px;border-top:1px solid #e2e8f0">
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:#64748b;margin-bottom:4px"><span>Subtotal</span><span>₹${inv.total.toFixed(2)}</span></div>
+        ${(inv.retAmt||0)>0?`<div style="display:flex;justify-content:space-between;font-size:12px;color:#dc2626;margin-bottom:4px"><span>↩ Return</span><span>-₹${inv.retAmt.toFixed(2)}</span></div>`:''}
+        ${(inv.prevDue||0)>0?`<div style="display:flex;justify-content:space-between;font-size:12px;color:#FF6B00;margin-bottom:4px"><span>⚠️ আগের বাকি</span><span>+₹${inv.prevDue.toFixed(2)}</span></div>`:''}
+        <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700;color:#FF6B00;border-top:2px solid #FF6B00;padding-top:8px;margin-top:4px"><span>Grand Total</span><span>₹${inv.net.toFixed(2)}</span></div>
+      </div>
+    </div>
+    <div style="padding:10px 16px;background:#f8fafc;text-align:center;font-size:11px;color:#94a3b8">Thank you! 🙏 • ${company.name||''}</div>
+  </div>`;
+
+  // HTML → Canvas → Image
+  try {
+    const el = document.createElement('div');
+    el.style.cssText = 'position:fixed;left:-9999px;top:0;z-index:-1';
+    el.innerHTML = html;
+    document.body.appendChild(el);
+
+    if(typeof html2canvas !== 'undefined'){
+      const canvas = await html2canvas(el.firstChild, {scale:2,useCORS:true,backgroundColor:'#fff'});
+      document.body.removeChild(el);
+      canvas.toBlob(async blob=>{
+        if(navigator.share && navigator.canShare({files:[new File([blob],'invoice.png',{type:'image/png'})]})){
+          await navigator.share({files:[new File([blob],'invoice.png',{type:'image/png'})],title:inv.no});
+        } else {
+          // Fallback: WhatsApp text
+          const wa='🧾 *'+inv.no+'*\n🏢 *'+(company.name||'')+'*\n👤 *'+inv.cname+'*\n\n📦 '+inv.items.map(it=>(it.desc||'-')+' x'+it.qty+'=Rs.'+(((+it.qty||0)*(+it.rate||0)).toFixed(2))).join(', ')+(inv.prevDue>0?'\n⚠️ Prev Due: Rs.'+inv.prevDue.toFixed(2):'')+'\n━━━━━━━━\n✅ *Total: Rs.'+inv.net.toFixed(2)+'*\n📅 '+inv.date+'\n\nThank you! 🙏';
+          window.open('https://wa.me/'+ph+'?text='+encodeURIComponent(wa),'_blank');
+        }
+      },'image/png');
+    } else {
+      document.body.removeChild(el);
+      // html2canvas নেই — text fallback
+      const wa='🧾 *'+inv.no+'*\n🏢 *'+(company.name||'')+'*\n👤 *'+inv.cname+'*\n\n📦 '+inv.items.map(it=>(it.desc||'-')+' x'+it.qty+'=Rs.'+(((+it.qty||0)*(+it.rate||0)).toFixed(2))).join(', ')+(inv.prevDue>0?'\n⚠️ Prev Due: Rs.'+inv.prevDue.toFixed(2):'')+'\n━━━━━━━━\n✅ *Total: Rs.'+inv.net.toFixed(2)+'*\n📅 '+inv.date+'\n\nThank you! 🙏';
+      window.open('https://wa.me/'+ph+'?text='+encodeURIComponent(wa),'_blank');
+    }
+  } catch(e){
+    const wa='🧾 *'+inv.no+'*\n🏢 *'+(company.name||'')+'*\n👤 *'+inv.cname+'*\n\n📦 '+inv.items.map(it=>(it.desc||'-')+' x'+it.qty+'=Rs.'+(((+it.qty||0)*(+it.rate||0)).toFixed(2))).join(', ')+(inv.prevDue>0?'\n⚠️ Prev Due: Rs.'+inv.prevDue.toFixed(2):'')+'\n━━━━━━━━\n✅ *Total: Rs.'+inv.net.toFixed(2)+'*\n📅 '+inv.date+'\n\nThank you! 🙏';
+    window.open('https://wa.me/'+ph+'?text='+encodeURIComponent(wa),'_blank');
+  }
 }
 
 
