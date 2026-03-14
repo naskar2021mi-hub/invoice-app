@@ -584,9 +584,9 @@ function openEdit(id){
 function renderItems(){
   document.getElementById('itemsContainer').innerHTML=items.map((it,i)=>`
     <div class="items-row">
-      <input value="${it.desc||''}" oninput="items[${i}].desc=this.value" placeholder="${lang==='en'?'Item':'পণ্যের নাম'}"/>
-      <input type="number" value="${it.qty||''}" oninput="items[${i}].qty=this.value;updateFormTotals()" placeholder="1" style="text-align:center"/>
-      <input type="number" value="${it.rate||''}" oninput="items[${i}].rate=this.value;updateFormTotals()" placeholder="0.00"/>
+      <input data-ii="${i}" data-if="desc" value="${it.desc||''}" oninput="items[+this.dataset.ii][this.dataset.if]=this.value" placeholder="${lang==='en'?'Item':'পণ্যের নাম'}"/>
+      <input type="number" data-ii="${i}" data-if="qty" value="${it.qty||''}" oninput="items[+this.dataset.ii][this.dataset.if]=this.value;updateFormTotals()" placeholder="1" style="text-align:center"/>
+      <input type="number" data-ii="${i}" data-if="rate" value="${it.rate||''}" oninput="items[+this.dataset.ii][this.dataset.if]=this.value;updateFormTotals()" placeholder="0.00"/>
       <button onclick="removeItem(${i})" style="background:#fef2f2;color:var(--red);padding:0;width:28px;height:36px;border-radius:8px;font-size:16px;display:flex;align-items:center;justify-content:center" ${items.length===1?'disabled':''}>×</button>
     </div>`).join('');
 }
@@ -597,10 +597,10 @@ function renderReturn(){
   const c=document.getElementById('returnContainer');if(!c)return;
   c.innerHTML=returnItems.map((r,i)=>`
     <div class="return-row">
-      <input value="${r.desc||''}" oninput="returnItems[${i}].desc=this.value" placeholder="${lang==='en'?'Item':'পণ্য'}" style="border-color:#fca5a5"/>
-      <input type="number" value="${r.qty||''}" oninput="returnItems[${i}].qty=this.value;updateFormTotals()" placeholder="1" style="text-align:center;border-color:#fca5a5"/>
-      <input type="number" value="${r.price||''}" oninput="returnItems[${i}].price=this.value;updateFormTotals()" placeholder="0.00" style="border-color:#fca5a5"/>
-      <input type="date" value="${r.date||''}" oninput="returnItems[${i}].date=this.value" style="border-color:#fca5a5;font-size:12px;padding:8px 6px"/>
+      <input data-ri="${i}" data-rf="desc" value="${r.desc||''}" oninput="returnItems[+this.dataset.ri][this.dataset.rf]=this.value" placeholder="${lang==='en'?'Item':'পণ্য'}" style="border-color:#fca5a5"/>
+      <input type="number" data-ri="${i}" data-rf="qty" value="${r.qty||''}" oninput="returnItems[+this.dataset.ri][this.dataset.rf]=this.value;updateFormTotals()" placeholder="1" style="text-align:center;border-color:#fca5a5"/>
+      <input type="number" data-ri="${i}" data-rf="price" value="${r.price||''}" oninput="returnItems[+this.dataset.ri][this.dataset.rf]=this.value;updateFormTotals()" placeholder="0.00" style="border-color:#fca5a5"/>
+      <input type="date" data-ri="${i}" data-rf="date" value="${r.date||''}" oninput="returnItems[+this.dataset.ri][this.dataset.rf]=this.value" style="border-color:#fca5a5;font-size:12px;padding:8px 6px"/>
       <button onclick="removeReturn(${i})" style="background:#fef2f2;color:var(--red);padding:0;width:28px;height:36px;border-radius:8px;font-size:16px;display:flex;align-items:center;justify-content:center">×</button>
     </div>`).join('');
 }
