@@ -56,9 +56,11 @@ td.r,th.r{text-align:right}
 .items-head span{font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase}
 .return-row{display:grid;grid-template-columns:2fr 55px 75px 75px 28px;gap:6px;margin-bottom:8px;align-items:center}
 /* LOGIN */
-#loginScreen{position:fixed;inset:0;background:linear-gradient(135deg,#FF6B00,#ff8c38);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
-.login-box{background:#fff;border-radius:24px;padding:32px 24px;width:100%;max-width:360px;text-align:center}
-.login-logo{width:72px;height:72px;background:var(--or);border-radius:18px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:32px}
+#loginScreen{position:fixed;inset:0;background:linear-gradient(160deg,#FF6B00 0%,#ff8c38 40%,#ffb347 100%);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden}
+#loginScreen::before{content:'';position:absolute;top:-80px;right:-80px;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,.08)}
+#loginScreen::after{content:'';position:absolute;bottom:-60px;left:-60px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.06)}
+.login-box{background:#fff;border-radius:28px;padding:36px 28px;width:100%;max-width:360px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.2);position:relative;z-index:1}
+.login-logo{width:80px;height:80px;background:linear-gradient(135deg,#FF6B00,#ff8c38);border-radius:22px;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;font-size:36px;box-shadow:0 8px 24px rgba(255,107,0,.35)}
 /* SETTINGS */
 .set-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);cursor:pointer}
 .set-item:last-child{border-bottom:none}
@@ -82,8 +84,10 @@ td.r,th.r{text-align:right}
 <div id="loginScreen">
   <div class="login-box">
     <div class="login-logo">🧾</div>
-    <div style="font-size:22px;font-weight:700;margin-bottom:4px">ইনভয়েস অ্যাপ</div>
-    <div style="font-size:13px;color:#94a3b8;margin-bottom:24px" id="loginSubtitle">পাসওয়ার্ড দিয়ে প্রবেশ করুন</div>
+    <div style="font-size:24px;font-weight:800;margin-bottom:4px;color:#1e293b">ইনভয়েস অ্যাপ</div>
+    <div style="font-size:12px;color:#94a3b8;margin-bottom:6px;letter-spacing:.5px">INVOICE MANAGER</div>
+    <div style="width:40px;height:3px;background:linear-gradient(90deg,#FF6B00,#ff8c38);border-radius:99px;margin:0 auto 20px"></div>
+    <div style="font-size:13px;color:#64748b;margin-bottom:24px" id="loginSubtitle">পাসওয়ার্ড দিয়ে প্রবেশ করুন</div>
 
     <!-- Terms & Conditions (first time) -->
     <div id="termsStep" style="display:none">
@@ -1048,6 +1052,22 @@ let _payProcessing = false;
 async function confirmPayment(){
   if(_payProcessing) return;
   _payProcessing = true;
+  // বাটন 15 সেকেন্ড lock
+  const btn = document.querySelector('#payModal button[onclick="confirmPayment()"]') || document.querySelector('#payModal .confirm-btn');
+  const confirmBtns = document.querySelectorAll('#payModal button');
+  let confirmBtn = null;
+  confirmBtns.forEach(b=>{ if(b.textContent.includes('নিশ্চিত')) confirmBtn=b; });
+  let countdown = 15;
+  const origText = confirmBtn ? confirmBtn.textContent : '';
+  const timer = setInterval(()=>{
+    countdown--;
+    if(confirmBtn) confirmBtn.textContent = `⏳ ${countdown}s`;
+    if(countdown<=0){
+      clearInterval(timer);
+      _payProcessing = false;
+      if(confirmBtn) confirmBtn.textContent = origText;
+    }
+  },1000);
   const inv = invoices.find(i=>i.id===_payInvId);
   if(!inv){_payProcessing=false;return;}
   const newPayment = parseFloat(document.getElementById('payAmt').value)||0;
@@ -1084,7 +1104,9 @@ async function confirmPayment(){
   }
 
   await save();
+  clearInterval(timer);
   _payProcessing = false;
+  if(confirmBtn) confirmBtn.textContent = origText;
   document.getElementById('payModal').style.display='none';
   renderList();
   openDetail(_payInvId);
@@ -1135,8 +1157,11 @@ function openSendModal(inv){
 
 async function shareInvImage(inv, ph){
   document.getElementById('sendModal').style.display='none';
-  // Invoice card HTML তৈরি করি
+  // Still due হিসাব
+  const stillDue = inv.status==='partial' ? (inv.remainingDue||0) : inv.status==='paid' ? 0 : inv.net;
+  // Return rows with date
   const il=inv.items.map(it=>`<tr><td style="padding:6px 4px;border-bottom:1px solid #f1f5f9">${it.desc||'-'}</td><td style="padding:6px 4px;border-bottom:1px solid #f1f5f9;text-align:center">${it.qty}</td><td style="padding:6px 4px;border-bottom:1px solid #f1f5f9;text-align:right">₹${(+it.rate||0).toFixed(2)}</td><td style="padding:6px 4px;border-bottom:1px solid #f1f5f9;text-align:right;font-weight:700">₹${((+it.qty||0)*(+it.rate||0)).toFixed(2)}</td></tr>`).join('');
+  const retRows=(inv.returnItems||[]).filter(r=>r.desc||r.qty).map(r=>`<tr><td style="padding:5px 4px;color:#dc2626">↩ ${r.desc||'-'}</td><td style="padding:5px 4px;text-align:center;color:#dc2626">${r.qty||0}</td><td style="padding:5px 4px;text-align:right;color:#dc2626">₹${(+r.price||0).toFixed(2)}</td><td style="padding:5px 4px;text-align:right;font-size:10px;color:#94a3b8">${r.date||''}</td></tr>`).join('');
   const logoHtml = company.logo ? `<img src="${company.logo}" style="width:50px;height:50px;border-radius:8px;object-fit:contain;background:#fff;padding:4px"/>` : `<div style="width:50px;height:50px;border-radius:8px;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:22px">🏢</div>`;
 
   const html = `<div style="font-family:sans-serif;width:380px;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.15)">
@@ -1155,13 +1180,17 @@ async function shareInvImage(inv, ph){
         <thead><tr style="color:#94a3b8;font-size:10px;font-weight:700">
           <th style="padding:4px;text-align:left">বিবরণ</th><th style="padding:4px;text-align:center">Qty</th><th style="padding:4px;text-align:right">মূল্য</th><th style="padding:4px;text-align:right">মোট</th>
         </tr></thead>
-        <tbody>${il}</tbody>
+        <tbody>${il}${retRows}</tbody>
       </table>
       <div style="margin-top:10px;padding-top:8px;border-top:1px solid #e2e8f0">
         <div style="display:flex;justify-content:space-between;font-size:12px;color:#64748b;margin-bottom:4px"><span>Subtotal</span><span>₹${inv.total.toFixed(2)}</span></div>
         ${(inv.retAmt||0)>0?`<div style="display:flex;justify-content:space-between;font-size:12px;color:#dc2626;margin-bottom:4px"><span>↩ Return</span><span>-₹${inv.retAmt.toFixed(2)}</span></div>`:''}
-        ${(inv.prevDue||0)>0?`<div style="display:flex;justify-content:space-between;font-size:12px;color:#FF6B00;margin-bottom:4px"><span>⚠️ আগের বাকি</span><span>+₹${inv.prevDue.toFixed(2)}</span></div>`:''}
-        <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700;color:#FF6B00;border-top:2px solid #FF6B00;padding-top:8px;margin-top:4px"><span>Grand Total</span><span>₹${inv.net.toFixed(2)}</span></div>
+        ${(inv.prevDue||0)>0?`<div style="display:flex;justify-content:space-between;font-size:12px;color:#FF6B00;margin-bottom:4px"><span>⚠️ আগের বাকি${inv.dueDate?' ('+inv.dueDate+')':''}</span><span>+₹${inv.prevDue.toFixed(2)}</span></div>`:''}
+        ${(inv.paidAmt||0)>0?`<div style="display:flex;justify-content:space-between;font-size:12px;color:#16a34a;margin-bottom:4px"><span>✅ পেয়েছি</span><span>-₹${inv.paidAmt.toFixed(2)}</span></div>`:''}
+        <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700;border-top:2px solid ${stillDue>0?'#dc2626':'#16a34a'};padding-top:8px;margin-top:4px;color:${stillDue>0?'#dc2626':'#16a34a'}">
+          <span>${stillDue>0?'⏳ এখনো বাকি':'✅ পরিশোধিত'}</span>
+          <span>₹${stillDue.toFixed(2)}</span>
+        </div>
       </div>
     </div>
     <div style="padding:10px 16px;background:#f8fafc;text-align:center;font-size:11px;color:#94a3b8">Thank you! 🙏 • ${company.name||''}</div>
@@ -1173,7 +1202,6 @@ async function shareInvImage(inv, ph){
     el.style.cssText = 'position:fixed;left:-9999px;top:0;z-index:-1';
     el.innerHTML = html;
     document.body.appendChild(el);
-
     if(typeof html2canvas !== 'undefined'){
       const canvas = await html2canvas(el.firstChild, {scale:2,useCORS:true,backgroundColor:'#fff'});
       document.body.removeChild(el);
@@ -1181,21 +1209,22 @@ async function shareInvImage(inv, ph){
         if(navigator.share && navigator.canShare({files:[new File([blob],'invoice.png',{type:'image/png'})]})){
           await navigator.share({files:[new File([blob],'invoice.png',{type:'image/png'})],title:inv.no});
         } else {
-          // Fallback: WhatsApp text
-          const wa='🧾 *'+inv.no+'*\n🏢 *'+(company.name||'')+'*\n👤 *'+inv.cname+'*\n\n📦 '+inv.items.map(it=>(it.desc||'-')+' x'+it.qty+'=Rs.'+(((+it.qty||0)*(+it.rate||0)).toFixed(2))).join(', ')+(inv.prevDue>0?'\n⚠️ Prev Due: Rs.'+inv.prevDue.toFixed(2):'')+'\n━━━━━━━━\n✅ *Total: Rs.'+inv.net.toFixed(2)+'*\n📅 '+inv.date+'\n\nThank you! 🙏';
-          window.open('https://wa.me/'+ph+'?text='+encodeURIComponent(wa),'_blank');
+          window.open('https://wa.me/'+ph+'?text='+encodeURIComponent(buildWAText(inv,stillDue)),'_blank');
         }
       },'image/png');
     } else {
       document.body.removeChild(el);
-      // html2canvas নেই — text fallback
-      const wa='🧾 *'+inv.no+'*\n🏢 *'+(company.name||'')+'*\n👤 *'+inv.cname+'*\n\n📦 '+inv.items.map(it=>(it.desc||'-')+' x'+it.qty+'=Rs.'+(((+it.qty||0)*(+it.rate||0)).toFixed(2))).join(', ')+(inv.prevDue>0?'\n⚠️ Prev Due: Rs.'+inv.prevDue.toFixed(2):'')+'\n━━━━━━━━\n✅ *Total: Rs.'+inv.net.toFixed(2)+'*\n📅 '+inv.date+'\n\nThank you! 🙏';
-      window.open('https://wa.me/'+ph+'?text='+encodeURIComponent(wa),'_blank');
+      window.open('https://wa.me/'+ph+'?text='+encodeURIComponent(buildWAText(inv,stillDue)),'_blank');
     }
   } catch(e){
-    const wa='🧾 *'+inv.no+'*\n🏢 *'+(company.name||'')+'*\n👤 *'+inv.cname+'*\n\n📦 '+inv.items.map(it=>(it.desc||'-')+' x'+it.qty+'=Rs.'+(((+it.qty||0)*(+it.rate||0)).toFixed(2))).join(', ')+(inv.prevDue>0?'\n⚠️ Prev Due: Rs.'+inv.prevDue.toFixed(2):'')+'\n━━━━━━━━\n✅ *Total: Rs.'+inv.net.toFixed(2)+'*\n📅 '+inv.date+'\n\nThank you! 🙏';
-    window.open('https://wa.me/'+ph+'?text='+encodeURIComponent(wa),'_blank');
+    window.open('https://wa.me/'+ph+'?text='+encodeURIComponent(buildWAText(inv,stillDue)),'_blank');
   }
+}
+
+function buildWAText(inv, stillDue){
+  const il=inv.items.map(it=>(it.desc||'-')+' x'+it.qty+'=₹'+(((+it.qty||0)*(+it.rate||0)).toFixed(2))).join('\n');
+  const retLines=(inv.returnItems||[]).filter(r=>r.desc||r.qty).map(r=>`↩ ${r.desc||'-'} x${r.qty||0}${r.date?' ('+r.date+')':''}`).join('\n');
+  return '🧾 *'+inv.no+'*\n🏢 *'+(company.name||'')+'*\n👤 *'+inv.cname+'*\n📅 '+inv.date+'\n\n📦 *মাল:*\n'+il+(retLines?'\n\n↩ *রিটার্ন:*\n'+retLines:'')+(inv.prevDue>0?'\n\n⚠️ আগের বাকি'+(inv.dueDate?' ('+inv.dueDate+')':'')+': ₹'+inv.prevDue.toFixed(2):'')+'\n━━━━━━━━\n'+(stillDue>0?'⏳ *এখনো বাকি: ₹'+stillDue.toFixed(2)+'*':'✅ *সম্পূর্ণ পরিশোধিত*')+'\n\nThank you! 🙏';
 }
 
 
