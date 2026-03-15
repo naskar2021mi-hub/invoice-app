@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="theme-color" content="#FF6B00"/>
-<title>ইনভয়েস অ্যাপ</title>
+<title>invoice app</title>
 <link rel="manifest" href="./manifest.json"/>
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
 <style>
@@ -132,15 +132,6 @@ td.r,th.r{text-align:right}
   <div class="co-name" id="topCoName">Invoice App</div>
   <div style="display:flex;gap:8px;align-items:center;position:relative">
     <button id="newBtn" onclick="openNew()" style="background:var(--or);color:#fff;padding:8px 14px;font-size:13px">+ <span class="t" data-bn="নতুন" data-en="New">New</span></button>
-    <button onclick="toggleTopMenu()" style="background:#f1f5f9;color:#64748b;padding:8px 10px;font-size:18px;line-height:1;border-radius:9px">⋮</button>
-    <!-- Dropdown Menu -->
-    <div id="topMenu" style="display:none;position:absolute;top:44px;right:0;background:#fff;border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.15);border:1px solid #e2e8f0;min-width:180px;z-index:200;overflow:hidden">
-      <div onclick="showView('company');loadCompanyForm();toggleTopMenu()" style="padding:13px 16px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:10px;border-bottom:1px solid #f1f5f9">🏢 <span class="t" data-bn="কোম্পানি" data-en="Company">Company</span></div>
-      <div onclick="showView('report');renderDailyReport2();toggleTopMenu()" style="padding:13px 16px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:10px;border-bottom:1px solid #f1f5f9">📊 <span class="t" data-bn="রিপোর্ট" data-en="Report">Report</span></div>
-      <div onclick="showView('settings');toggleTopMenu()" style="padding:13px 16px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:10px;border-bottom:1px solid #f1f5f9">⚙️ <span class="t" data-bn="সেটিংস" data-en="Settings">Settings</span></div>
-      <div onclick="toggleLangQuick();toggleTopMenu()" style="padding:13px 16px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:10px;border-bottom:1px solid #f1f5f9">🌐 <span id="langToggleLabel">Switch to বাংলা</span></div>
-      <div onclick="doLogout();toggleTopMenu()" style="padding:13px 16px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:10px;color:var(--red)">🚪 <span class="t" data-bn="লগআউট" data-en="Logout">Logout</span></div>
-    </div>
   </div>
 </div>
 
@@ -299,6 +290,20 @@ td.r,th.r{text-align:right}
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
     <button onclick="goList()" style="background:#f1f5f9;color:#64748b;padding:10px 16px;font-size:18px;border-radius:12px">←</button>
     <div style="font-size:20px;font-weight:700">⚙️ <span class="t" data-bn="সেটিংস" data-en="Settings">Settings</span></div>
+  </div>
+
+  <!-- Quick Navigation -->
+  <div class="card" style="padding:6px 8px;margin-bottom:14px">
+    <div onclick="showView('company');loadCompanyForm()" style="display:flex;align-items:center;gap:12px;padding:12px 10px;border-radius:10px;cursor:pointer;border-bottom:1px solid #f1f5f9">
+      <span style="font-size:20px">🏢</span>
+      <div style="flex:1"><div style="font-weight:600;font-size:14px"><span class="t" data-bn="কোম্পানি" data-en="Company">Company</span></div><div style="font-size:11px;color:#94a3b8"><span class="t" data-bn="নাম, লোগো, ঠিকানা" data-en="Name, logo, address">Name, logo, address</span></div></div>
+      <span style="color:#94a3b8">›</span>
+    </div>
+    <div onclick="showView('report');renderDailyReport2()" style="display:flex;align-items:center;gap:12px;padding:12px 10px;border-radius:10px;cursor:pointer">
+      <span style="font-size:20px">📊</span>
+      <div style="flex:1"><div style="font-weight:600;font-size:14px"><span class="t" data-bn="রিপোর্ট" data-en="Report">Report</span></div><div style="font-size:11px;color:#94a3b8"><span class="t" data-bn="দৈনিক বিক্রয় রিপোর্ট" data-en="Daily sales report">Daily sales report</span></div></div>
+      <span style="color:#94a3b8">›</span>
+    </div>
   </div>
 
   <!-- Language -->
@@ -1204,7 +1209,10 @@ function renderList(){
         <div style="font-size:10px;font-weight:700;color:${dc}">${dt}</div>
       </div>
     </div>
-    <div class="stat-card"><div class="stat-label">${lang==='bn'?'আদায় হয়েছে':'Collected'}</div><div class="stat-val mono" style="color:var(--green);font-size:15px">${fmtINR(paid)}</div></div>
+    <div class="stat-card" onclick="showPaidList()" style="cursor:pointer;border:1.5px solid ${paid>0?'#86efac':'var(--border)'};background:${paid>0?'#f0fdf4':'#fff'}">
+      <div class="stat-label" style="color:${paid>0?'#166534':'#94a3b8'}">${lang==='bn'?'✅ আদায় হয়েছে':'✅ Collected'} ${paid>0?'👆':''}</div>
+      <div class="stat-val mono" style="color:var(--green);font-size:15px">${fmtINR(paid)}</div>
+    </div>
     <div class="stat-card" onclick="showDueList()" style="cursor:pointer;border:1.5px solid ${due>0?'#fecaca':'var(--border)'};background:${due>0?'#fff5f5':'#fff'}">
       <div class="stat-label" style="color:${due>0?'var(--red)':'#94a3b8'}">💰 ${lang==='bn'?'বকেয়া':'Due'} ${due>0?'👆':''}</div>
       <div class="stat-val mono" style="color:${due>0?'var(--red)':'var(--green)'};font-size:15px">${fmtINR(due)}</div>
