@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="theme-color" content="#FF6B00"/>
-<title>invoice app</title>
+<title>ইনভয়েস অ্যাপ</title>
 <link rel="manifest" href="./manifest.json"/>
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:'Hind Siliguri',sans-serif;background:#f1f5f9;color:#1e293b;min-height:100vh}
+body{font-family:'Hind Siliguri',sans-serif;background:#f1f5f9;color:#1e293b;min-height:100vh;padding-bottom:70px}
 body.en{font-family:'Inter',sans-serif}
 :root{--or:#FF6B00;--or2:#ff8c38;--green:#16a34a;--red:#dc2626;--gray:#64748b;--border:#e2e8f0}
 input,select,textarea{font-family:inherit;font-size:14px;color:#1e293b;outline:none;border:1.5px solid var(--border);border-radius:9px;padding:10px 13px;background:#fff;width:100%;box-sizing:border-box;transition:border .15s}
@@ -80,6 +80,28 @@ td.r,th.r{text-align:right}
 
 <div id="toast"></div>
 
+<!-- ══ BOTTOM NAV ══ -->
+<div id="bottomNav" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e2e8f0;z-index:49;display:none">
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);max-width:680px;margin:0 auto">
+    <button onclick="goList()" id="nav-home" style="background:none;border:none;padding:10px 4px 12px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;color:#94a3b8;font-size:11px;font-weight:600;border-radius:0">
+      <span style="font-size:22px">🏠</span>
+      <span class="t" data-bn="হোম" data-en="Home">Home</span>
+    </button>
+    <button onclick="showView('company');loadCompanyForm()" id="nav-company" style="background:none;border:none;padding:10px 4px 12px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;color:#94a3b8;font-size:11px;font-weight:600;border-radius:0">
+      <span style="font-size:22px">🏢</span>
+      <span class="t" data-bn="কোম্পানি" data-en="Company">Company</span>
+    </button>
+    <button onclick="showView('report');renderDailyReport2()" id="nav-report" style="background:none;border:none;padding:10px 4px 12px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;color:#94a3b8;font-size:11px;font-weight:600;border-radius:0">
+      <span style="font-size:22px">📊</span>
+      <span class="t" data-bn="রিপোর্ট" data-en="Report">Report</span>
+    </button>
+    <button onclick="showView('settings')" id="nav-settings" style="background:none;border:none;padding:10px 4px 12px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;color:#94a3b8;font-size:11px;font-weight:600;border-radius:0">
+      <span style="font-size:22px">⚙️</span>
+      <span class="t" data-bn="সেটিংস" data-en="Settings">Settings</span>
+    </button>
+  </div>
+</div>
+
 <!-- ══ LOGIN SCREEN ══ -->
 <div id="loginScreen">
   <div class="login-box">
@@ -126,9 +148,7 @@ td.r,th.r{text-align:right}
 
 <!-- ══ TOPBAR ══ -->
 <div id="topbar" style="display:none">
-  <!-- Settings icon left side - unique design -->
-  <button onclick="showView('settings')" style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#1e293b,#334155);color:#fff;font-size:17px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:none;padding:0">⚙</button>
-  <div class="logo-box" id="topLogoBox" style="margin-left:4px">₹</div>
+  <div class="logo-box" id="topLogoBox">₹</div>
   <div class="co-name" id="topCoName">Invoice App</div>
   <div style="display:flex;gap:8px;align-items:center;position:relative">
     <button id="newBtn" onclick="openNew()" style="background:var(--or);color:#fff;padding:8px 14px;font-size:13px">+ <span class="t" data-bn="নতুন" data-en="New">New</span></button>
@@ -251,7 +271,7 @@ td.r,th.r{text-align:right}
 <!-- ══ COMPANY VIEW ══ -->
 <div class="view" id="view-company">
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
-    <button onclick="goList()" style="background:#f1f5f9;color:#64748b;padding:10px 16px;font-size:18px;border-radius:12px">←</button>
+    <button onclick="goList()" style="background:linear-gradient(135deg,#1e293b,#334155);color:#fff;padding:12px 20px;font-size:16px;border-radius:12px;font-weight:700">← Back</button>
     <div style="font-size:20px;font-weight:700">🏢 <span class="t" data-bn="কোম্পানি তথ্য" data-en="Company Info">Company Info</span></div>
   </div>
   <div class="card">
@@ -272,7 +292,7 @@ td.r,th.r{text-align:right}
 <!-- ══ REPORT VIEW ══ -->
 <div class="view" id="view-report">
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
-    <button onclick="goList()" style="background:#f1f5f9;color:#64748b;padding:10px 16px;font-size:18px;border-radius:12px">←</button>
+    <button onclick="goList()" style="background:linear-gradient(135deg,#1e293b,#334155);color:#fff;padding:12px 20px;font-size:16px;border-radius:12px;font-weight:700">← Back</button>
     <div style="font-size:20px;font-weight:700">📊 <span class="t" data-bn="রিপোর্ট" data-en="Report">Report</span></div>
   </div>
   <div class="card">
@@ -288,22 +308,8 @@ td.r,th.r{text-align:right}
 <!-- ══ SETTINGS VIEW ══ -->
 <div class="view" id="view-settings">
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
-    <button onclick="goList()" style="background:#f1f5f9;color:#64748b;padding:10px 16px;font-size:18px;border-radius:12px">←</button>
+    <button onclick="goList()" style="background:linear-gradient(135deg,#1e293b,#334155);color:#fff;padding:12px 20px;font-size:16px;border-radius:12px;font-weight:700">← Back</button>
     <div style="font-size:20px;font-weight:700">⚙️ <span class="t" data-bn="সেটিংস" data-en="Settings">Settings</span></div>
-  </div>
-
-  <!-- Quick Navigation -->
-  <div class="card" style="padding:6px 8px;margin-bottom:14px">
-    <div onclick="showView('company');loadCompanyForm()" style="display:flex;align-items:center;gap:12px;padding:12px 10px;border-radius:10px;cursor:pointer;border-bottom:1px solid #f1f5f9">
-      <span style="font-size:20px">🏢</span>
-      <div style="flex:1"><div style="font-weight:600;font-size:14px"><span class="t" data-bn="কোম্পানি" data-en="Company">Company</span></div><div style="font-size:11px;color:#94a3b8"><span class="t" data-bn="নাম, লোগো, ঠিকানা" data-en="Name, logo, address">Name, logo, address</span></div></div>
-      <span style="color:#94a3b8">›</span>
-    </div>
-    <div onclick="showView('report');renderDailyReport2()" style="display:flex;align-items:center;gap:12px;padding:12px 10px;border-radius:10px;cursor:pointer">
-      <span style="font-size:20px">📊</span>
-      <div style="flex:1"><div style="font-weight:600;font-size:14px"><span class="t" data-bn="রিপোর্ট" data-en="Report">Report</span></div><div style="font-size:11px;color:#94a3b8"><span class="t" data-bn="দৈনিক বিক্রয় রিপোর্ট" data-en="Daily sales report">Daily sales report</span></div></div>
-      <span style="color:#94a3b8">›</span>
-    </div>
   </div>
 
   <!-- Language -->
@@ -572,12 +578,17 @@ function resetPassWithRecovery(){/* removed */}
 
 function checkPassword(){
   const p=document.getElementById('enterPass').value;
+  if(!p){document.getElementById('loginErr').textContent=lang==='bn'?'পাসওয়ার্ড দিন!':'Enter password!';return;}
   const stored=localStorage.getItem('inv_pass');
+  const googleLogin=localStorage.getItem('inv_google');
+  // Google login করা থাকলে সরাসরি enter করতে দাও
+  if(!stored && googleLogin){enterApp();return;}
+  if(!stored){document.getElementById('loginErr').textContent=lang==='bn'?'পাসওয়ার্ড নেই, নতুন তৈরি করুন':'No password set';return;}
   if(hashPass(p)===stored){
     document.getElementById('loginErr').textContent='';
     enterApp();
   } else {
-    document.getElementById('loginErr').textContent=lang==='bn'?'❌ ভুল পাসওয়ার্ড!':'❌ Wrong password!';
+    document.getElementById('loginErr').textContent=lang==='bn'?'❌ ভুল পাসওয়ার্ড! আবার চেষ্টা করুন':'❌ Wrong password! Try again';
     document.getElementById('enterPass').value='';
     document.getElementById('enterPass').focus();
   }
@@ -798,7 +809,8 @@ function enterApp(){
   sessionStorage.setItem('inv_session','1');
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('topbar').style.display='flex';
-  setLang(lang); // apply lang to all elements
+  document.getElementById('bottomNav').style.display='block';
+  setLang(lang);
   loadData();
 }
 
@@ -892,6 +904,15 @@ function showView(id){
   const el = document.getElementById('view-'+id);
   if(!el) return;
   el.classList.add('active');
+  // Bottom nav highlight
+  ['home','company','report','settings'].forEach(n=>{
+    const btn=document.getElementById('nav-'+n);
+    if(btn){
+      const isActive=(n==='home'&&id==='list')||(n===id);
+      btn.style.color=isActive?'var(--or)':'#94a3b8';
+      btn.style.background=isActive?'#fff7ed':'none';
+    }
+  });
   document.getElementById('newBtn').style.display=id==='list'?'block':'none';
   window.scrollTo(0,0);
   if(id==='settings'){
