@@ -112,10 +112,12 @@ td.r,th.r{text-align:right}
       <div style="flex:1;height:1px;background:#e2e8f0"></div>
     </div>
 
-    <!-- Google Sign In -->
-    <button onclick="signInWithGoogle()" id="googleBtn" style="display:none;background:#fff;color:#1e293b;width:100%;padding:13px;border-radius:12px;border:1.5px solid #e2e8f0;font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:4px">
-      <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-      Sign in with Google
+    <!-- Google Sign In - with account chooser -->
+    <button onclick="signInWithGoogle()" id="googleBtn" style="display:none;background:#fff;color:#1e293b;width:100%;padding:13px;border-radius:12px;border:1.5px solid #e2e8f0;font-size:15px;font-weight:600;align-items:center;justify-content:center;gap:10px;margin-bottom:4px">
+      <span style="display:flex;align-items:center;justify-content:center;gap:10px">
+        <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Sign in with Google
+      </span>
     </button>
 
     <div id="loginErr" style="color:var(--red);font-size:13px;margin-top:10px;min-height:20px"></div>
@@ -124,15 +126,18 @@ td.r,th.r{text-align:right}
 
 <!-- ══ TOPBAR ══ -->
 <div id="topbar" style="display:none">
-  <div class="logo-box" id="topLogoBox">₹</div>
+  <!-- Settings icon left side - unique design -->
+  <button onclick="showView('settings')" style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#1e293b,#334155);color:#fff;font-size:17px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:none;padding:0">⚙</button>
+  <div class="logo-box" id="topLogoBox" style="margin-left:4px">₹</div>
   <div class="co-name" id="topCoName">Invoice App</div>
   <div style="display:flex;gap:8px;align-items:center;position:relative">
     <button id="newBtn" onclick="openNew()" style="background:var(--or);color:#fff;padding:8px 14px;font-size:13px">+ <span class="t" data-bn="নতুন" data-en="New">New</span></button>
     <button onclick="toggleTopMenu()" style="background:#f1f5f9;color:#64748b;padding:8px 10px;font-size:18px;line-height:1;border-radius:9px">⋮</button>
     <!-- Dropdown Menu -->
     <div id="topMenu" style="display:none;position:absolute;top:44px;right:0;background:#fff;border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.15);border:1px solid #e2e8f0;min-width:180px;z-index:200;overflow:hidden">
-      <div onclick="goToCompany();toggleTopMenu()" style="padding:13px 16px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:10px;border-bottom:1px solid #f1f5f9">🏢 <span class="t" data-bn="কোম্পানি সেটআপ" data-en="Company">Company</span></div>
-      <div onclick="goToSettings();toggleTopMenu()" style="padding:13px 16px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:10px;border-bottom:1px solid #f1f5f9">⚙️ <span class="t" data-bn="সেটিংস" data-en="Settings">Settings</span></div>
+      <div onclick="showView('company');loadCompanyForm();toggleTopMenu()" style="padding:13px 16px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:10px;border-bottom:1px solid #f1f5f9">🏢 <span class="t" data-bn="কোম্পানি" data-en="Company">Company</span></div>
+      <div onclick="showView('report');renderDailyReport2();toggleTopMenu()" style="padding:13px 16px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:10px;border-bottom:1px solid #f1f5f9">📊 <span class="t" data-bn="রিপোর্ট" data-en="Report">Report</span></div>
+      <div onclick="showView('settings');toggleTopMenu()" style="padding:13px 16px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:10px;border-bottom:1px solid #f1f5f9">⚙️ <span class="t" data-bn="সেটিংস" data-en="Settings">Settings</span></div>
       <div onclick="toggleLangQuick();toggleTopMenu()" style="padding:13px 16px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:10px;border-bottom:1px solid #f1f5f9">🌐 <span id="langToggleLabel">Switch to বাংলা</span></div>
       <div onclick="doLogout();toggleTopMenu()" style="padding:13px 16px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:10px;color:var(--red)">🚪 <span class="t" data-bn="লগআউট" data-en="Logout">Logout</span></div>
     </div>
@@ -252,120 +257,73 @@ td.r,th.r{text-align:right}
   <div class="action-row no-print" id="detailActions"></div>
 </div>
 
-<!-- ══ SETTINGS VIEW ══ -->
-<div class="view" id="view-settings">
+<!-- ══ COMPANY VIEW ══ -->
+<div class="view" id="view-company">
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
-    <button onclick="goList()" style="background:#f1f5f9;color:#64748b;padding:12px 20px;font-size:20px;border-radius:12px;font-weight:700;min-width:52px">←</button>
-    <div style="font-size:20px;font-weight:700">⚙️ <span class="t" data-bn="সেটিংস" data-en="Settings">সেটিংস</span></div>
+    <button onclick="goList()" style="background:#f1f5f9;color:#64748b;padding:10px 16px;font-size:18px;border-radius:12px">←</button>
+    <div style="font-size:20px;font-weight:700">🏢 <span class="t" data-bn="কোম্পানি তথ্য" data-en="Company Info">Company Info</span></div>
   </div>
-
-  <!-- Company -->
   <div class="card">
-    <div class="sec-title">🏢 <span class="t" data-bn="কোম্পানি তথ্য" data-en="Company Info">কোম্পানি তথ্য</span></div>
     <div style="text-align:center;margin-bottom:16px">
       <div id="logoPreview" onclick="document.getElementById('logoInput').click()" style="width:80px;height:80px;border-radius:14px;border:2px dashed #cbd5e1;display:flex;align-items:center;justify-content:center;cursor:pointer;margin:0 auto 8px;overflow:hidden;background:#f8fafc;font-size:28px">🏢</div>
-      <div style="font-size:11px;color:#94a3b8;cursor:pointer" onclick="document.getElementById('logoInput').click()"><span class="t" data-bn="লোগো আপলোড" data-en="Upload Logo">লোগো আপলোড</span></div>
+      <div style="font-size:11px;color:#94a3b8;cursor:pointer" onclick="document.getElementById('logoInput').click()"><span class="t" data-bn="লোগো আপলোড" data-en="Upload Logo">Upload Logo</span></div>
       <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="handleLogo(this)"/>
     </div>
     <div class="g2" style="margin-bottom:12px">
-      <div><label class="label"><span class="t" data-bn="কোম্পানির নাম" data-en="Company Name">কোম্পানির নাম</span> *</label><input id="s-name"/></div>
-      <div><label class="label"><span class="t" data-bn="ফোন" data-en="Phone">ফোন</span></label><input id="s-phone"/></div>
+      <div><label class="label"><span class="t" data-bn="কোম্পানির নাম" data-en="Company Name">Company Name</span> *</label><input id="s-name"/></div>
+      <div><label class="label"><span class="t" data-bn="ফোন" data-en="Phone">Phone</span></label><input id="s-phone"/></div>
     </div>
-    <div style="margin-bottom:16px"><label class="label"><span class="t" data-bn="ঠিকানা" data-en="Address">ঠিকানা</span></label><textarea id="s-addr" rows="2"></textarea></div>
-    <button onclick="saveCompany()" style="background:var(--or);color:#fff;width:100%"><span class="t" data-bn="সংরক্ষণ করুন" data-en="Save">সংরক্ষণ করুন</span></button>
+    <div style="margin-bottom:16px"><label class="label"><span class="t" data-bn="ঠিকানা" data-en="Address">Address</span></label><textarea id="s-addr" rows="2"></textarea></div>
+    <button onclick="saveCompany()" style="background:var(--or);color:#fff;width:100%"><span class="t" data-bn="সংরক্ষণ করুন" data-en="Save">Save</span></button>
+  </div>
+</div>
+
+<!-- ══ REPORT VIEW ══ -->
+<div class="view" id="view-report">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+    <button onclick="goList()" style="background:#f1f5f9;color:#64748b;padding:10px 16px;font-size:18px;border-radius:12px">←</button>
+    <div style="font-size:20px;font-weight:700">📊 <span class="t" data-bn="রিপোর্ট" data-en="Report">Report</span></div>
+  </div>
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+      <button onclick="changeReportDate(-1)" style="background:#f1f5f9;color:#64748b;padding:6px 10px;font-size:16px;border-radius:8px">◀</button>
+      <input type="date" id="reportDate2" style="flex:1;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-size:13px;font-weight:600" onchange="renderDailyReport2()"/>
+      <button onclick="changeReportDate(1)" style="background:#f1f5f9;color:#64748b;padding:6px 10px;font-size:16px;border-radius:8px">▶</button>
+    </div>
+    <div id="dailyReport2"></div>
+  </div>
+</div>
+
+<!-- ══ SETTINGS VIEW ══ -->
+<div class="view" id="view-settings">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+    <button onclick="goList()" style="background:#f1f5f9;color:#64748b;padding:10px 16px;font-size:18px;border-radius:12px">←</button>
+    <div style="font-size:20px;font-weight:700">⚙️ <span class="t" data-bn="সেটিংস" data-en="Settings">Settings</span></div>
   </div>
 
   <!-- Language -->
   <div class="card">
-    <div class="sec-title">🌐 <span class="t" data-bn="ভাষা / Language" data-en="Language">ভাষা / Language</span></div>
+    <div class="sec-title">🌐 <span class="t" data-bn="ভাষা / Language" data-en="Language">Language</span></div>
     <div style="display:flex;gap:12px">
       <button class="lang-btn" id="btnBn" onclick="setLang('bn')">বাংলা</button>
       <button class="lang-btn" id="btnEn" onclick="setLang('en')">English</button>
     </div>
   </div>
 
-  <!-- Daily Report -->
-  <div class="card">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-      <div class="sec-title" style="margin-bottom:0">📊 <span class="t" data-bn="রিপোর্ট" data-en="Report">রিপোর্ট</span></div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <button onclick="changeReportDate(-1)" style="background:#f1f5f9;color:#64748b;padding:6px 10px;font-size:16px;border-radius:8px">◀</button>
-        <input type="date" id="reportDate" style="border:1.5px solid var(--border);border-radius:8px;padding:6px 10px;font-size:13px;font-weight:600;color:#1e293b;width:140px" onchange="renderDailyReport()"/>
-        <button onclick="changeReportDate(1)" style="background:#f1f5f9;color:#64748b;padding:6px 10px;font-size:16px;border-radius:8px">▶</button>
-      </div>
-    </div>
-    <div id="dailyReport"></div>
-  </div>
-
   <!-- Change Password -->
   <div class="card">
-    <div class="sec-title">🔐 <span class="t" data-bn="পাসওয়ার্ড পরিবর্তন" data-en="Change Password">পাসওয়ার্ড পরিবর্তন</span></div>
-    <input id="oldPass" type="password" id="oldPass" placeholder="পুরনো পাসওয়ার্ড" style="margin-bottom:10px" data-ph-bn="পুরনো পাসওয়ার্ড" data-ph-en="Old Password"/>
-    <input id="newPassA" type="password" placeholder="নতুন পাসওয়ার্ড" style="margin-bottom:10px" data-ph-bn="নতুন পাসওয়ার্ড" data-ph-en="New Password"/>
-    <input id="newPassB" type="password" placeholder="নতুন পাসওয়ার্ড আবার" style="margin-bottom:12px" data-ph-bn="নতুন পাসওয়ার্ড আবার" data-ph-en="Confirm New Password"/>
-    <button onclick="changePassword()" style="background:#1e293b;color:#fff;width:100%"><span class="t" data-bn="পরিবর্তন করুন" data-en="Change">পরিবর্তন করুন</span></button>
-  </div>
-
-  <!-- Terms of Conditions -->
-  <div class="card">
-    <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="toggleTermsCard()">
-      <div class="sec-title" style="margin-bottom:0">📋 <span class="t" data-bn="ব্যবহারের সুবিধা ও শর্তাবলী" data-en="Features & Terms">ব্যবহারের সুবিধা ও শর্তাবলী</span></div>
-      <span id="termsCardArrow" style="color:#94a3b8;font-size:18px">▼</span>
-    </div>
-    <div id="termsCardBody" style="display:none;margin-top:14px">
-      <div style="font-size:13px;color:#1e293b;line-height:1.8">
-
-        <div style="font-weight:700;color:var(--or);margin-bottom:8px">✨ <span class="t" data-bn="কাস্টমারকে যা সুবিধা দিতে পারবেন:" data-en="Benefits you can offer customers:">কাস্টমারকে যা সুবিধা দিতে পারবেন:</span></div>
-
-        <div style="margin-bottom:6px">📦 <span class="t" data-bn="প্রতিটি মালের বিস্তারিত হিসাব — পরিমাণ ও মূল্যসহ invoice পাঠাতে পারবেন" data-en="Detailed item-wise invoice with quantity and price">প্রতিটি মালের বিস্তারিত হিসাব — পরিমাণ ও মূল্যসহ invoice পাঠাতে পারবেন</div>
-
-        <div style="margin-bottom:6px">💬 <span class="t" data-bn="WhatsApp বা SMS এ সুন্দর invoice card পাঠাতে পারবেন" data-en="Send beautiful invoice cards via WhatsApp or SMS">WhatsApp বা SMS এ সুন্দর invoice card পাঠাতে পারবেন</span></div>
-
-        <div style="margin-bottom:6px">💰 <span class="t" data-bn="কাস্টমারের বাকির হিসাব রাখতে পারবেন এবং কতটুকু পরিশোধ হয়েছে তা দেখাতে পারবেন" data-en="Track customer dues and show payment history">কাস্টমারের বাকির হিসাব রাখতে পারবেন এবং কতটুকু পরিশোধ হয়েছে তা দেখাতে পারবেন</span></div>
-
-        <div style="margin-bottom:6px">📅 <span class="t" data-bn="প্রতিটি payment এর তারিখসহ রসিদ পাঠাতে পারবেন" data-en="Send receipts with date for every payment">প্রতিটি payment এর তারিখসহ রসিদ পাঠাতে পারবেন</span></div>
-
-        <div style="margin-bottom:6px">↩ <span class="t" data-bn="রিটার্ন মালের হিসাব রাখতে পারবেন এবং সেটা invoice থেকে বাদ দেওয়া যাবে" data-en="Track returned goods and deduct from invoice">রিটার্ন মালের হিসাব রাখতে পারবেন এবং সেটা invoice থেকে বাদ দেওয়া যাবে</span></div>
-
-        <div style="margin-bottom:6px">🖨️ <span class="t" data-bn="যেকোনো invoice PDF বা print করে দিতে পারবেন" data-en="Print or save any invoice as PDF">যেকোনো invoice PDF বা print করে দিতে পারবেন</span></div>
-
-        <div style="margin-bottom:14px">📊 <span class="t" data-bn="দৈনিক বিক্রয়ের সম্পূর্ণ রিপোর্ট যেকোনো দিনের দেখতে পারবেন" data-en="View complete daily sales report for any date">দৈনিক বিক্রয়ের সম্পূর্ণ রিপোর্ট যেকোনো দিনের দেখতে পারবেন</span></div>
-
-        <div style="border-top:1px solid var(--border);padding-top:12px;font-weight:700;color:#dc2626;margin-bottom:8px">⚠️ <span class="t" data-bn="গুরুত্বপূর্ণ শর্তাবলী:" data-en="Important Terms:">গুরুত্বপূর্ণ শর্তাবলী:</span></div>
-
-        <div style="margin-bottom:6px;color:#64748b">🔑 <span class="t" data-bn="Recovery Code সংরক্ষণ করুন — না থাকলে পাসওয়ার্ড reset এ সব data মুছে যাবে" data-en="Keep your Recovery Code safe — losing it means data loss on password reset">Recovery Code সংরক্ষণ করুন — না থাকলে পাসওয়ার্ড reset এ সব data মুছে যাবে</span></div>
-
-
-
-        <div style="color:#64748b">📱 <span class="t" data-bn="এই অ্যাপ ব্যবসায়িক ব্যবহারের জন্য" data-en="Business use only">এই অ্যাপ ব্যবসায়িক ব্যবহারের জন্য</span></div>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- Admin Panel (hidden) -->
-  <div class="card" id="adminCard" style="display:none;border:1.5px solid #7c3aed;background:#f5f3ff">
-    <div class="sec-title" style="color:#7c3aed">👑 Admin Panel</div>
-    <div style="font-size:13px;color:#64748b;margin-bottom:12px">শুধুমাত্র আপনি এটা দেখতে পাচ্ছেন</div>
-    <div id="adminStats">
-      <div style="text-align:center;color:#94a3b8;font-size:13px">লোড হচ্ছে...</div>
-    </div>
-  </div>
-
-  <!-- Admin Unlock (secret) -->
-  <div class="card" style="border:none;background:transparent;padding:4px 0">
-    <div style="display:flex;gap:8px">
-      <input id="adminCodeInput" type="password" placeholder="🔐" style="flex:1;padding:8px 12px;font-size:13px;border-radius:10px;opacity:.3"/>
-      <button onclick="checkAdminCode()" style="background:#f1f5f9;color:#94a3b8;padding:8px 14px;border-radius:10px;font-size:13px">→</button>
-    </div>
+    <div class="sec-title">🔐 <span class="t" data-bn="পাসওয়ার্ড পরিবর্তন" data-en="Change Password">Change Password</span></div>
+    <input id="oldPass" type="password" placeholder="Old Password" style="margin-bottom:10px" data-ph-bn="পুরনো পাসওয়ার্ড" data-ph-en="Old Password"/>
+    <input id="newPassA" type="password" placeholder="New Password" style="margin-bottom:10px" data-ph-bn="নতুন পাসওয়ার্ড" data-ph-en="New Password"/>
+    <input id="newPassB" type="password" placeholder="Confirm New Password" style="margin-bottom:12px" data-ph-bn="নতুন পাসওয়ার্ড আবার" data-ph-en="Confirm New Password"/>
+    <button onclick="changePassword()" style="background:#1e293b;color:#fff;width:100%"><span class="t" data-bn="পরিবর্তন করুন" data-en="Change">Change</span></button>
   </div>
 
   <!-- Logout -->
   <div class="card">
-    <button onclick="doLogout()" style="background:#fef2f2;color:var(--red);width:100%">🚪 <span class="t" data-bn="লগআউট" data-en="Logout">লগআউট</span></button>
+    <button onclick="doLogout()" style="background:#fef2f2;color:var(--red);width:100%;padding:14px;font-size:15px">🚪 <span class="t" data-bn="লগআউট" data-en="Logout">Logout</span></button>
   </div>
 </div>
-
 <!-- ══ MODALS ══ -->
 <!-- Due List -->
 <div class="modal-bg" id="dueModal" style="display:none">
@@ -411,20 +369,20 @@ td.r,th.r{text-align:right}
   <div class="modal" style="max-width:500px;padding:0;overflow:hidden">
     <!-- Header -->
     <div style="padding:16px 20px;background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;display:flex;justify-content:space-between;align-items:center">
-      <div style="font-size:17px;font-weight:700">📒 <span id="pdTitle">বাকি খাতা</span></div>
+      <div style="font-size:17px;font-weight:700">📒 <span id="pdTitle" class="t" data-bn="বাকি খাতা" data-en="Due Ledger">Due Ledger</span></div>
       <button onclick="document.getElementById('prevDueModal').style.display='none'" style="background:rgba(255,255,255,.2);color:#fff;padding:5px 10px;border-radius:8px;font-size:13px">✕</button>
     </div>
     <!-- Add Customer Due -->
     <div id="addCustDue" style="padding:14px 16px;background:#f5f3ff;border-bottom:1px solid #e2e8f0">
-      <div style="font-size:12px;font-weight:700;color:#7c3aed;margin-bottom:8px">➕ নতুন বাকি যোগ করুন</div>
+      <div style="font-size:12px;font-weight:700;color:#7c3aed;margin-bottom:8px">➕ <span class="t" data-bn="নতুন বাকি যোগ করুন" data-en="Add New Due">Add New Due</span></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
-        <input id="lcd-name" placeholder="কাস্টমার নাম *" style="font-size:13px;padding:9px 11px"/>
-        <input id="lcd-phone" type="tel" placeholder="ফোন নম্বর" style="font-size:13px;padding:9px 11px"/>
+        <input id="lcd-name" placeholder="Customer Name *" data-ph-bn="কাস্টমার নাম *" data-ph-en="Customer Name *" style="font-size:13px;padding:9px 11px"/>
+        <input id="lcd-phone" type="tel" placeholder="Phone Number" data-ph-bn="ফোন নম্বর" data-ph-en="Phone Number" style="font-size:13px;padding:9px 11px"/>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px">
-        <input id="lcd-amt" type="number" placeholder="বাকির পরিমাণ ₹" style="font-size:13px;padding:9px 11px"/>
-        <input id="lcd-note" placeholder="নোট (ঐচ্ছিক)" style="font-size:13px;padding:9px 11px"/>
-        <button onclick="addCustomerDue()" style="background:#7c3aed;color:#fff;padding:9px 14px;border-radius:9px;font-size:13px;white-space:nowrap">+ যোগ</button>
+        <input id="lcd-amt" type="number" placeholder="Due Amount ₹" data-ph-bn="বাকির পরিমাণ ₹" data-ph-en="Due Amount ₹" style="font-size:13px;padding:9px 11px"/>
+        <input id="lcd-note" placeholder="Note (optional)" data-ph-bn="নোট (ঐচ্ছিক)" data-ph-en="Note (optional)" style="font-size:13px;padding:9px 11px"/>
+        <button onclick="addCustomerDue()" style="background:#7c3aed;color:#fff;padding:9px 14px;border-radius:9px;font-size:13px;white-space:nowrap"><span class="t" data-bn="+ যোগ" data-en="+ Add">+ Add</span></button>
       </div>
     </div>
     <!-- List -->
@@ -462,6 +420,7 @@ td.r,th.r{text-align:right}
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
@@ -521,11 +480,33 @@ function forgotPassSimple(){
 }
 
 function signInWithGoogle(){
-  // Google login — store flag, skip password
-  localStorage.setItem('inv_google','1');
-  localStorage.removeItem('inv_pass');
-  showToast('✅ '+(lang==='bn'?'Google দিয়ে প্রবেশ হয়েছে!':'Signed in with Google!'));
-  enterApp();
+  // Open Google account chooser via Firebase Auth
+  if(typeof firebase !== 'undefined' && firebase.auth){
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({prompt:'select_account'}); // always show account chooser
+    firebase.auth().signInWithPopup(provider)
+      .then(result=>{
+        const user = result.user;
+        localStorage.setItem('inv_google', user.email||'1');
+        localStorage.setItem('inv_gname', user.displayName||'');
+        showToast('✅ Welcome, '+(user.displayName||user.email||'User')+'!');
+        enterApp();
+      })
+      .catch(err=>{
+        // Popup blocked or cancelled - fallback to simple flag
+        if(err.code==='auth/popup-blocked'||err.code==='auth/cancelled-popup-request'||err.code==='auth/popup-closed-by-user'){
+          showToast(lang==='bn'?'Popup block হয়েছে — সরাসরি login হচ্ছে':'Popup blocked — logging in directly');
+          localStorage.setItem('inv_google','1');
+          enterApp();
+        } else {
+          document.getElementById('loginErr').textContent = err.message||'Google login failed';
+        }
+      });
+  } else {
+    // Firebase not loaded - simple fallback
+    localStorage.setItem('inv_google','1');
+    enterApp();
+  }
 }
 
 function goToCompany(){
@@ -903,7 +884,9 @@ function updateTopBar(){
 // ══ VIEWS ══
 function showView(id){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.getElementById('view-'+id).classList.add('active');
+  const el = document.getElementById('view-'+id);
+  if(!el) return;
+  el.classList.add('active');
   document.getElementById('newBtn').style.display=id==='list'?'block':'none';
   window.scrollTo(0,0);
   if(id==='settings'){
@@ -918,6 +901,42 @@ function showView(id){
   }
 }
 function goList(){showView('list');renderList();}
+
+function loadCompanyForm(){
+  document.getElementById('s-name').value=company.name||'';
+  document.getElementById('s-phone').value=company.phone||'';
+  document.getElementById('s-addr').value=company.address||'';
+  const lp=document.getElementById('logoPreview');
+  if(lp) lp.innerHTML=company.logo?`<img src="${company.logo}" style="width:100%;height:100%;object-fit:contain"/>`:'🏢';
+}
+
+function renderDailyReport2(){
+  const rd = document.getElementById('reportDate2');
+  if(rd&&!rd.value) rd.value = todayStr();
+  const date = document.getElementById('reportDate2')?.value||todayStr();
+  const L = lang==='bn';
+  const ti=invoices.filter(i=>i.date===date);
+  const el = document.getElementById('dailyReport2');
+  if(!el)return;
+  if(ti.length===0){el.innerHTML=`<div style="text-align:center;color:#94a3b8;padding:20px">${L?'এই দিনে কোনো বিক্রয় নেই':'No sales on this date'}</div>`;return;}
+  const ts=ti.reduce((s,i)=>s+i.total,0);
+  const tp=ti.filter(i=>i.status==='paid').reduce((s,i)=>s+(i.paidAmt||i.net),0);
+  const td=ti.filter(i=>i.status!=='paid').reduce((s,i)=>s+(i.remainingDue||i.net),0);
+  el.innerHTML=`
+    <div class="rep-row"><span>${L?'ইনভয়েস':'Invoices'}</span><strong>${ti.length}</strong></div>
+    <div class="rep-row"><span>${L?'মোট বিক্রয়':'Total Sales'}</span><strong class="mono">${fmtINR(ts)}</strong></div>
+    <div class="rep-row"><span>${L?'আদায়':'Collected'}</span><strong class="mono" style="color:var(--green)">${fmtINR(tp)}</strong></div>
+    <div class="rep-row" style="border:none"><span>${L?'বাকি':'Pending'}</span><strong class="mono" style="color:var(--red)">${fmtINR(td)}</strong></div>
+    <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:10px">
+      ${ti.map(inv=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f8fafc;font-size:13px;cursor:pointer" onclick="showView('detail');openDetail('${inv.id}')">
+        <div><span style="font-weight:600">${inv.cname}</span> <span style="font-size:11px;color:#94a3b8">${inv.no}</span></div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="mono" style="font-weight:700;color:${inv.status==='paid'?'var(--green)':'var(--red)'}">${fmtINR(inv.status==='partial'?(inv.remainingDue||inv.net):inv.net)}</span>
+          ${inv.status!=='paid'?`<button onclick="event.stopPropagation();markPaid('${inv.id}');renderDailyReport2();" style="background:#ecfdf5;color:var(--green);padding:3px 8px;font-size:11px;border-radius:6px">✓</button>`:'<span style="color:var(--green)">✓</span>'}
+        </div>
+      </div>`).join('')}
+    </div>`;
+}
 
 // ══ COMPANY ══
 function saveCompany(){
@@ -1232,7 +1251,7 @@ function renderList(){
       <div style="flex:1">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
           <span class="mono" style="font-size:12px;color:#94a3b8">${inv.no}</span>
-          ${inv.status==='paid'?`<span class="badge paid">${lang==='bn'?'পরিশোধিত':'Paid'}</span>`:inv.status==='partial'?`<span class="badge" style="background:#fff7ed;color:#92400e">${lang==='bn'?'আংশিক':'Partial'}</span>`:`<span class="badge unpaid">${lang==='bn'?'বকেয়া':'Unpaid'}</span>`}
+          ${inv.status==='paid'?`<span class="badge paid" style="cursor:pointer" onclick="event.stopPropagation();showPaidList()">${lang==='bn'?'✓ পরিশোধিত':'✓ Paid'}</span>`:inv.status==='partial'?`<span class="badge" style="background:#fff7ed;color:#92400e;cursor:pointer" onclick="event.stopPropagation();showDueList()">${lang==='bn'?'⏳ আংশিক':'⏳ Partial'}</span>`:`<span class="badge unpaid" style="cursor:pointer" onclick="event.stopPropagation();showDueList()">${lang==='bn'?'বকেয়া':'Unpaid'}</span>`}
           <span style="font-size:11px;color:#94a3b8">${inv.date}</span>
         </div>
         <div style="font-weight:700;font-size:15px">${inv.cname}</div>
@@ -1665,15 +1684,16 @@ function showPaymentInput(key){
 function renderLedger(){
   const keys = Object.keys(customers);
   const totalBal = keys.reduce((s,k)=>s+customers[k].balance,0);
+  const L = lang==='bn';
 
   if(keys.length===0){
-    document.getElementById('prevDueContent').innerHTML=`<div class="empty"><div class="icon">📒</div><div style="font-weight:600;color:#94a3b8">${lang==='bn'?'কোনো বাকি নেই':'No dues yet'}</div><div style="font-size:12px;color:#94a3b8;margin-top:6px">${lang==='bn'?'উপরে নতুন বাকি যোগ করুন':'Add a due above'}</div></div>`;
+    document.getElementById('prevDueContent').innerHTML=`<div class="empty"><div class="icon">📒</div><div style="font-weight:600;color:#94a3b8">${L?'কোনো বাকি নেই':'No dues yet'}</div><div style="font-size:12px;color:#94a3b8;margin-top:6px">${L?'উপরে নতুন বাকি যোগ করুন':'Add a due above'}</div></div>`;
     return;
   }
 
   document.getElementById('prevDueContent').innerHTML=`
     <div style="background:${totalBal>0?'#fef2f2':'#f0fdf4'};border-radius:10px;padding:12px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center">
-      <div style="font-size:13px;font-weight:600;color:${totalBal>0?'#92400e':'#166534'}">${lang==='bn'?'মোট বাকি':'Total Due'}</div>
+      <div style="font-size:13px;font-weight:600;color:${totalBal>0?'#92400e':'#166534'}">${L?'মোট বাকি':'Total Due'}</div>
       <div class="mono" style="font-size:20px;font-weight:700;color:${totalBal>0?'var(--red)':'var(--green)'}">${fmtINR(totalBal)}</div>
     </div>
     ${keys.map(key=>{
@@ -1681,43 +1701,94 @@ function renderLedger(){
       const bal = c.balance;
       const isCleared = bal<=0;
       return `<div style="border-radius:14px;border:1.5px solid ${isCleared?'#86efac':'#fecaca'};margin-bottom:14px;overflow:hidden">
-        <!-- Customer header -->
         <div style="padding:12px 14px;background:${isCleared?'#f0fdf4':'#fff5f5'}">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div>
               <div style="font-weight:700;font-size:16px">${c.name}</div>
               ${c.phone?`<div style="font-size:12px;color:#64748b">📞 ${c.phone}</div>`:''}
             </div>
-            <div style="text-align:right">
-              <div style="font-size:10px;color:#94a3b8">${lang==='bn'?'বাকি':'Balance'}</div>
-              <div class="mono" style="font-size:20px;font-weight:700;color:${isCleared?'var(--green)':'var(--red)'}">${isCleared?'✅':fmtINR(bal)}</div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="text-align:right">
+                <div style="font-size:10px;color:#94a3b8">${L?'বাকি':'Balance'}</div>
+                <div class="mono" style="font-size:20px;font-weight:700;color:${isCleared?'var(--green)':'var(--red)'}">${isCleared?'✅':fmtINR(bal)}</div>
+              </div>
+              <button onclick="deleteCustomer('${key}')" style="background:#fef2f2;color:var(--red);padding:6px 10px;border-radius:8px;font-size:16px;line-height:1" title="${L?'মুছুন':'Delete'}">🗑</button>
             </div>
           </div>
-          <!-- Payment input -->
           ${!isCleared?`<div style="margin-top:10px">
-            <button onclick="showPaymentInput('${key}')" style="background:#ecfdf5;color:var(--green);padding:7px 14px;font-size:12px;border-radius:8px;width:100%">💵 ${lang==='bn'?'পেমেন্ট নিন':'Record Payment'}</button>
+            <button onclick="showPaymentInput('${key}')" style="background:#ecfdf5;color:var(--green);padding:7px 14px;font-size:12px;border-radius:8px;width:100%">💵 ${L?'পেমেন্ট নিন':'Record Payment'}</button>
             <div id="pay-input-${key}" style="display:none;gap:8px;margin-top:8px;align-items:center">
-              <input id="pay-amt-${key}" type="number" placeholder="₹ পরিমাণ" style="font-size:14px;padding:9px;flex:1"/>
-              <button onclick="const a=parseFloat(document.getElementById('pay-amt-${key}').value)||0;if(a>0)addCustomerPayment('${key}',a);" style="background:var(--green);color:#fff;padding:9px 14px;border-radius:8px;font-size:13px">${lang==='bn'?'✓ নিলাম':'✓ Done'}</button>
+              <input id="pay-amt-${key}" type="number" placeholder="₹" style="font-size:14px;padding:9px;flex:1"/>
+              <button onclick="const a=parseFloat(document.getElementById('pay-amt-${key}').value)||0;if(a>0)addCustomerPayment('${key}',a);" style="background:var(--green);color:#fff;padding:9px 14px;border-radius:8px;font-size:13px">${L?'✓ নিলাম':'✓ Done'}</button>
             </div>
           </div>`:''}
         </div>
-        <!-- History -->
         <div style="padding:0 14px 8px;background:#fff">
-          <div style="font-size:11px;color:#94a3b8;font-weight:700;padding:8px 0 4px">${lang==='bn'?'হিসাবের খাতা':'Transaction History'}</div>
-          ${(c.history||[]).slice(0,5).map(h=>`
+          <div style="font-size:11px;color:#94a3b8;font-weight:700;padding:8px 0 4px">${L?'হিসাবের খাতা':'Transaction History'}</div>
+          ${(c.history||[]).slice(0,8).map((h,hi)=>`
             <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f8fafc;font-size:13px">
-              <div>
+              <div style="flex:1">
                 <span style="font-size:11px;color:#94a3b8">${h.date}</span>
                 ${h.note?`<span style="font-size:11px;color:#64748b;margin-left:6px">${h.note}</span>`:''}
+                <span style="font-size:11px;color:#94a3b8;margin-left:4px">${h.type==='due'?(L?'বাকি':'Due'):(L?'পেমেন্ট':'Payment')}</span>
               </div>
-              <span class="mono" style="font-weight:700;color:${h.type==='due'?'var(--red)':'var(--green)'}">
-                ${h.type==='due'?'+ ':'- '}${fmtINR(h.amt)}
-              </span>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span class="mono" style="font-weight:700;color:${h.type==='due'?'var(--red)':'var(--green)'}">
+                  ${h.type==='due'?'+ ':'- '}${fmtINR(h.amt)}
+                </span>
+                <button onclick="deleteHistoryEntry('${key}',${hi})" style="background:#fef2f2;color:var(--red);padding:3px 7px;border-radius:6px;font-size:12px">×</button>
+              </div>
             </div>`).join('')}
         </div>
       </div>`;
     }).join('')}`;
+}
+
+function deleteCustomer(key){
+  if(!confirm(lang==='bn'?'এই কাস্টমারের সব হিসাব মুছে দেবেন?':'Delete all records for this customer?'))return;
+  delete customers[key];
+  save();renderLedger();renderList();
+  showToast(lang==='bn'?'🗑 মুছে দেওয়া হয়েছে':'🗑 Deleted');
+}
+
+function deleteHistoryEntry(key, idx){
+  if(!customers[key])return;
+  const h = customers[key].history[idx];
+  if(!h)return;
+  // Reverse the balance effect
+  if(h.type==='due') customers[key].balance -= h.amt;
+  else customers[key].balance += h.amt;
+  customers[key].history.splice(idx,1);
+  save();renderLedger();renderList();
+  showToast(lang==='bn'?'✅ Entry মুছে দেওয়া হয়েছে':'✅ Entry deleted');
+}
+
+function showPaidList(){
+  const paid = invoices.filter(i=>i.status==='paid');
+  const L = lang==='bn';
+  let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <div style="font-size:18px;font-weight:700">✅ ${L?'পরিশোধিত তালিকা':'Paid Invoices'}</div>
+    <button onclick="document.getElementById('paidListModal').style.display='none'" style="background:#f1f5f9;color:#64748b;padding:6px 12px;border-radius:8px">✕</button>
+  </div>`;
+  if(paid.length===0){
+    html+=`<div class="empty"><div class="icon">📋</div><div style="color:#94a3b8">${L?'কোনো পরিশোধিত invoice নেই':'No paid invoices yet'}</div></div>`;
+  } else {
+    const total = paid.reduce((s,i)=>s+(i.paidAmt||i.net),0);
+    html+=`<div style="background:#f0fdf4;border-radius:10px;padding:10px 14px;margin-bottom:14px;display:flex;justify-content:space-between">
+      <span style="font-weight:600;color:#166534">${L?'মোট আদায়':'Total Collected'}</span>
+      <span class="mono" style="font-weight:700;color:var(--green)">${fmtINR(total)}</span>
+    </div>`;
+    html += paid.map(inv=>`
+      <div style="padding:12px 14px;border-radius:12px;border:1.5px solid #86efac;background:#f0fdf4;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center" onclick="document.getElementById('paidListModal').style.display='none';openDetail('${inv.id}')">
+        <div>
+          <div style="font-weight:700">${inv.cname}</div>
+          <div style="font-size:12px;color:#94a3b8">${inv.no} • ${inv.date}</div>
+        </div>
+        <div class="mono" style="font-weight:700;color:var(--green)">${fmtINR(inv.paidAmt||inv.net)}</div>
+      </div>`).join('');
+  }
+  document.getElementById('paidListContent').innerHTML=html;
+  document.getElementById('paidListModal').style.display='flex';
 }
 
 function showPrevDueList(){
