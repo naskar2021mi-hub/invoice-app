@@ -337,6 +337,13 @@ td.r,th.r{text-align:right}
 </div>
 <!-- ══ MODALS ══ -->
 <!-- Due List -->
+<!-- ══ PAID LIST MODAL ══ -->
+<div class="modal-bg" id="paidListModal" style="display:none">
+  <div class="modal" style="max-width:480px;padding:20px;max-height:85vh;overflow-y:auto">
+    <div id="paidListContent"></div>
+  </div>
+</div>
+
 <div class="modal-bg" id="dueModal" style="display:none">
   <div class="modal" style="max-width:480px;padding:20px">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
@@ -1231,18 +1238,18 @@ function renderList(){
       </div>
     </div>
     <div class="stat-card" onclick="showPaidList()" style="cursor:pointer;border:1.5px solid ${paid>0?'#86efac':'var(--border)'};background:${paid>0?'#f0fdf4':'#fff'}">
-      <div class="stat-label" style="color:${paid>0?'#166534':'#94a3b8'}">${lang==='bn'?'✅ আদায় হয়েছে':'✅ Collected'} ${paid>0?'👆':''}</div>
+      <div class="stat-label" style="color:${paid>0?'#166534':'#94a3b8'};display:flex;align-items:center;gap:4px">${lang==='bn'?'✅ আদায় হয়েছে':'✅ Collected'} ${paid>0?'<span style="font-size:16px">👆</span>':''}</div>
       <div class="stat-val mono" style="color:var(--green);font-size:15px">${fmtINR(paid)}</div>
     </div>
     <div class="stat-card" onclick="showDueList()" style="cursor:pointer;border:1.5px solid ${due>0?'#fecaca':'var(--border)'};background:${due>0?'#fff5f5':'#fff'}">
-      <div class="stat-label" style="color:${due>0?'var(--red)':'#94a3b8'}">💰 ${lang==='bn'?'বকেয়া':'Due'} ${due>0?'👆':''}</div>
+      <div class="stat-label" style="color:${due>0?'var(--red)':'#94a3b8'};display:flex;align-items:center;gap:4px">💰 ${lang==='bn'?'বকেয়া':'Due'} ${due>0?'<span style="font-size:16px">👆</span>':''}</div>
       <div class="stat-val mono" style="color:${due>0?'var(--red)':'var(--green)'};font-size:15px">${fmtINR(due)}</div>
     </div>
     ${hasPrevDue?`
     <div class="stat-card" onclick="showPrevDueList()" style="grid-column:span 2;cursor:pointer;border:1.5px solid #e0e7ff;background:#f5f3ff">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div>
-          <div class="stat-label" style="color:#7c3aed">📒 ${lang==='bn'?'আগের বাকি':'Previous Due'} 👆</div>
+          <div class="stat-label" style="color:#7c3aed;display:flex;align-items:center;gap:4px">📒 ${lang==='bn'?'আগের বাকি':'Previous Due'} <span style="font-size:16px">👆</span></div>
           <div style="display:flex;align-items:center;gap:16px;margin-top:4px">
             <div>
               <div style="font-size:10px;color:#94a3b8;margin-bottom:2px">${lang==='bn'?'বাকি আছে':'Pending'}</div>
