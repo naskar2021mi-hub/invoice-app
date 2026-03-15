@@ -124,7 +124,7 @@ td.r,th.r{text-align:right}
 
     <!-- Enter Password -->
     <div id="enterPassStep" style="display:none">
-      <input id="enterPass" type="password" placeholder="পাসওয়ার্ড লিখুন" style="margin-bottom:16px;font-size:18px;text-align:center;letter-spacing:4px" onkeydown="if(event.key==='Enter')checkPassword()"/>
+      <input id="enterPass" type="password" placeholder="পাসওয়ার্ড লিখুন" data-ph-bn="পাসওয়ার্ড লিখুন" data-ph-en="Enter Password" style="margin-bottom:16px;font-size:18px;text-align:center;letter-spacing:4px" onkeydown="if(event.key==='Enter')checkPassword()"/>
       <button onclick="checkPassword()" style="background:var(--or);color:#fff;width:100%;padding:14px;font-size:16px;border-radius:12px">প্রবেশ করুন →</button>
       <button onclick="showRecovery()" style="background:none;color:#94a3b8;width:100%;padding:10px;margin-top:8px;font-size:12px">পাসওয়ার্ড ভুলে গেছেন?</button>
     </div>
@@ -158,7 +158,6 @@ td.r,th.r{text-align:right}
   <div class="logo-box" id="topLogoBox">₹</div>
   <div class="co-name" id="topCoName">ইনভয়েস অ্যাপ</div>
   <div style="display:flex;gap:8px;align-items:center">
-    <button onclick="toggleExpenseMode()" id="expenseSwitch" style="background:#f1f5f9;color:#64748b;padding:8px 12px;font-size:13px;font-weight:700;border-radius:9px">💸</button>
     <button onclick="showView('settings')" style="background:#f1f5f9;color:#64748b;padding:8px 12px;font-size:18px;line-height:1">⚙</button>
     <button id="newBtn" onclick="openNew()" style="background:var(--or);color:#fff;padding:8px 14px;font-size:13px">+ <span class="t" data-bn="নতুন" data-en="New">নতুন</span></button>
   </div>
@@ -325,9 +324,9 @@ td.r,th.r{text-align:right}
   <!-- Change Password -->
   <div class="card">
     <div class="sec-title">🔐 <span class="t" data-bn="পাসওয়ার্ড পরিবর্তন" data-en="Change Password">পাসওয়ার্ড পরিবর্তন</span></div>
-    <input id="oldPass" type="password" placeholder="পুরনো পাসওয়ার্ড" style="margin-bottom:10px"/>
-    <input id="newPassA" type="password" placeholder="নতুন পাসওয়ার্ড" style="margin-bottom:10px"/>
-    <input id="newPassB" type="password" placeholder="নতুন পাসওয়ার্ড আবার" style="margin-bottom:12px"/>
+    <input id="oldPass" type="password" id="oldPass" placeholder="পুরনো পাসওয়ার্ড" style="margin-bottom:10px" data-ph-bn="পুরনো পাসওয়ার্ড" data-ph-en="Old Password"/>
+    <input id="newPassA" type="password" placeholder="নতুন পাসওয়ার্ড" style="margin-bottom:10px" data-ph-bn="নতুন পাসওয়ার্ড" data-ph-en="New Password"/>
+    <input id="newPassB" type="password" placeholder="নতুন পাসওয়ার্ড আবার" style="margin-bottom:12px" data-ph-bn="নতুন পাসওয়ার্ড আবার" data-ph-en="Confirm New Password"/>
     <button onclick="changePassword()" style="background:#1e293b;color:#fff;width:100%"><span class="t" data-bn="পরিবর্তন করুন" data-en="Change">পরিবর্তন করুন</span></button>
   </div>
 
@@ -360,9 +359,9 @@ td.r,th.r{text-align:right}
 
         <div style="margin-bottom:6px;color:#64748b">🔑 <span class="t" data-bn="Recovery Code সংরক্ষণ করুন — না থাকলে পাসওয়ার্ড reset এ সব data মুছে যাবে" data-en="Keep your Recovery Code safe — losing it means data loss on password reset">Recovery Code সংরক্ষণ করুন — না থাকলে পাসওয়ার্ড reset এ সব data মুছে যাবে</span></div>
 
-        <div style="margin-bottom:6px;color:#64748b">☁️ <span class="t" data-bn="Data Firebase Cloud এ সংরক্ষিত হয় — internet না থাকলে local এ সেভ হবে" data-en="Data saved to Firebase Cloud — saves locally when offline">Data Firebase Cloud এ সংরক্ষিত হয় — internet না থাকলে local এ সেভ হবে</span></div>
 
-        <div style="color:#64748b">📱 <span class="t" data-bn="এই অ্যাপ শুধুমাত্র ব্যক্তিগত ব্যবসায়িক ব্যবহারের জন্য" data-en="This app is for personal business use only">এই অ্যাপ শুধুমাত্র ব্যক্তিগত ব্যবসায়িক ব্যবহারের জন্য</span></div>
+
+        <div style="color:#64748b">📱 <span class="t" data-bn="এই অ্যাপ ব্যবসায়িক ব্যবহারের জন্য" data-en="Business use only">এই অ্যাপ ব্যবসায়িক ব্যবহারের জন্য</span></div>
 
       </div>
     </div>
@@ -881,6 +880,10 @@ function setLang(l){
   // Login screen
   const ls=document.getElementById('loginSubtitle');
   if(ls&&ls.textContent) ls.textContent=l==='bn'?'পাসওয়ার্ড দিয়ে প্রবেশ করুন':'Enter your password';
+  // Password field placeholders - lang aware
+  document.querySelectorAll('[data-ph-bn]').forEach(el=>{
+    el.placeholder = l==='en'?(el.dataset.phEn||el.placeholder):(el.dataset.phBn||el.placeholder);
+  });
   renderList();
 }
 
