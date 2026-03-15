@@ -84,70 +84,39 @@ td.r,th.r{text-align:right}
 <div id="loginScreen">
   <div class="login-box">
     <div class="login-logo">🧾</div>
-    <div style="font-size:24px;font-weight:800;margin-bottom:4px;color:#1e293b">ইনভয়েস অ্যাপ</div>
+    <div style="font-size:24px;font-weight:800;margin-bottom:4px;color:#1e293b">Invoice App</div>
     <div style="font-size:12px;color:#94a3b8;margin-bottom:6px;letter-spacing:.5px">INVOICE MANAGER</div>
     <div style="width:40px;height:3px;background:linear-gradient(90deg,#FF6B00,#ff8c38);border-radius:99px;margin:0 auto 20px"></div>
-    <div style="font-size:13px;color:#64748b;margin-bottom:24px" id="loginSubtitle">পাসওয়ার্ড দিয়ে প্রবেশ করুন</div>
-
-    <!-- Terms & Conditions (first time) -->
-    <div id="termsStep" style="display:none">
-      <div style="font-size:16px;font-weight:700;margin-bottom:12px;color:#1e293b">📋 ব্যবহারের শর্তাবলী</div>
-      <div style="background:#f8fafc;border-radius:12px;padding:14px;margin-bottom:16px;text-align:left;max-height:220px;overflow-y:auto">
-        <div style="font-size:13px;color:#1e293b;line-height:1.7">
-          <div style="font-weight:700;color:var(--or);margin-bottom:8px">🔑 Recovery Code সম্পর্কে জানুন:</div>
-          <div style="margin-bottom:8px">✅ পাসওয়ার্ড তৈরির পরে আপনাকে একটি <strong>Recovery Code</strong> দেওয়া হবে।</div>
-          <div style="margin-bottom:8px">📝 এই code টি অবশ্যই <strong>কোথাও লিখে রাখুন</strong> — যেমন: নোটপ্যাড, ডায়েরি বা ফোনের notes এ।</div>
-          <div style="margin-bottom:8px">🔒 পাসওয়ার্ড ভুলে গেলে এই code দিয়ে <strong>কোনো data না মুছেই</strong> reset করতে পারবেন।</div>
-          <div style="margin-bottom:8px;color:#dc2626">⚠️ Recovery Code হারিয়ে গেলে পাসওয়ার্ড reset করতে <strong>সব data মুছে যাবে।</strong></div>
-          <div style="border-top:1px solid #e2e8f0;margin-top:10px;padding-top:10px;font-weight:700;color:var(--or)">💾 Data সুরক্ষার টিপস:</div>
-          <div style="margin-top:6px">• Recovery Code স্ক্রিনশট নিন</div>
-          <div>• ডায়েরিতে লিখে রাখুন</div>
-          <div>• বিশ্বস্ত কারো কাছে রাখুন</div>
-        </div>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;background:#f0fdf4;border-radius:10px;padding:12px;cursor:pointer" onclick="document.getElementById('termsCheck').checked=!document.getElementById('termsCheck').checked">
-        <input type="checkbox" id="termsCheck" style="width:20px;height:20px;cursor:pointer;accent-color:var(--or)"/>
-        <span style="font-size:13px;color:#166534;font-weight:600">আমি বুঝেছি এবং শর্তাবলী মানছি</span>
-      </div>
-      <button onclick="acceptTerms()" style="background:var(--or);color:#fff;width:100%;padding:14px;font-size:16px;border-radius:12px">পরবর্তী →</button>
-    </div>
+    <div style="font-size:13px;color:#64748b;margin-bottom:20px" id="loginSubtitle">Enter your password to continue</div>
 
     <!-- Set Password (first time) -->
     <div id="setPassStep" style="display:none">
       <div style="background:#fff7ed;border-radius:10px;padding:12px;margin-bottom:16px;font-size:13px;color:#92400e">
-        🔐 প্রথমবার — নতুন পাসওয়ার্ড তৈরি করুন
+        🔐 <span id="firstTimeText">First time — create a password</span>
       </div>
-      <input id="newPass1" type="password" placeholder="নতুন পাসওয়ার্ড" style="margin-bottom:10px;font-size:16px;text-align:center"/>
-      <input id="newPass2" type="password" placeholder="আবার লিখুন" style="margin-bottom:16px;font-size:16px;text-align:center"/>
-      <button onclick="createPassword()" style="background:var(--or);color:#fff;width:100%;padding:14px;font-size:16px;border-radius:12px">পাসওয়ার্ড তৈরি করুন →</button>
+      <input id="newPass1" type="password" placeholder="New password" style="margin-bottom:10px;font-size:16px;text-align:center"/>
+      <input id="newPass2" type="password" placeholder="Confirm password" style="margin-bottom:16px;font-size:16px;text-align:center"/>
+      <button onclick="createPassword()" style="background:var(--or);color:#fff;width:100%;padding:14px;font-size:16px;border-radius:12px" id="createPassBtn">Create Password →</button>
     </div>
 
     <!-- Enter Password -->
     <div id="enterPassStep" style="display:none">
-      <input id="enterPass" type="password" placeholder="পাসওয়ার্ড লিখুন" data-ph-bn="পাসওয়ার্ড লিখুন" data-ph-en="Enter Password" style="margin-bottom:16px;font-size:18px;text-align:center;letter-spacing:4px" onkeydown="if(event.key==='Enter')checkPassword()"/>
-      <button onclick="checkPassword()" style="background:var(--or);color:#fff;width:100%;padding:14px;font-size:16px;border-radius:12px">প্রবেশ করুন →</button>
-      <button onclick="showRecovery()" style="background:none;color:#94a3b8;width:100%;padding:10px;margin-top:8px;font-size:12px">পাসওয়ার্ড ভুলে গেছেন?</button>
+      <input id="enterPass" type="password" placeholder="Enter Password" data-ph-bn="পাসওয়ার্ড লিখুন" data-ph-en="Enter Password" style="margin-bottom:16px;font-size:18px;text-align:center;letter-spacing:4px" onkeydown="if(event.key==='Enter')checkPassword()"/>
+      <button onclick="checkPassword()" style="background:var(--or);color:#fff;width:100%;padding:14px;font-size:16px;border-radius:12px" id="enterPassBtn">Login →</button>
+      <button onclick="forgotPassSimple()" style="background:none;color:#94a3b8;width:100%;padding:10px;margin-top:8px;font-size:12px" id="forgotPassBtn">Forgot password?</button>
     </div>
 
-    <!-- Recovery Step -->
-    <div id="recoveryStep" style="display:none">
-      <div style="background:#fff7ed;border-radius:10px;padding:12px;margin-bottom:16px;font-size:13px;color:#92400e">
-        🔑 Recovery Code দিন — কোনো data মুছবে না
-      </div>
-      <input id="recoveryInput" type="text" placeholder="Recovery Code লিখুন" style="margin-bottom:16px;font-size:16px;text-align:center;letter-spacing:2px"/>
-      <button onclick="checkRecovery()" style="background:var(--or);color:#fff;width:100%;padding:14px;font-size:16px;border-radius:12px">✓ যাচাই করুন</button>
-      <button onclick="backToLogin()" style="background:none;color:#94a3b8;width:100%;padding:10px;margin-top:8px;font-size:12px">← ফিরে যান</button>
+    <div style="display:flex;align-items:center;gap:10px;margin:16px 0" id="orDivider" style="display:none">
+      <div style="flex:1;height:1px;background:#e2e8f0"></div>
+      <span style="font-size:12px;color:#94a3b8">or, continue with</span>
+      <div style="flex:1;height:1px;background:#e2e8f0"></div>
     </div>
 
-    <!-- New Password after recovery -->
-    <div id="newPassAfterRecovery" style="display:none">
-      <div style="background:#f0fdf4;border-radius:10px;padding:12px;margin-bottom:16px;font-size:13px;color:#166534">
-        ✅ যাচাই সফল! নতুন পাসওয়ার্ড দিন
-      </div>
-      <input id="recNewPass1" type="password" placeholder="নতুন পাসওয়ার্ড" style="margin-bottom:10px;font-size:16px;text-align:center"/>
-      <input id="recNewPass2" type="password" placeholder="আবার লিখুন" style="margin-bottom:16px;font-size:16px;text-align:center"/>
-      <button onclick="resetPassWithRecovery()" style="background:var(--or);color:#fff;width:100%;padding:14px;font-size:16px;border-radius:12px">পাসওয়ার্ড সেট করুন →</button>
-    </div>
+    <!-- Google Sign In -->
+    <button onclick="signInWithGoogle()" id="googleBtn" style="display:none;background:#fff;color:#1e293b;width:100%;padding:13px;border-radius:12px;border:1.5px solid #e2e8f0;font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:4px">
+      <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Sign in with Google
+    </button>
 
     <div id="loginErr" style="color:var(--red);font-size:13px;margin-top:10px;min-height:20px"></div>
   </div>
@@ -156,10 +125,17 @@ td.r,th.r{text-align:right}
 <!-- ══ TOPBAR ══ -->
 <div id="topbar" style="display:none">
   <div class="logo-box" id="topLogoBox">₹</div>
-  <div class="co-name" id="topCoName">ইনভয়েস অ্যাপ</div>
-  <div style="display:flex;gap:8px;align-items:center">
-    <button onclick="showView('settings')" style="background:#f1f5f9;color:#64748b;padding:8px 12px;font-size:18px;line-height:1">⚙</button>
-    <button id="newBtn" onclick="openNew()" style="background:var(--or);color:#fff;padding:8px 14px;font-size:13px">+ <span class="t" data-bn="নতুন" data-en="New">নতুন</span></button>
+  <div class="co-name" id="topCoName">Invoice App</div>
+  <div style="display:flex;gap:8px;align-items:center;position:relative">
+    <button id="newBtn" onclick="openNew()" style="background:var(--or);color:#fff;padding:8px 14px;font-size:13px">+ <span class="t" data-bn="নতুন" data-en="New">New</span></button>
+    <button onclick="toggleTopMenu()" style="background:#f1f5f9;color:#64748b;padding:8px 10px;font-size:18px;line-height:1;border-radius:9px">⋮</button>
+    <!-- Dropdown Menu -->
+    <div id="topMenu" style="display:none;position:absolute;top:44px;right:0;background:#fff;border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.15);border:1px solid #e2e8f0;min-width:180px;z-index:200;overflow:hidden">
+      <div onclick="goToCompany();toggleTopMenu()" style="padding:13px 16px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:10px;border-bottom:1px solid #f1f5f9">🏢 <span class="t" data-bn="কোম্পানি সেটআপ" data-en="Company">Company</span></div>
+      <div onclick="goToSettings();toggleTopMenu()" style="padding:13px 16px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:10px;border-bottom:1px solid #f1f5f9">⚙️ <span class="t" data-bn="সেটিংস" data-en="Settings">Settings</span></div>
+      <div onclick="toggleLangQuick();toggleTopMenu()" style="padding:13px 16px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:10px;border-bottom:1px solid #f1f5f9">🌐 <span id="langToggleLabel">Switch to বাংলা</span></div>
+      <div onclick="doLogout();toggleTopMenu()" style="padding:13px 16px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:10px;color:var(--red)">🚪 <span class="t" data-bn="লগআউট" data-en="Logout">Logout</span></div>
+    </div>
   </div>
 </div>
 
@@ -509,7 +485,7 @@ let expenses = {}; // {date: [{id,name,qty,price,total,due,note}]}
 let editId = null;
 let items = [];
 let returnItems = [];
-let lang = localStorage.getItem('inv_lang')||'bn';
+let lang = localStorage.getItem('inv_lang')||'en';
 let sessionKey = null;
 
 // ══ PASSWORD AUTH ══
@@ -517,26 +493,75 @@ function hashPass(p){ let h=0;for(let i=0;i<p.length;i++){h=(Math.imul(31,h)+p.c
 
 function initLogin(){
   const stored = localStorage.getItem('inv_pass');
-  if(!stored){
-    document.getElementById('loginSubtitle').textContent = lang==='bn'?'স্বাগতম! প্রথমে শর্তাবলী পড়ুন':'Welcome! Please read terms first';
-    document.getElementById('termsStep').style.display='block';
+  const hasGoogle = localStorage.getItem('inv_google');
+  // Update lang-dependent text
+  document.getElementById('loginSubtitle').textContent = lang==='bn'?'পাসওয়ার্ড দিয়ে প্রবেশ করুন':'Enter your password to continue';
+  if(!stored && !hasGoogle){
+    // First time
+    document.getElementById('loginSubtitle').textContent = lang==='bn'?'প্রথমবার — পাসওয়ার্ড তৈরি করুন':'First time — create your password';
+    document.getElementById('setPassStep').style.display='block';
+    document.getElementById('firstTimeText').textContent = lang==='bn'?'প্রথমবার — নতুন পাসওয়ার্ড তৈরি করুন':'First time — create a password';
+    document.getElementById('createPassBtn').textContent = lang==='bn'?'পাসওয়ার্ড তৈরি করুন →':'Create Password →';
   } else {
-    document.getElementById('loginSubtitle').textContent = lang==='bn'?'পাসওয়ার্ড দিয়ে প্রবেশ করুন':'Enter your password';
     document.getElementById('enterPassStep').style.display='block';
+    document.getElementById('forgotPassBtn').textContent = lang==='bn'?'পাসওয়ার্ড ভুলে গেছেন?':'Forgot password?';
+    document.getElementById('enterPassBtn').textContent = lang==='bn'?'প্রবেশ করুন →':'Login →';
     setTimeout(()=>document.getElementById('enterPass').focus(),300);
+  }
+  // Always show Google option
+  document.getElementById('orDivider').style.display='flex';
+  document.getElementById('googleBtn').style.display='flex';
+}
+
+function forgotPassSimple(){
+  if(confirm(lang==='bn'?'সব data মুছে নতুন পাসওয়ার্ড তৈরি করবেন?':'Reset all data and create new password?')){
+    localStorage.clear();
+    location.reload();
   }
 }
 
-function acceptTerms(){
-  if(!document.getElementById('termsCheck').checked){
-    document.getElementById('loginErr').textContent='✋ শর্তাবলী মানার জন্য checkbox টিক দিন!';
-    return;
-  }
-  document.getElementById('loginErr').textContent='';
-  document.getElementById('termsStep').style.display='none';
-  document.getElementById('loginSubtitle').textContent='🔐 নতুন পাসওয়ার্ড তৈরি করুন';
-  document.getElementById('setPassStep').style.display='block';
+function signInWithGoogle(){
+  // Google login — store flag, skip password
+  localStorage.setItem('inv_google','1');
+  localStorage.removeItem('inv_pass');
+  showToast('✅ '+(lang==='bn'?'Google দিয়ে প্রবেশ হয়েছে!':'Signed in with Google!'));
+  enterApp();
 }
+
+function goToCompany(){
+  document.getElementById('view-settings').scrollTop=0;
+  showView('settings');
+  setTimeout(()=>{
+    const el=document.getElementById('s-name');
+    if(el){el.focus();}
+  },200);
+}
+
+function goToSettings(){
+  showView('settings');
+}
+
+function toggleLangQuick(){
+  const newLang = lang==='en'?'bn':'en';
+  setLang(newLang);
+  document.getElementById('langToggleLabel').textContent = newLang==='en'?'Switch to বাংলা':'Switch to English';
+}
+
+function toggleTopMenu(){
+  const m = document.getElementById('topMenu');
+  m.style.display = m.style.display==='none'?'block':'none';
+}
+
+// Close menu on outside click
+document.addEventListener('click', function(e){
+  const menu = document.getElementById('topMenu');
+  const btn = e.target.closest('[onclick="toggleTopMenu()"]');
+  if(menu && !menu.contains(e.target) && !btn){
+    menu.style.display='none';
+  }
+});
+
+function acceptTerms(){ /* removed */ }
 
 function createPassword(){
   const p1=document.getElementById('newPass1').value;
@@ -551,43 +576,13 @@ function createPassword(){
   enterApp();
 }
 
-function showRecovery(){
-  document.getElementById('enterPassStep').style.display='none';
-  document.getElementById('recoveryStep').style.display='block';
-  document.getElementById('loginErr').textContent='';
-}
+function showRecovery(){/* removed */}
 
-function backToLogin(){
-  document.getElementById('recoveryStep').style.display='none';
-  document.getElementById('newPassAfterRecovery').style.display='none';
-  document.getElementById('enterPassStep').style.display='block';
-  document.getElementById('loginErr').textContent='';
-}
+function backToLogin(){/* removed */}
 
-function checkRecovery(){
-  const code = document.getElementById('recoveryInput').value.trim().toUpperCase();
-  const stored = localStorage.getItem('inv_recovery');
-  if(code === stored){
-    document.getElementById('recoveryStep').style.display='none';
-    document.getElementById('newPassAfterRecovery').style.display='block';
-    document.getElementById('loginErr').textContent='';
-  } else {
-    document.getElementById('loginErr').textContent='❌ ভুল Recovery Code!';
-  }
-}
+function checkRecovery(){/* removed */}
 
-function resetPassWithRecovery(){
-  const p1=document.getElementById('recNewPass1').value;
-  const p2=document.getElementById('recNewPass2').value;
-  if(p1.length<4){document.getElementById('loginErr').textContent=lang==='bn'?'কমপক্ষে ৪ অক্ষর দিন!':'Min 4 characters!';return;}
-  if(p1!==p2){document.getElementById('loginErr').textContent=lang==='bn'?'পাসওয়ার্ড মিলছে না!':'Passwords do not match!';return;}
-  localStorage.setItem('inv_pass',hashPass(p1));
-  // নতুন recovery code তৈরি
-  const rc = Math.random().toString(36).slice(2,8).toUpperCase();
-  localStorage.setItem('inv_recovery', rc);
-  alert('✅ পাসওয়ার্ড reset হয়েছে!\n\n🔑 নতুন Recovery Code:\n' + rc + '\n\nএটা লিখে রাখুন!');
-  enterApp();
-}
+function resetPassWithRecovery(){/* removed */}
 
 function checkPassword(){
   const p=document.getElementById('enterPass').value;
@@ -817,6 +812,7 @@ function enterApp(){
   sessionStorage.setItem('inv_session','1');
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('topbar').style.display='flex';
+  setLang(lang); // apply lang to all elements
   loadData();
 }
 
@@ -874,6 +870,8 @@ function setLang(l){
   document.getElementById('search-input').placeholder=l==='bn'?'🔍 নাম বা ইনভয়েস খুঁজুন...':'🔍 Search by name or invoice...';
   document.getElementById('btnBn').className='lang-btn'+(l==='bn'?' active':'');
   document.getElementById('btnEn').className='lang-btn'+(l==='en'?' active':'');
+  const ltl = document.getElementById('langToggleLabel');
+  if(ltl) ltl.textContent = l==='en'?'Switch to বাংলা':'Switch to English';
   // Payment modal static texts
   document.getElementById('payModalTitle').textContent=l==='bn'?'কত টাকা পেয়েছেন?':'How much received?';
   document.getElementById('payAmt').placeholder=l==='bn'?'₹ পরিমাণ লিখুন':'₹ Enter amount';
@@ -898,6 +896,7 @@ function showToast(msg){
 function updateTopBar(){
   const box=document.getElementById('topLogoBox');
   document.getElementById('topCoName').textContent=company.name||(lang==='en'?'Invoice App':'ইনভয়েস অ্যাপ');
+  document.getElementById('langToggleLabel').textContent = lang==='en'?'Switch to বাংলা':'Switch to English';
   box.innerHTML=company.logo?`<img src="${company.logo}" style="width:100%;height:100%;object-fit:contain;border-radius:9px"/>`:'₹';
 }
 
