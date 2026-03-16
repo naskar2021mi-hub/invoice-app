@@ -817,21 +817,22 @@ function enterApp(){
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('topbar').style.display='flex';
   document.getElementById('bottomNav').style.display='block';
-  // সাথে সাথে list view দেখাও
+  // list view সাথে সাথে দেখাও
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   const listView = document.getElementById('view-list');
   if(listView) listView.classList.add('active');
-  // Nav home highlight
   const navHome = document.getElementById('nav-home');
   if(navHome) navHome.style.color='var(--or)';
   setLang(lang);
-  // Local data দিয়ে আগে দেখাও
-  company=JSON.parse(localStorage.getItem('inv_co')||'{"name":"","address":"","phone":"","logo":null}');
-  invoices=JSON.parse(localStorage.getItem('inv_list')||'[]');
-  customers=JSON.parse(localStorage.getItem('inv_customers')||'{}');
+  // localStorage থেকে আগে load করো
+  const localCo = localStorage.getItem('inv_co');
+  const localInv = localStorage.getItem('inv_list');
+  if(localCo) company = JSON.parse(localCo);
+  if(localInv) invoices = JSON.parse(localInv);
+  customers = JSON.parse(localStorage.getItem('inv_customers')||'{}');
   updateTopBar();
   renderList();
-  // Cloud sync background-এ - firstSetup দেখাবে না
+  // তারপর cloud থেকে sync — সব সময় চেষ্টা করো
   loadData();
 }
 
@@ -845,25 +846,29 @@ function getDeviceKey(){
 async function loadData(){
   const key=getDeviceKey();
   try{
-    const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),5000));
+    const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000));
     const docPromise=db.collection('invoiceApp').doc(key).get();
     const doc=await Promise.race([docPromise,timeout]);
     if(doc.exists){
       const d=doc.data();
-      company=d.company||company;
-      invoices=d.invoices||invoices;
-      customers=d.customers||customers;
-      expenses=d.expenses||expenses;
-      // Cloud data এলে শুধু update করো, view change করো না
+      // Cloud data দিয়ে update করো
+      if(d.company) company=d.company;
+      if(d.invoices&&d.invoices.length>0) invoices=d.invoices;
+      if(d.customers) customers=d.customers;
+      if(d.expenses) expenses=d.expenses||{};
+      // localStorage-ও update করো যাতে পরবর্তীবার দ্রুত load হয়
+      localStorage.setItem('inv_co',JSON.stringify(company));
+      localStorage.setItem('inv_list',JSON.stringify(invoices));
+      localStorage.setItem('inv_customers',JSON.stringify(customers));
       updateTopBar();
       renderList();
+      console.log('Cloud sync OK, invoices:',invoices.length);
+    } else {
+      console.log('No cloud data found for key:',key);
     }
   }catch(e){
-    // offline — already loaded from localStorage in enterApp
-    console.log('Cloud sync failed, using local data');
+    console.log('Cloud sync failed:', e.message);
   }
-  updateTopBar();
-  renderList();
 }
 
 async function save(){
