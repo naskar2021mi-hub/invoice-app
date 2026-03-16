@@ -359,10 +359,11 @@ td.r,th.r{text-align:right}
   <div class="modal" style="max-width:320px;text-align:center">
     <div style="font-size:20px;font-weight:700;margin-bottom:6px">📤 <span class="t" data-bn="পাঠাবেন?" data-en="Send?">পাঠাবেন?</span></div>
     <div style="font-size:13px;color:#64748b;margin-bottom:20px" id="sendTo"></div>
-    <div style="display:flex;gap:10px;margin-bottom:12px">
+    <div style="display:flex;gap:10px;margin-bottom:10px">
       <button id="btnSMS" style="background:#1e90ff;color:#fff;flex:1;padding:13px;border-radius:12px">📱 SMS</button>
       <button id="btnWA" style="background:#25D366;color:#fff;flex:1;padding:13px;border-radius:12px">💬 WhatsApp</button>
     </div>
+    <button id="btnShare" style="background:#f1f5f9;color:#1e293b;width:100%;padding:12px;border-radius:12px;margin-bottom:10px;font-size:14px;font-weight:600">🔗 Share Invoice Link</button>
     <button onclick="document.getElementById('sendModal').style.display='none'" style="background:#f1f5f9;color:#64748b;width:100%"><span class="t" data-bn="বাদ দিন" data-en="Skip">বাদ দিন</span></button>
   </div>
 </div>
@@ -813,33 +814,56 @@ function doLogout(){
   location.reload();
 }
 
-function enterApp(){
-  sessionStorage.setItem('inv_session','1'); localStorage.setItem('inv_session','1');
+function showHome(){
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('topbar').style.display='flex';
   document.getElementById('bottomNav').style.display='block';
-  // list view সাথে সাথে দেখাও
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  const listView = document.getElementById('view-list');
-  if(listView) listView.classList.add('active');
-  const navHome = document.getElementById('nav-home');
-  if(navHome) navHome.style.color='var(--or)';
-  setLang(lang);
-  // localStorage থেকে সবকিছু আগে load করো — এটাই primary source
-  try {
-    const localCo = localStorage.getItem('inv_co');
-    const localInv = localStorage.getItem('inv_list');
-    const localCust = localStorage.getItem('inv_customers');
-    const localExp = localStorage.getItem('inv_expenses');
-    if(localCo) company = JSON.parse(localCo);
-    if(localInv && localInv !== '[]') invoices = JSON.parse(localInv);
-    if(localCust) customers = JSON.parse(localCust);
-    if(localExp) expenses = JSON.parse(localExp);
-  } catch(e){ console.log('Local load error:', e); }
+  const lv=document.getElementById('view-list');
+  if(lv) lv.classList.add('active');
+  const nh=document.getElementById('nav-home');
+  if(nh){nh.style.color='var(--or)';nh.style.background='#fff7ed';}
   updateTopBar();
   renderList();
-  // Background-এ cloud sync — data আসলে update হবে
-  loadData();
+}
+
+function enterApp(){
+  sessionStorage.setItem('inv_session','1');
+  localStorage.setItem('inv_session','1');
+  setLang(lang);
+  // localStorage থেকে load
+  try{
+    const lc=localStorage.getItem('inv_co');
+    const li=localStorage.getItem('inv_list');
+    const lcu=localStorage.getItem('inv_customers');
+    const le=localStorage.getItem('inv_expenses');
+    if(lc) company=JSON.parse(lc);
+    if(li) invoices=JSON.parse(li);
+    if(lcu) customers=JSON.parse(lcu);
+    if(le) expenses=JSON.parse(le);
+  }catch(e){}
+
+  if(invoices.length>0 || company.name){
+    // data আছে — সাথে সাথে দেখাও
+    showHome();
+    loadData(); // background sync
+  } else {
+    // data নেই — cloud থেকে আনো
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('topbar').style.display='flex';
+    document.getElementById('bottomNav').style.display='block';
+    // loading দেখাও
+    const ov=document.createElement('div');
+    ov.id='loadOv';
+    ov.style.cssText='position:fixed;inset:0;background:#f1f5f9;z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px';
+    ov.innerHTML='<div style="width:48px;height:48px;border:4px solid #e2e8f0;border-top-color:#FF6B00;border-radius:50%;animation:spin .7s linear infinite"></div><div style="font-size:15px;color:#64748b;font-weight:600">Loading data...</div>';
+    document.body.appendChild(ov);
+    loadData().then(()=>{
+      const o=document.getElementById('loadOv');
+      if(o) o.remove();
+      showHome();
+    });
+  }
 }
 
 // ══ CLOUD DATA ══
@@ -1386,7 +1410,7 @@ function openDetail(id){
     <button id="da-edit" style="background:#f1f5f9;color:#64748b">✏ ${lang==='bn'?'সম্পাদনা':'Edit'}</button>
     ${inv.status==='paid'?'':`<button id="da-pay" style="background:${inv.status==='partial'?'#fff7ed':'#ecfdf5'};color:${inv.status==='partial'?'#92400e':'var(--green)'};font-weight:700">💵 ${inv.status==='partial'?(lang==='bn'?`বাকি ₹${(inv.remainingDue||0).toFixed(2)}`:`Due ₹${(inv.remainingDue||0).toFixed(2)}`):lang==='bn'?'পেমেন্ট নিন':'Receive Payment'}</button>`}
     <button id="da-print" style="background:var(--or);color:#fff">🖨 ${lang==='bn'?'প্রিন্ট':'Print'}</button>
-    ${inv.cphone?`<button id="da-send" style="background:#25D366;color:#fff">📤 ${lang==='bn'?'পাঠান':'Send'}</button>`:''}
+    <button id="da-send" style="background:#25D366;color:#fff">📤 ${lang==='bn'?'পাঠান':'Send'}</button>
     <button id="da-del" style="background:#fef2f2;color:var(--red);margin-left:auto">🗑</button>`;
 
   document.getElementById('da-edit').onclick = ()=>openEdit(_did);
@@ -1599,14 +1623,31 @@ function mpDue(id){
 
 // ══ SEND ══
 function openSendModal(inv){
-  if(!inv||!inv.cphone)return;
+  if(!inv) return;
   const il=inv.items.map(it=>(it.desc||'-')+' x'+it.qty+'=Rs.'+(((+it.qty||0)*(+it.rate||0)).toFixed(2))).join(', ');
   const co=company.name||'';
-  const sms=co+' | '+inv.no+' | '+inv.cname+' | '+il+(inv.prevDue>0?' | Prev:Rs.'+inv.prevDue.toFixed(2):'')+' | Total:Rs.'+inv.net.toFixed(2)+' | '+inv.date+' | Thank you!';
-  let ph=inv.cphone.replace(/\D/g,'');if(ph.length===10)ph='91'+ph;
-  document.getElementById('sendTo').textContent=inv.cname+' — '+inv.cphone;
-  document.getElementById('btnSMS').onclick=()=>{window.location.href='sms:'+ph+'?body='+encodeURIComponent(sms);document.getElementById('sendModal').style.display='none';};
-  document.getElementById('btnWA').onclick=()=>shareInvImage(inv,ph);
+  const smsText=co+' | '+inv.no+' | '+inv.cname+' | '+il+(inv.prevDue>0?' | Prev:Rs.'+inv.prevDue.toFixed(2):'')+' | Total:Rs.'+inv.net.toFixed(2)+' | '+inv.date+' | Thank you!';
+  const hasPhone=inv.cphone&&inv.cphone.trim();
+  let ph='';
+  if(hasPhone){ph=inv.cphone.replace(/\D/g,'');if(ph.length===10)ph='91'+ph;}
+  document.getElementById('sendTo').textContent=inv.cname+(hasPhone?' — '+inv.cphone:'');
+  // SMS
+  const smsBtn=document.getElementById('btnSMS');
+  smsBtn.style.display=hasPhone?'block':'none';
+  if(hasPhone) smsBtn.onclick=()=>{window.location.href='sms:'+ph+'?body='+encodeURIComponent(smsText);document.getElementById('sendModal').style.display='none';};
+  // WhatsApp
+  const waBtn=document.getElementById('btnWA');
+  waBtn.onclick=()=>shareInvImage(inv,ph);
+  // Share link
+  const shareBtn=document.getElementById('btnShare');
+  if(shareBtn) shareBtn.onclick=()=>{
+    if(navigator.share){
+      navigator.share({title:'Invoice '+inv.no,text:smsText}).catch(()=>{});
+    } else {
+      navigator.clipboard&&navigator.clipboard.writeText(smsText).then(()=>showToast('✅ Copied!'));
+    }
+    document.getElementById('sendModal').style.display='none';
+  };
   document.getElementById('sendModal').style.display='flex';
 }
 
