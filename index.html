@@ -808,12 +808,12 @@ function toggleTermsCard(){
 
 function doLogout(){
   if(!confirm(lang==='bn'?'লগআউট করবেন?':'Logout?'))return;
-  sessionStorage.removeItem('inv_session');
+  localStorage.removeItem('inv_session');
   location.reload();
 }
 
 function enterApp(){
-  sessionStorage.setItem('inv_session','1');
+  localStorage.setItem('inv_session','1');
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('topbar').style.display='flex';
   document.getElementById('bottomNav').style.display='block';
@@ -1897,7 +1897,10 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js',{sco
 
 // ══ INIT ══
 document.addEventListener('DOMContentLoaded', function(){
-  if(sessionStorage.getItem('inv_session')){
+  const hasPass = localStorage.getItem('inv_pass');
+  const hasGoogle = localStorage.getItem('inv_google');
+  // password বা google set আছে → সরাসরি home, login screen নেই
+  if(hasPass || hasGoogle){
     enterApp();
   } else {
     initLogin();
