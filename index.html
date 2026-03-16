@@ -831,8 +831,7 @@ function enterApp(){
   customers=JSON.parse(localStorage.getItem('inv_customers')||'{}');
   updateTopBar();
   renderList();
-  if(!company.name) document.getElementById('firstSetup').style.display='flex';
-  // তারপর cloud থেকে sync করো
+  // Cloud sync background-এ - firstSetup দেখাবে না
   loadData();
 }
 
@@ -863,6 +862,8 @@ async function loadData(){
     // offline — already loaded from localStorage in enterApp
     console.log('Cloud sync failed, using local data');
   }
+  updateTopBar();
+  renderList();
 }
 
 async function save(){
