@@ -162,45 +162,6 @@ td.r,th.r{text-align:right}
   <div id="invList"></div>
 </div>
 
-<!-- ══ EXPENSE VIEW ══ -->
-<div class="view" id="view-expense">
-  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-    <button onclick="toggleExpenseMode()" style="background:#f1f5f9;color:#64748b;padding:10px 16px;font-size:16px;border-radius:12px;font-weight:700">←</button>
-    <div style="font-size:18px;font-weight:700">💸 <span class="t" data-bn="খরচ ট্র্যাকার" data-en="Expense Tracker">খরচ ট্র্যাকার</span></div>
-  </div>
-
-  <!-- Date picker -->
-  <div class="card" style="margin-bottom:14px">
-    <div style="display:flex;align-items:center;gap:8px">
-      <button onclick="changeExpDate(-1)" style="background:#f1f5f9;color:#64748b;padding:8px 12px;font-size:16px;border-radius:8px">◀</button>
-      <input type="date" id="expDate" style="flex:1;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-size:13px;font-weight:600" onchange="renderExpenses()"/>
-      <button onclick="changeExpDate(1)" style="background:#f1f5f9;color:#64748b;padding:8px 12px;font-size:16px;border-radius:8px">▶</button>
-    </div>
-  </div>
-
-  <!-- Summary -->
-  <div id="expSummary" style="margin-bottom:14px"></div>
-
-  <!-- Add Expense -->
-  <div class="card" style="border-color:#fecaca">
-    <div class="sec-title" style="color:#dc2626">➕ <span class="t" data-bn="নতুন খরচ যোগ" data-en="Add Expense">নতুন খরচ যোগ</span></div>
-    <div style="margin-bottom:10px"><label class="label"><span class="t" data-bn="জিনিসের নাম" data-en="Item Name">জিনিসের নাম</span></label><input id="exp-name" placeholder=""/></div>
-    <div class="g2" style="margin-bottom:10px">
-      <div><label class="label"><span class="t" data-bn="পরিমাণ" data-en="Qty">পরিমাণ</span></label><input id="exp-qty" type="number" placeholder="1"/></div>
-      <div><label class="label"><span class="t" data-bn="দাম (₹)" data-en="Price (₹)">দাম (₹)</span></label><input id="exp-price" type="number" placeholder="0.00" oninput="calcExpTotal()"/></div>
-    </div>
-    <div class="g2" style="margin-bottom:10px">
-      <div><label class="label"><span class="t" data-bn="মোট খরচ (₹)" data-en="Total (₹)">মোট খরচ (₹)</span></label><input id="exp-total" type="number" placeholder="0.00" style="font-weight:700;color:var(--red)"/></div>
-      <div><label class="label"><span class="t" data-bn="দোকানদার পাবে (₹)" data-en="Due to Shop (₹)">দোকানদার পাবে (₹)</span></label><input id="exp-due" type="number" placeholder="0.00"/></div>
-    </div>
-    <div style="margin-bottom:12px"><label class="label"><span class="t" data-bn="দোকানের নাম / নোট" data-en="Shop / Note">দোকানের নাম / নোট</span></label><input id="exp-note" placeholder=""/></div>
-    <button onclick="addExpense()" style="background:#dc2626;color:#fff;width:100%;padding:12px;border-radius:10px;font-weight:700">➕ <span class="t" data-bn="যোগ করুন" data-en="Add">যোগ করুন</span></button>
-  </div>
-
-  <!-- Expense List -->
-  <div id="expList"></div>
-</div>
-
 <!-- ══ FORM VIEW ══ -->
 <div class="view" id="view-form">
   <div class="inv-header" id="formHeader"></div>
@@ -382,7 +343,6 @@ td.r,th.r{text-align:right}
   </div>
 </div>
 
-
 <!-- ══ CUSTOMER LEDGER MODAL ══ -->
 <div class="modal-bg" id="prevDueModal" style="display:none">
   <div class="modal" style="max-width:500px;padding:0;overflow:hidden">
@@ -459,7 +419,7 @@ const db = firebase.firestore();
 let company = {name:'',address:'',phone:'',logo:null};
 let invoices = [];
 let customers = {};
-let expenses = {}; // {date: [{id,name,qty,price,total,due,note}]}
+ // {date: [{id,name,qty,price,total,due,note}]}
 let editId = null;
 let items = [];
 let returnItems = [];
@@ -537,21 +497,6 @@ function goToCompany(){
   },200);
 }
 
-function goToSettings(){
-  showView('settings');
-}
-
-function toggleLangQuick(){
-  const newLang = lang==='en'?'bn':'en';
-  setLang(newLang);
-  document.getElementById('langToggleLabel').textContent = newLang==='en'?'Switch to বাংলা':'Switch to English';
-}
-
-function toggleTopMenu(){
-  const m = document.getElementById('topMenu');
-  m.style.display = m.style.display==='none'?'block':'none';
-}
-
 // Close menu on outside click
 document.addEventListener('click', function(e){
   const menu = document.getElementById('topMenu');
@@ -560,8 +505,6 @@ document.addEventListener('click', function(e){
     menu.style.display='none';
   }
 });
-
-function acceptTerms(){ /* removed */ }
 
 function createPassword(){
   const p1=document.getElementById('newPass1').value;
@@ -575,14 +518,6 @@ function createPassword(){
   alert('🔑 আপনার Recovery Code:\n\n' + rc + '\n\nএটা কোথাও লিখে রাখুন! পাসওয়ার্ড ভুললে এই code দিয়ে reset করতে পারবেন।');
   enterApp();
 }
-
-function showRecovery(){/* removed */}
-
-function backToLogin(){/* removed */}
-
-function checkRecovery(){/* removed */}
-
-function resetPassWithRecovery(){/* removed */}
 
 function checkPassword(){
   const p=document.getElementById('enterPass').value;
@@ -626,18 +561,6 @@ function changePassword(){
 
 const _ADMIN_CODE = 'Megh';
 
-function checkAdminCode(){
-  const code = document.getElementById('adminCodeInput').value;
-  if(code === _ADMIN_CODE){
-    document.getElementById('adminCodeInput').value='';
-    document.getElementById('adminCard').style.display='block';
-    loadAdminStats();
-    showToast('👑 Admin mode চালু!');
-  } else {
-    document.getElementById('adminCodeInput').value='';
-  }
-}
-
 async function loadAdminStats(){
   const el = document.getElementById('adminStats');
   try {
@@ -674,64 +597,6 @@ async function loadAdminStats(){
 }
 
 // ══ EXPENSE TRACKER ══
-function toggleExpenseMode(){
-  const sw = document.getElementById('expenseSwitch');
-  const isExp = document.getElementById('view-expense').classList.contains('active');
-  if(isExp){
-    sw.style.background='#f1f5f9';sw.style.color='#64748b';
-    showView('list');renderList();
-  } else {
-    sw.style.background='#fef2f2';sw.style.color='#dc2626';
-    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-    document.getElementById('view-expense').classList.add('active');
-    document.getElementById('newBtn').style.display='none';
-    const ed=document.getElementById('expDate');
-    if(ed&&!ed.value) ed.value=todayStr();
-    renderExpenses();
-  }
-}
-
-function changeExpDate(delta){
-  const el=document.getElementById('expDate');
-  const d=new Date(el.value||todayStr());
-  d.setDate(d.getDate()+delta);
-  el.value=d.toISOString().split('T')[0];
-  renderExpenses();
-}
-
-function calcExpTotal(){
-  const qty=parseFloat(document.getElementById('exp-qty').value)||1;
-  const price=parseFloat(document.getElementById('exp-price').value)||0;
-  document.getElementById('exp-total').value=(qty*price).toFixed(2);
-}
-
-function addExpense(){
-  const name=document.getElementById('exp-name').value.trim();
-  const qty=parseFloat(document.getElementById('exp-qty').value)||1;
-  const price=parseFloat(document.getElementById('exp-price').value)||0;
-  const total=parseFloat(document.getElementById('exp-total').value)||(qty*price);
-  const due=parseFloat(document.getElementById('exp-due').value)||0;
-  const note=document.getElementById('exp-note').value.trim();
-  if(!name){showToast(lang==='bn'?'জিনিসের নাম দিন!':'Enter item name!');return;}
-  const date=document.getElementById('expDate').value||todayStr();
-  if(!expenses[date]) expenses[date]=[];
-  expenses[date].unshift({id:Math.random().toString(36).slice(2),name,qty,price,total,due,note,date});
-  document.getElementById('exp-name').value='';
-  document.getElementById('exp-qty').value='';
-  document.getElementById('exp-price').value='';
-  document.getElementById('exp-total').value='';
-  document.getElementById('exp-due').value='';
-  document.getElementById('exp-note').value='';
-  save();
-  renderExpenses();
-  showToast('✅ '+(lang==='bn'?'খরচ যোগ হয়েছে!':'Expense added!'));
-}
-
-function deleteExpense(date,id){
-  if(!expenses[date]) return;
-  expenses[date]=expenses[date].filter(e=>e.id!==id);
-  save();renderExpenses();
-}
 
 function renderExpenses(){
   const date=document.getElementById('expDate').value||todayStr();
@@ -799,14 +664,6 @@ async function pickContact(){
   }
 }
 
-function toggleTermsCard(){
-  const body = document.getElementById('termsCardBody');
-  const arrow = document.getElementById('termsCardArrow');
-  const isOpen = body.style.display !== 'none';
-  body.style.display = isOpen ? 'none' : 'block';
-  arrow.textContent = isOpen ? '▼' : '▲';
-}
-
 function doLogout(){
   if(!confirm(lang==='bn'?'লগআউট করবেন?':'Logout?'))return;
   localStorage.removeItem('inv_session');
@@ -831,7 +688,7 @@ function enterApp(){
   sessionStorage.setItem('inv_session','1');
   localStorage.setItem('inv_session','1');
   setLang(lang);
-  // localStorage থেকে load করো
+  // localStorage থেকে আগে load করো
   try{
     const lc=localStorage.getItem('inv_co');
     const li=localStorage.getItem('inv_list');
@@ -842,29 +699,10 @@ function enterApp(){
     if(lcu) customers=JSON.parse(lcu);
     if(le) expenses=JSON.parse(le);
   }catch(e){}
-
-  // সবসময় loading দেখাও, তারপর cloud থেকে data আনো
-  document.getElementById('loginScreen').style.display='none';
-  document.getElementById('topbar').style.display='flex';
-  document.getElementById('bottomNav').style.display='block';
-
-  // loading overlay
-  const ov=document.createElement('div');
-  ov.id='loadOv';
-  ov.style.cssText='position:fixed;inset:0;background:#fff;z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px';
-  ov.innerHTML=`<div style="width:56px;height:56px;border-radius:14px;background:var(--or);display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:8px">🧾</div><div style="width:40px;height:40px;border:4px solid #e2e8f0;border-top-color:#FF6B00;border-radius:50%;animation:spin .7s linear infinite"></div><div style="font-size:14px;color:#64748b;font-weight:600">Loading...</div>`;
-  document.body.appendChild(ov);
-
-  // cloud থেকে data আনো
-  loadData().then(()=>{
-    const o=document.getElementById('loadOv');
-    if(o){ o.style.opacity='0'; o.style.transition='opacity .3s'; setTimeout(()=>o.remove(),300); }
-    showHome();
-  }).catch(()=>{
-    const o=document.getElementById('loadOv');
-    if(o) o.remove();
-    showHome(); // offline হলেও localStorage data দিয়ে দেখাও
-  });
+  // সাথে সাথে home দেখাও (localStorage data দিয়ে)
+  showHome();
+  // background-এ cloud sync
+  loadData();
 }
 
 // ══ CLOUD DATA ══
@@ -885,7 +723,6 @@ async function loadData(){
       if(d.company) company=d.company;
       if(d.invoices&&d.invoices.length>0) invoices=d.invoices;
       if(d.customers) customers=d.customers;
-      if(d.expenses) expenses=d.expenses||{};
       localStorage.setItem('inv_co',JSON.stringify(company));
       localStorage.setItem('inv_list',JSON.stringify(invoices));
       localStorage.setItem('inv_customers',JSON.stringify(customers));
@@ -901,10 +738,9 @@ async function save(){
   localStorage.setItem('inv_co',JSON.stringify(company));
   localStorage.setItem('inv_list',JSON.stringify(invoices));
   localStorage.setItem('inv_customers',JSON.stringify(customers));
-  localStorage.setItem('inv_expenses',JSON.stringify(expenses));
   try{
     await db.collection('invoiceApp').doc(getDeviceKey()).set({
-      company,invoices,customers,expenses,updated:new Date().toISOString()
+      company,invoices,customers,updated:new Date().toISOString()
     });
   }catch(e){ console.log('Cloud save failed, local only'); }
 }
@@ -1734,7 +1570,6 @@ function buildWAText(inv, stillDue){
   const payLines=(inv.payments||[]).map(p=>`${p.method==='online'?'📱 Online':'💵 Cash'} (${p.date}): ₹${p.amt.toFixed(2)}`).join('\n');
   return '🧾 *'+inv.no+'*\n🏢 *'+(company.name||'')+'*\n👤 *'+inv.cname+'*\n📅 '+inv.date+'\n\n📦 *মাল:*\n'+il+(retLines?'\n\n↩ *রিটার্ন:*\n'+retLines:'')+(inv.prevDue>0?'\n\n⚠️ আগের বাকি ('+(inv.dueDate||inv.date)+'): ₹'+inv.prevDue.toFixed(2):'')+(payLines?'\n\n'+payLines:'')+'\n━━━━━━━━\n'+(stillDue>0?'⏳ *এখনো বাকি: ₹'+stillDue.toFixed(2)+'*':'✅ *সম্পূর্ণ পরিশোধিত*')+'\n\nThank you! 🙏';
 }
-
 
 // ══ CUSTOMER LEDGER ══
 function getCustKey(name, phone){
