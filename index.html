@@ -809,11 +809,12 @@ function toggleTermsCard(){
 function doLogout(){
   if(!confirm(lang==='bn'?'লগআউট করবেন?':'Logout?'))return;
   localStorage.removeItem('inv_session');
+  sessionStorage.removeItem('inv_session');
   location.reload();
 }
 
 function enterApp(){
-  localStorage.setItem('inv_session','1');
+  sessionStorage.setItem('inv_session','1'); localStorage.setItem('inv_session','1');
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('topbar').style.display='flex';
   document.getElementById('bottomNav').style.display='block';
@@ -824,15 +825,20 @@ function enterApp(){
   const navHome = document.getElementById('nav-home');
   if(navHome) navHome.style.color='var(--or)';
   setLang(lang);
-  // localStorage থেকে আগে load করো
-  const localCo = localStorage.getItem('inv_co');
-  const localInv = localStorage.getItem('inv_list');
-  if(localCo) company = JSON.parse(localCo);
-  if(localInv) invoices = JSON.parse(localInv);
-  customers = JSON.parse(localStorage.getItem('inv_customers')||'{}');
+  // localStorage থেকে সবকিছু আগে load করো — এটাই primary source
+  try {
+    const localCo = localStorage.getItem('inv_co');
+    const localInv = localStorage.getItem('inv_list');
+    const localCust = localStorage.getItem('inv_customers');
+    const localExp = localStorage.getItem('inv_expenses');
+    if(localCo) company = JSON.parse(localCo);
+    if(localInv && localInv !== '[]') invoices = JSON.parse(localInv);
+    if(localCust) customers = JSON.parse(localCust);
+    if(localExp) expenses = JSON.parse(localExp);
+  } catch(e){ console.log('Local load error:', e); }
   updateTopBar();
   renderList();
-  // তারপর cloud থেকে sync — সব সময় চেষ্টা করো
+  // Background-এ cloud sync — data আসলে update হবে
   loadData();
 }
 
@@ -1897,12 +1903,17 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js',{sco
 
 // ══ INIT ══
 document.addEventListener('DOMContentLoaded', function(){
+  const hasSession = sessionStorage.getItem('inv_session'); // tab/browser বন্ধ হলে clear
   const hasPass = localStorage.getItem('inv_pass');
   const hasGoogle = localStorage.getItem('inv_google');
-  // password বা google set আছে → সরাসরি home, login screen নেই
-  if(hasPass || hasGoogle){
+  if(hasSession){
+    // এই session-এ আগে login করেছে → সরাসরি home
     enterApp();
+  } else if(hasPass || hasGoogle){
+    // password আছে কিন্তু session নেই → password চাও
+    initLogin();
   } else {
+    // প্রথমবার → password তৈরি করতে বলো
     initLogin();
   }
 });
