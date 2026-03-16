@@ -817,7 +817,22 @@ function enterApp(){
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('topbar').style.display='flex';
   document.getElementById('bottomNav').style.display='block';
+  // সাথে সাথে list view দেখাও
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  const listView = document.getElementById('view-list');
+  if(listView) listView.classList.add('active');
+  // Nav home highlight
+  const navHome = document.getElementById('nav-home');
+  if(navHome) navHome.style.color='var(--or)';
   setLang(lang);
+  // Local data দিয়ে আগে দেখাও
+  company=JSON.parse(localStorage.getItem('inv_co')||'{"name":"","address":"","phone":"","logo":null}');
+  invoices=JSON.parse(localStorage.getItem('inv_list')||'[]');
+  customers=JSON.parse(localStorage.getItem('inv_customers')||'{}');
+  updateTopBar();
+  renderList();
+  if(!company.name) document.getElementById('firstSetup').style.display='flex';
+  // তারপর cloud থেকে sync করো
   loadData();
 }
 
@@ -837,21 +852,17 @@ async function loadData(){
     if(doc.exists){
       const d=doc.data();
       company=d.company||company;
-      invoices=d.invoices||[];
-      customers=d.customers||{};
-      expenses=d.expenses||{};
+      invoices=d.invoices||invoices;
+      customers=d.customers||customers;
+      expenses=d.expenses||expenses;
+      // Cloud data এলে শুধু update করো, view change করো না
+      updateTopBar();
+      renderList();
     }
   }catch(e){
-    company=JSON.parse(localStorage.getItem('inv_co')||'{"name":"","address":"","phone":"","logo":null}');
-    invoices=JSON.parse(localStorage.getItem('inv_list')||'[]');
-    customers=JSON.parse(localStorage.getItem('inv_customers')||'{}');
-    expenses=JSON.parse(localStorage.getItem('inv_expenses')||'{}');
+    // offline — already loaded from localStorage in enterApp
+    console.log('Cloud sync failed, using local data');
   }
-  setLang(lang);
-  updateTopBar();
-  showView('list');
-  renderList();
-  if(!company.name) document.getElementById('firstSetup').style.display='flex';
 }
 
 async function save(){
