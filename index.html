@@ -452,8 +452,10 @@ function initLogin(){
 }
 
 function forgotPassSimple(){
-  if(confirm(lang==='bn'?'সব data মুছে নতুন পাসওয়ার্ড তৈরি করবেন?':'Reset all data and create new password?')){
+  if(confirm(lang==='bn'?'পাসওয়ার্ড reset করবেন? (data থাকবে)':'Reset password? (data will be kept)')){
+    const dkey = localStorage.getItem('inv_dkey');
     localStorage.clear();
+    if(dkey) localStorage.setItem('inv_dkey', dkey); // key রাখো
     location.reload();
   }
 }
@@ -666,8 +668,13 @@ async function pickContact(){
 
 function doLogout(){
   if(!confirm(lang==='bn'?'লগআউট করবেন?':'Logout?'))return;
-  localStorage.removeItem('inv_session');
-  sessionStorage.removeItem('inv_session');
+  // inv_dkey রাখো — cloud data খুঁজে পাওয়ার জন্য দরকার
+  const dkey = localStorage.getItem('inv_dkey');
+  const pass = localStorage.getItem('inv_pass');
+  localStorage.clear();
+  if(dkey) localStorage.setItem('inv_dkey', dkey);
+  if(pass) localStorage.setItem('inv_pass', pass);
+  sessionStorage.clear();
   location.reload();
 }
 
@@ -688,50 +695,59 @@ function enterApp(){
   sessionStorage.setItem('inv_session','1');
   localStorage.setItem('inv_session','1');
   setLang(lang);
-  // localStorage থেকে আগে load করো
+  // localStorage থেকে load করো
   try{
     const lc=localStorage.getItem('inv_co');
     const li=localStorage.getItem('inv_list');
     const lcu=localStorage.getItem('inv_customers');
-    const le=localStorage.getItem('inv_expenses');
     if(lc) company=JSON.parse(lc);
     if(li) invoices=JSON.parse(li);
     if(lcu) customers=JSON.parse(lcu);
-    if(le) expenses=JSON.parse(le);
   }catch(e){}
-  // সাথে সাথে home দেখাও (localStorage data দিয়ে)
-  showHome();
-  // background-এ cloud sync
-  loadData();
+
+  if(invoices.length > 0 || company.name){
+    // localStorage-এ data আছে → সাথে সাথে দেখাও
+    showHome();
+    loadData(); // background sync
+  } else {
+    // localStorage-এ নেই → cloud থেকে আনো তারপর দেখাও
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('topbar').style.display='flex';
+    document.getElementById('bottomNav').style.display='block';
+    loadData().then(()=>{ showHome(); });
+  }
 }
 
 // ══ CLOUD DATA ══
 function getDeviceKey(){
-  let k=localStorage.getItem('inv_dkey');
-  if(!k){k='dev_'+Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem('inv_dkey',k);}
-  return k;
+  // Fixed device key - always use this to find cloud data
+  const FIXED_KEY = 'dev_1p0O3m6q1qpmmq28rkh';
+  localStorage.setItem('inv_dkey', FIXED_KEY);
+  return FIXED_KEY;
 }
 
 async function loadData(){
   const key=getDeviceKey();
   try{
     const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000));
-    const docPromise=db.collection('invoiceApp').doc(key).get();
-    const doc=await Promise.race([docPromise,timeout]);
+    const doc=await Promise.race([db.collection('invoiceApp').doc(key).get(), timeout]);
     if(doc.exists){
       const d=doc.data();
       if(d.company) company=d.company;
       if(d.invoices&&d.invoices.length>0) invoices=d.invoices;
       if(d.customers) customers=d.customers;
+      // localStorage update করো — পরেরবার দ্রুত load হবে
       localStorage.setItem('inv_co',JSON.stringify(company));
       localStorage.setItem('inv_list',JSON.stringify(invoices));
       localStorage.setItem('inv_customers',JSON.stringify(customers));
-      console.log('Cloud sync OK:', invoices.length, 'invoices');
+      console.log('✅ Cloud loaded:', invoices.length, 'invoices');
+    } else {
+      console.log('ℹ️ No cloud data for key:', key);
     }
   }catch(e){
-    console.log('Cloud sync failed:', e.message);
+    console.log('⚠️ Cloud failed:', e.message);
   }
-  return true; // Promise resolve
+  return true;
 }
 
 async function save(){
