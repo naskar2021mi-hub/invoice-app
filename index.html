@@ -157,6 +157,10 @@ td.r,th.r{text-align:right}
 
 <!-- ══ LIST VIEW ══ -->
 <div class="view" id="view-list">
+  <div id="syncBanner" style="display:none;background:#fff7ed;border:1.5px solid #fed7aa;border-radius:12px;padding:12px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
+    <div style="font-size:13px;color:#92400e" id="syncMsg">Syncing...</div>
+    <button onclick="forceSync()" style="background:#FF6B00;color:#fff;padding:6px 14px;font-size:12px;border-radius:8px">🔄 Reload</button>
+  </div>
   <div class="stats" id="statsGrid"></div>
   <input id="search-input" type="text" oninput="renderList()" style="margin-bottom:14px;padding:11px 16px;border-radius:12px"/>
   <div id="invList"></div>
@@ -706,15 +710,15 @@ function enterApp(){
   }catch(e){}
 
   if(invoices.length > 0 || company.name){
-    // localStorage-এ data আছে → সাথে সাথে দেখাও
     showHome();
-    loadData(); // background sync
+    // background-এ sync
+    loadData().then(()=>{ updateTopBar(); renderList(); });
   } else {
-    // localStorage-এ নেই → cloud থেকে আনো তারপর দেখাও
+    // cloud থেকে আনো
     document.getElementById('loginScreen').style.display='none';
     document.getElementById('topbar').style.display='flex';
     document.getElementById('bottomNav').style.display='block';
-    loadData().then(()=>{ showHome(); });
+    forceSync().then(()=>{ showHome(); });
   }
 }
 
@@ -829,6 +833,32 @@ function showView(id){
   }
 }
 function goList(){showView('list');renderList();}
+
+async function forceSync(){
+  document.getElementById('syncMsg').textContent = 'Loading from cloud...';
+  document.getElementById('syncBanner').style.display='flex';
+  const key = 'dev_1p0O3m6q1qpmmq28rkh';
+  try{
+    const doc = await db.collection('invoiceApp').doc(key).get();
+    if(doc.exists){
+      const d = doc.data();
+      if(d.company) company=d.company;
+      if(d.invoices&&d.invoices.length>0) invoices=d.invoices;
+      if(d.customers) customers=d.customers;
+      localStorage.setItem('inv_co',JSON.stringify(company));
+      localStorage.setItem('inv_list',JSON.stringify(invoices));
+      localStorage.setItem('inv_customers',JSON.stringify(customers));
+      document.getElementById('syncMsg').textContent = '✅ Loaded ' + invoices.length + ' invoices!';
+      updateTopBar();
+      renderList();
+      setTimeout(()=>{ document.getElementById('syncBanner').style.display='none'; }, 3000);
+    } else {
+      document.getElementById('syncMsg').textContent = '❌ No data found in cloud';
+    }
+  }catch(e){
+    document.getElementById('syncMsg').textContent = '❌ Error: ' + e.message;
+  }
+}
 
 function loadCompanyForm(){
   document.getElementById('s-name').value=company.name||'';
