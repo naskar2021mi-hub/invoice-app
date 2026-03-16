@@ -831,7 +831,7 @@ function enterApp(){
   sessionStorage.setItem('inv_session','1');
   localStorage.setItem('inv_session','1');
   setLang(lang);
-  // localStorage থেকে load
+  // localStorage থেকে load করো
   try{
     const lc=localStorage.getItem('inv_co');
     const li=localStorage.getItem('inv_list');
@@ -843,27 +843,28 @@ function enterApp(){
     if(le) expenses=JSON.parse(le);
   }catch(e){}
 
-  if(invoices.length>0 || company.name){
-    // data আছে — সাথে সাথে দেখাও
+  // সবসময় loading দেখাও, তারপর cloud থেকে data আনো
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('topbar').style.display='flex';
+  document.getElementById('bottomNav').style.display='block';
+
+  // loading overlay
+  const ov=document.createElement('div');
+  ov.id='loadOv';
+  ov.style.cssText='position:fixed;inset:0;background:#fff;z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px';
+  ov.innerHTML=`<div style="width:56px;height:56px;border-radius:14px;background:var(--or);display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:8px">🧾</div><div style="width:40px;height:40px;border:4px solid #e2e8f0;border-top-color:#FF6B00;border-radius:50%;animation:spin .7s linear infinite"></div><div style="font-size:14px;color:#64748b;font-weight:600">Loading...</div>`;
+  document.body.appendChild(ov);
+
+  // cloud থেকে data আনো
+  loadData().then(()=>{
+    const o=document.getElementById('loadOv');
+    if(o){ o.style.opacity='0'; o.style.transition='opacity .3s'; setTimeout(()=>o.remove(),300); }
     showHome();
-    loadData(); // background sync
-  } else {
-    // data নেই — cloud থেকে আনো
-    document.getElementById('loginScreen').style.display='none';
-    document.getElementById('topbar').style.display='flex';
-    document.getElementById('bottomNav').style.display='block';
-    // loading দেখাও
-    const ov=document.createElement('div');
-    ov.id='loadOv';
-    ov.style.cssText='position:fixed;inset:0;background:#f1f5f9;z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px';
-    ov.innerHTML='<div style="width:48px;height:48px;border:4px solid #e2e8f0;border-top-color:#FF6B00;border-radius:50%;animation:spin .7s linear infinite"></div><div style="font-size:15px;color:#64748b;font-weight:600">Loading data...</div>';
-    document.body.appendChild(ov);
-    loadData().then(()=>{
-      const o=document.getElementById('loadOv');
-      if(o) o.remove();
-      showHome();
-    });
-  }
+  }).catch(()=>{
+    const o=document.getElementById('loadOv');
+    if(o) o.remove();
+    showHome(); // offline হলেও localStorage data দিয়ে দেখাও
+  });
 }
 
 // ══ CLOUD DATA ══
@@ -881,24 +882,19 @@ async function loadData(){
     const doc=await Promise.race([docPromise,timeout]);
     if(doc.exists){
       const d=doc.data();
-      // Cloud data দিয়ে update করো
       if(d.company) company=d.company;
       if(d.invoices&&d.invoices.length>0) invoices=d.invoices;
       if(d.customers) customers=d.customers;
       if(d.expenses) expenses=d.expenses||{};
-      // localStorage-ও update করো যাতে পরবর্তীবার দ্রুত load হয়
       localStorage.setItem('inv_co',JSON.stringify(company));
       localStorage.setItem('inv_list',JSON.stringify(invoices));
       localStorage.setItem('inv_customers',JSON.stringify(customers));
-      updateTopBar();
-      renderList();
-      console.log('Cloud sync OK, invoices:',invoices.length);
-    } else {
-      console.log('No cloud data found for key:',key);
+      console.log('Cloud sync OK:', invoices.length, 'invoices');
     }
   }catch(e){
     console.log('Cloud sync failed:', e.message);
   }
+  return true; // Promise resolve
 }
 
 async function save(){
