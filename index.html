@@ -154,7 +154,7 @@ td.r,th.r{text-align:right}
     <!-- Set Password (first time) -->
     <div id="setPassStep" style="display:none">
       <div style="background:#fff7ed;border-radius:10px;padding:12px;margin-bottom:16px;font-size:13px;color:#92400e">
-        🔐 <span id="firstTimeText">First time — create a password</span>
+        🔐 প্রথমবার — পাসওয়ার্ড তৈরি করুন
       </div>
       <input id="newPass1" type="password" placeholder="New password" style="margin-bottom:10px;font-size:16px;text-align:center"/>
       <input id="newPass2" type="password" placeholder="Confirm password" style="margin-bottom:16px;font-size:16px;text-align:center"/>
@@ -168,38 +168,17 @@ td.r,th.r{text-align:right}
       <button onclick="forgotPassSimple()" style="background:none;color:#94a3b8;width:100%;padding:10px;margin-top:8px;font-size:12px" id="forgotPassBtn">Forgot password?</button>
     </div>
 
-    <div style="display:flex;align-items:center;gap:10px;margin:16px 0" id="orDivider" style="display:none">
-      <div style="flex:1;height:1px;background:#e2e8f0"></div>
       <span style="font-size:12px;color:#94a3b8">or, continue with</span>
       <div style="flex:1;height:1px;background:#e2e8f0"></div>
     </div>
 
-    <!-- Google Sign In - with account chooser -->
-    <button onclick="signInWithGoogle()" id="googleBtn" style="display:none;background:#fff;color:#1e293b;width:100%;padding:13px;border-radius:12px;border:1.5px solid #e2e8f0;font-size:15px;font-weight:600;align-items:center;justify-content:center;gap:10px;margin-bottom:4px">
-      <span style="display:flex;align-items:center;justify-content:center;gap:10px">
-        <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-        Sign in with Google
-      </span>
-    </button>
-
-    <div id="loginErr" style="color:var(--red);font-size:13px;margin-top:10px;min-height:20px"></div>
-  </div>
-</div>
-
-<!-- ══ TOPBAR ══ -->
-<div id="topbar" style="display:none">
-  <button onclick="openMenu()" style="width:40px;height:40px;border-radius:9px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-size:22px;border:none;padding:0;flex-shrink:0;cursor:pointer">☰</button>
-  <div class="logo-box" id="topLogoBox">₹</div>
+    <div class="logo-box" id="topLogoBox">₹</div>
   <div class="co-name" id="topCoName">Invoice App</div>
   <button id="newBtn" onclick="openNew()" style="background:var(--or);color:#fff;padding:8px 14px;font-size:13px">+ New</button>
 </div>
 
 <!-- ══ LIST VIEW ══ -->
 <div class="view" id="view-list">
-  <div id="syncBanner" style="display:none;background:#fff7ed;border:1.5px solid #fed7aa;border-radius:12px;padding:12px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
-    <div style="font-size:13px;color:#92400e" id="syncMsg">Syncing...</div>
-    <button onclick="forceSync()" style="background:#FF6B00;color:#fff;padding:6px 14px;font-size:12px;border-radius:8px">🔄 Reload</button>
-  </div>
   <div class="stats" id="statsGrid"></div>
   <input id="search-input" type="text" oninput="renderList()" style="margin-bottom:14px;padding:11px 16px;border-radius:12px"/>
   <div id="invList"></div>
@@ -474,9 +453,8 @@ function initLogin(){
   document.getElementById('loadingScreen').style.display='none';
   document.getElementById('loginScreen').style.display='flex';
   const stored = localStorage.getItem('inv_pass');
-  const hasGoogle = localStorage.getItem('inv_google');
   document.getElementById('loginSubtitle').textContent = lang==='bn'?'পাসওয়ার্ড দিয়ে প্রবেশ করুন':'Enter your password to continue';
-  if(!stored && !hasGoogle){
+  if(!stored){
     document.getElementById('loginSubtitle').textContent = lang==='bn'?'প্রথমবার — পাসওয়ার্ড তৈরি করুন':'First time — create your password';
     document.getElementById('setPassStep').style.display='block';
   } else {
@@ -494,53 +472,8 @@ function forgotPassSimple(){
   }
 }
 
-function signInWithGoogle(){
-  // Open Google account chooser via Firebase Auth
-  if(typeof firebase !== 'undefined' && firebase.auth){
-    const provider = new firebase.auth.GoogleAuthProvider();
-    provider.setCustomParameters({prompt:'select_account'}); // always show account chooser
-    firebase.auth().signInWithPopup(provider)
-      .then(result=>{
-        const user = result.user;
-        localStorage.setItem('inv_google', user.email||'1');
-        localStorage.setItem('inv_gname', user.displayName||'');
-        showToast('✅ Welcome, '+(user.displayName||user.email||'User')+'!');
-        enterApp();
-      })
-      .catch(err=>{
-        // Popup blocked or cancelled - fallback to simple flag
-        if(err.code==='auth/popup-blocked'||err.code==='auth/cancelled-popup-request'||err.code==='auth/popup-closed-by-user'){
-          showToast(lang==='bn'?'Popup block হয়েছে — সরাসরি login হচ্ছে':'Popup blocked — logging in directly');
-          localStorage.setItem('inv_google','1');
-          enterApp();
-        } else {
-          document.getElementById('loginErr').textContent = err.message||'Google login failed';
-        }
-      });
-  } else {
-    // Firebase not loaded - simple fallback
-    localStorage.setItem('inv_google','1');
-    enterApp();
-  }
-}
 
-function goToCompany(){
-  document.getElementById('view-settings').scrollTop=0;
-  showView('settings');
-  setTimeout(()=>{
-    const el=document.getElementById('s-name');
-    if(el){el.focus();}
-  },200);
-}
 
-// Close menu on outside click
-document.addEventListener('click', function(e){
-  const menu = document.getElementById('topMenu');
-  const btn = e.target.closest('[onclick="toggleTopMenu()"]');
-  if(menu && !menu.contains(e.target) && !btn){
-    menu.style.display='none';
-  }
-});
 
 function createPassword(){
   const p1=document.getElementById('newPass1').value;
@@ -559,9 +492,6 @@ function checkPassword(){
   const p=document.getElementById('enterPass').value;
   if(!p){document.getElementById('loginErr').textContent=lang==='bn'?'পাসওয়ার্ড দিন!':'Enter password!';return;}
   const stored=localStorage.getItem('inv_pass');
-  const googleLogin=localStorage.getItem('inv_google');
-  // Google login করা থাকলে সরাসরি enter করতে দাও
-  if(!stored && googleLogin){enterApp();return;}
   if(!stored){document.getElementById('loginErr').textContent=lang==='bn'?'পাসওয়ার্ড নেই, নতুন তৈরি করুন':'No password set';return;}
   if(hashPass(p)===stored){
     document.getElementById('loginErr').textContent='';
@@ -595,87 +525,9 @@ function changePassword(){
   showToast('✅ '+(lang==='bn'?'পাসওয়ার্ড পরিবর্তন হয়েছে!':'Password changed!'));
 }
 
-const _ADMIN_CODE = 'Megh';
 
-async function loadAdminStats(){
-  const el = document.getElementById('adminStats');
-  try {
-    el.innerHTML=`<div style="text-align:center;color:#94a3b8;font-size:13px">লোড হচ্ছে...</div>`;
-    const snapshot = await db.collection('invoiceApp').get();
-    const total = snapshot.size;
-    const users = [];
-    snapshot.forEach(doc=>{
-      const d = doc.data();
-      const co = d.company?.name || '(নাম নেই)';
-      const invCount = (d.invoices||[]).length;
-      const lastInv = (d.invoices||[]).sort((a,b)=>b.date>a.date?1:-1)[0];
-      const lastDate = lastInv?.date || '—';
-      users.push({co, invCount, lastDate});
-    });
-    users.sort((a,b)=>b.lastDate>a.lastDate?1:-1);
-    el.innerHTML=`
-      <div style="display:flex;justify-content:space-between;align-items:center;background:#ede9fe;border-radius:10px;padding:12px 14px;margin-bottom:14px">
-        <div style="font-size:13px;font-weight:700;color:#5b21b6">👥 মোট ব্যবহারকারী</div>
-        <div style="font-size:28px;font-weight:800;color:#7c3aed">${total}</div>
-      </div>
-      ${users.map(u=>`
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #e2e8f0;font-size:13px">
-          <div>
-            <div style="font-weight:600;color:#1e293b">${u.co}</div>
-            <div style="font-size:11px;color:#94a3b8">শেষ invoice: ${u.lastDate}</div>
-          </div>
-          <div style="font-size:12px;font-weight:700;color:#7c3aed">${u.invCount}টি invoice</div>
-        </div>`).join('')}
-      <button onclick="loadAdminStats()" style="background:#ede9fe;color:#7c3aed;width:100%;margin-top:12px;padding:8px;border-radius:8px;font-size:12px">🔄 Refresh</button>`;
-  } catch(e){
-    el.innerHTML=`<div style="color:var(--red);font-size:13px">❌ লোড করা যায়নি।</div>`;
-  }
-}
 
-// ══ EXPENSE TRACKER ══
 
-function renderExpenses(){
-  const date=document.getElementById('expDate').value||todayStr();
-  const list=expenses[date]||[];
-  const totalSpent=list.reduce((s,e)=>s+e.total,0);
-  const totalDue=list.reduce((s,e)=>s+e.due,0);
-
-  // Summary
-  document.getElementById('expSummary').innerHTML=`
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="stat-card" style="border:1.5px solid #fecaca;background:#fff5f5">
-        <div class="stat-label" style="color:var(--red)">${lang==='bn'?'মোট খরচ':'Total Spent'}</div>
-        <div class="stat-val mono" style="color:var(--red);font-size:15px">${fmtINR(totalSpent)}</div>
-      </div>
-      <div class="stat-card" style="border:1.5px solid #fed7aa;background:#fff7ed">
-        <div class="stat-label" style="color:#92400e">${lang==='bn'?'দোকানদার পাবে':'Due to Shops'}</div>
-        <div class="stat-val mono" style="color:#92400e;font-size:15px">${fmtINR(totalDue)}</div>
-      </div>
-    </div>`;
-
-  // List
-  if(list.length===0){
-    document.getElementById('expList').innerHTML=`<div class="empty"><div class="icon">💸</div><div style="font-weight:600;color:#94a3b8">${lang==='bn'?'এই দিনে কোনো খরচ নেই':'No expenses for this day'}</div></div>`;
-    return;
-  }
-  document.getElementById('expList').innerHTML=list.map(e=>`
-    <div class="card" style="border-left:4px solid var(--red);margin-bottom:10px">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div style="flex:1">
-          <div style="font-weight:700;font-size:15px">${e.name}</div>
-          <div style="font-size:12px;color:#64748b;margin-top:3px">
-            ${lang==='bn'?'পরিমাণ':'Qty'}: ${e.qty} × ₹${e.price.toFixed(2)}
-            ${e.note?` • ${e.note}`:''}
-          </div>
-          ${e.due>0?`<div style="font-size:12px;color:#92400e;margin-top:3px">🏪 ${lang==='bn'?'দোকানদার পাবে':'Due to shop'}: <strong>${fmtINR(e.due)}</strong></div>`:''}
-        </div>
-        <div style="text-align:right;flex-shrink:0;margin-left:10px">
-          <div class="mono" style="font-size:17px;font-weight:700;color:var(--red)">${fmtINR(e.total)}</div>
-          <button onclick="deleteExpense('${date}','${e.id}')" style="background:#fef2f2;color:var(--red);padding:3px 8px;font-size:11px;border-radius:6px;margin-top:4px">🗑</button>
-        </div>
-      </div>
-    </div>`).join('');
-}
 
 async function pickContact(){
   try {
@@ -747,8 +599,6 @@ function enterApp(){
     if(lcu) customers=JSON.parse(lcu);
   }catch(e){}
   // Step 2: session set
-  sessionStorage.setItem('inv_session','1');
-  localStorage.setItem('inv_session','1');
   setLang(lang);
   // Step 3: সাথে সাথে home দেখাও — কখনো empty দেখাবে না
   document.getElementById('loadingScreen').style.display='none';
@@ -813,8 +663,6 @@ function setLang(l){
   document.getElementById('search-input').placeholder=l==='bn'?'🔍 নাম বা ইনভয়েস খুঁজুন...':'🔍 Search by name or invoice...';
   document.getElementById('btnBn').className='lang-btn'+(l==='bn'?' active':'');
   document.getElementById('btnEn').className='lang-btn'+(l==='en'?' active':'');
-  const ltl = document.getElementById('langToggleLabel');
-  if(ltl) ltl.textContent = l==='en'?'Switch to বাংলা':'Switch to English';
   // Payment modal static texts
   document.getElementById('payModalTitle').textContent=l==='bn'?'কত টাকা পেয়েছেন?':'How much received?';
   document.getElementById('payAmt').placeholder=l==='bn'?'₹ পরিমাণ লিখুন':'₹ Enter amount';
@@ -839,7 +687,6 @@ function showToast(msg){
 function updateTopBar(){
   const box=document.getElementById('topLogoBox');
   document.getElementById('topCoName').textContent=company.name||(lang==='en'?'Invoice App':'ইনভয়েস অ্যাপ');
-  document.getElementById('langToggleLabel').textContent = lang==='en'?'Switch to বাংলা':'Switch to English';
   box.innerHTML=company.logo?`<img src="${company.logo}" style="width:100%;height:100%;object-fit:contain;border-radius:9px"/>`:'₹';
 }
 
@@ -861,31 +708,6 @@ function showView(id){
 }
 function goList(){showView('list');renderList();}
 
-async function forceSync(){
-  document.getElementById('syncMsg').textContent = 'Loading from cloud...';
-  document.getElementById('syncBanner').style.display='flex';
-  const key = 'dev_1p0O3m6q1qpmmq28rkh';
-  try{
-    const doc = await db.collection('invoiceApp').doc(key).get();
-    if(doc.exists){
-      const d = doc.data();
-      if(d.company) company=d.company;
-      if(d.invoices&&d.invoices.length>0) invoices=d.invoices;
-      if(d.customers) customers=d.customers;
-      localStorage.setItem('inv_co',JSON.stringify(company));
-      localStorage.setItem('inv_list',JSON.stringify(invoices));
-      localStorage.setItem('inv_customers',JSON.stringify(customers));
-      document.getElementById('syncMsg').textContent = '✅ Loaded ' + invoices.length + ' invoices!';
-      updateTopBar();
-      renderList();
-      setTimeout(()=>{ document.getElementById('syncBanner').style.display='none'; }, 3000);
-    } else {
-      document.getElementById('syncMsg').textContent = '❌ No data found in cloud';
-    }
-  }catch(e){
-    document.getElementById('syncMsg').textContent = '❌ Error: ' + e.message;
-  }
-}
 
 function loadCompanyForm(){
   document.getElementById('s-name').value=company.name||'';
@@ -942,56 +764,7 @@ function handleLogo(input){
 }
 
 // ══ DAILY REPORT ══
-function changeReportDate(delta){
-  const el = document.getElementById('reportDate');
-  const d = new Date(el.value || todayStr());
-  d.setDate(d.getDate() + delta);
-  el.value = d.toISOString().split('T')[0];
-  renderDailyReport();
-}
 
-function renderDailyReport(){
-  const dateEl = document.getElementById('reportDate');
-  const selectedDate = dateEl ? (dateEl.value || todayStr()) : todayStr();
-  const isToday = selectedDate === todayStr();
-  const ti=invoices.filter(i=>i.date===selectedDate);
-
-  // date label বাংলায়
-  const d = new Date(selectedDate);
-  const mbn=['জানু','ফেব্রু','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টে','অক্টো','নভে','ডিসে'];
-  const men=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const dateLabel = d.getDate()+' '+(lang==='bn'?mbn:men)[d.getMonth()]+' '+d.getFullYear();
-
-  if(ti.length===0){
-    document.getElementById('dailyReport').innerHTML=`<div style="text-align:center;color:#94a3b8;padding:16px">${isToday?(lang==='bn'?'আজ কোনো বিক্রয় নেই':'No sales today'):(dateLabel+' — '+(lang==='bn'?'কোনো বিক্রয় নেই':'No sales'))}</div>`;
-    return;
-  }
-  const ts=ti.reduce((s,i)=>s+i.total,0);
-  const tp=ti.filter(i=>i.status==='paid').reduce((s,i)=>s+(i.paidAmt||i.net),0)+ti.filter(i=>i.status==='partial').reduce((s,i)=>s+(i.paidAmt||0),0);
-  const td=ti.filter(i=>i.status!=='paid'&&i.status!=='partial').reduce((s,i)=>s+i.net,0)+ti.filter(i=>i.status==='partial').reduce((s,i)=>s+(i.remainingDue||0),0);
-  const prevDueRecovered = ti.filter(i=>i.prevDue>0&&(i.status==='paid'||i.status==='partial')).reduce((s,i)=>{
-    const paid = i.paidAmt||0;
-    const todayAmt = i.total - (i.retAmt||0);
-    const fromPrev = Math.max(0, paid - todayAmt);
-    return s + Math.min(fromPrev, i.prevDue||0);
-  },0);
-  document.getElementById('dailyReport').innerHTML=`
-    <div style="font-size:12px;font-weight:700;color:var(--or);margin-bottom:10px;text-align:center">${isToday?(lang==='bn'?'📅 আজকের রিপোর্ট':'📅 Today'):('📅 '+dateLabel)}</div>
-    <div class="rep-row"><span>${lang==='bn'?'ইনভয়েস':'Invoices'}</span><strong>${ti.length}${lang==='bn'?'টি':''}</strong></div>
-    <div class="rep-row"><span>${lang==='bn'?'মোট বিক্রয়':'Total Sales'}</span><strong class="mono">${fmtINR(ts)}</strong></div>
-    <div class="rep-row"><span>${lang==='bn'?'আদায়':'Collected'}</span><strong class="mono" style="color:var(--green)">${fmtINR(tp)}</strong></div>
-    ${prevDueRecovered>0?`<div class="rep-row"><span>↩ ${lang==='bn'?'আগের বাকি আদায়':'Prev Due Recovered'}</span><strong class="mono" style="color:#7c3aed">${fmtINR(prevDueRecovered)}</strong></div>`:''}
-    <div class="rep-row" style="border:none"><span>${lang==='bn'?'বাকি':'Pending'}</span><strong class="mono" style="color:var(--red)">${fmtINR(td)}</strong></div>
-    <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
-      ${ti.map(inv=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f8fafc;font-size:13px">
-        <div><span style="font-weight:600">${inv.cname}</span> <span style="font-size:11px;color:#94a3b8">${inv.no}</span></div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <span class="mono" style="font-weight:700;color:${inv.status==='paid'?'var(--green)':'var(--red)'}">${fmtINR(inv.net)}</span>
-          ${inv.status!=='paid'&&isToday?`<button onclick="markPaid('${inv.id}');renderDailyReport()" style="background:#ecfdf5;color:var(--green);padding:3px 8px;font-size:11px;border-radius:6px">✓</button>`:'<span style="color:var(--green);font-size:12px">${inv.status==="paid"?"✓":""}</span>'}
-        </div>
-      </div>`).join('')}
-    </div>`;
-}
 
 // ══ UTILS ══
 function fmtINR(n){return '₹'+Number(n).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});}
@@ -1800,10 +1573,6 @@ function showPrevDueList(){
   document.getElementById('prevDueModal').style.display='flex';
 }
 
-function clearPrevDue(invId){
-  invoices = invoices.map(i=>i.id===invId?{...i,prevDuePaid:true}:i);
-  save();showToast('✅');renderList();
-}
 
 // ══ PRINT ══
 function printInv(id){
@@ -1848,44 +1617,8 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js',{sco
 
 // ══ INIT ══
 document.addEventListener('DOMContentLoaded', function(){
-  const hasPass = localStorage.getItem('inv_pass');
-  const hasData = localStorage.getItem('inv_list') || localStorage.getItem('inv_co');
-
-  if(hasPass && hasData){
-    // পাসওয়ার্ড + data আছে → সরাসরি home
-    enterApp();
-  } else {
-    // প্রথমবার বা data নেই → login
-    initLogin();
-  }
-});
-</script>
-</body>
-</html>
-  <div style="display:flex;justify-content:flex-end;margin-top:12px"><div style="min-width:240px">
-  <div class="tr"><span>Subtotal</span><span>₹${inv.total.toFixed(2)}</span></div>
-  ${inv.prevDue>0?`<div class="tr"><span>Prev Due</span><span>+₹${inv.prevDue.toFixed(2)}</span></div>`:''}
-  <div class="tr tf"><span>Grand Total</span><span>₹${inv.net.toFixed(2)}</span></div>
-  </div></div></div>
-  </body></html>`);
-  w.document.close();setTimeout(()=>w.print(),600);
-}
-
-// SERVICE WORKER
-if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(e=>console.log('SW:',e.message));}
-
-// ══ INIT ══
-document.addEventListener('DOMContentLoaded', function(){
-  const hasPass = localStorage.getItem('inv_pass');
-  const hasData = localStorage.getItem('inv_list') || localStorage.getItem('inv_co');
-
-  if(hasPass && hasData){
-    // পাসওয়ার্ড আছে + data আছে → সরাসরি home দেখাও
-    enterApp();
-  } else {
-    // পাসওয়ার্ড নেই বা নতুন device → login screen
-    initLogin();
-  }
+  // সবসময় login screen দেখাবে — প্রতিবার password দিতে হবে
+  initLogin();
 });
 </script>
 </body>
