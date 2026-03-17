@@ -1214,7 +1214,7 @@ function renderList(){
     </div>`:''}`;
 
   if(filtered.length===0){
-    document.getElementById('invList').innerHTML=`<div class="empty"><div class="icon">🧾</div><div style="font-size:16px;font-weight:600;color:var(--gray);margin-bottom:6px">${invoices.length===0?(t('No invoices yet')):(t('Nothing found'))}</div><p>${invoices.length===0?('" + t('"+ New" to create')'):''}  </p></div>`;
+    document.getElementById('invList').innerHTML=`<div class="empty"><div class="icon">🧾</div><div style="font-size:16px;font-weight:600;color:var(--gray);margin-bottom:6px">${invoices.length===0?(t('No invoices yet')):(t('Nothing found'))}</div><p>${invoices.length===0?t('"+ New" to create'):''}  </p></div>`;
     return;
   }
   document.getElementById('invList').innerHTML=filtered.map(inv=>{
