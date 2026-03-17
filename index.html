@@ -452,23 +452,36 @@ function hashPass(p){ let h=0;for(let i=0;i<p.length;i++){h=(Math.imul(31,h)+p.c
 function initLogin(){
   document.getElementById('loadingScreen').style.display='none';
   document.getElementById('loginScreen').style.display='flex';
+  // প্রতিবার দুটোই hide করো, তারপর সঠিকটা দেখাও
+  document.getElementById('setPassStep').style.display='none';
+  document.getElementById('enterPassStep').style.display='none';
+  document.getElementById('loginErr').textContent='';
   const stored = localStorage.getItem('inv_pass');
-  document.getElementById('loginSubtitle').textContent = lang==='bn'?'পাসওয়ার্ড দিয়ে প্রবেশ করুন':'Enter your password to continue';
   if(!stored){
-    document.getElementById('loginSubtitle').textContent = lang==='bn'?'প্রথমবার — পাসওয়ার্ড তৈরি করুন':'First time — create your password';
+    document.getElementById('loginSubtitle').textContent='প্রথমবার — পাসওয়ার্ড তৈরি করুন';
     document.getElementById('setPassStep').style.display='block';
   } else {
+    document.getElementById('loginSubtitle').textContent='পাসওয়ার্ড দিয়ে প্রবেশ করুন';
     document.getElementById('enterPassStep').style.display='block';
+    document.getElementById('enterPass').value='';
     setTimeout(()=>document.getElementById('enterPass').focus(),300);
   }
 }
 
 function forgotPassSimple(){
-  if(confirm(lang==='bn'?'পাসওয়ার্ড reset করবেন? (data থাকবে)':'Reset password? (data will be kept)')){
-    const dkey = localStorage.getItem('inv_dkey');
+  if(confirm('পাসওয়ার্ড reset করবেন? (data থাকবে)')){
+    // data রাখো, শুধু password মুছো
+    const co = localStorage.getItem('inv_co');
+    const li = localStorage.getItem('inv_list');
+    const lcu = localStorage.getItem('inv_customers');
+    const dk = localStorage.getItem('inv_dkey');
     localStorage.clear();
-    if(dkey) localStorage.setItem('inv_dkey', dkey); // key রাখো
-    location.reload();
+    if(co) localStorage.setItem('inv_co', co);
+    if(li) localStorage.setItem('inv_list', li);
+    if(lcu) localStorage.setItem('inv_customers', lcu);
+    if(dk) localStorage.setItem('inv_dkey', dk);
+    // নতুন password তৈরির screen দেখাও
+    initLogin();
   }
 }
 
@@ -589,7 +602,7 @@ function showHome(){
 }
 
 function enterApp(){
-  // Step 1: localStorage থেকে সাথে সাথে load করো
+  // Step 1: localStorage থেকে data load
   try{
     const lc=localStorage.getItem('inv_co');
     const li=localStorage.getItem('inv_list');
@@ -598,16 +611,16 @@ function enterApp(){
     if(li) invoices=JSON.parse(li);
     if(lcu) customers=JSON.parse(lcu);
   }catch(e){}
-  // Step 2: session set
-  setLang(lang);
-  // Step 3: সাথে সাথে home দেখাও — কখনো empty দেখাবে না
+  // Step 2: login screen লুকাও, app দেখাও
   document.getElementById('loadingScreen').style.display='none';
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('topbar').style.display='flex';
+  // Step 3: language + views
+  setLang(lang);
   showView('list');
-  renderList();
   updateTopBar();
-  // Step 4: background-এ cloud sync
+  renderList();
+  // Step 4: background cloud sync
   loadData().then(()=>{updateTopBar();renderList();}).catch(()=>{});
 }
 
