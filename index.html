@@ -149,35 +149,36 @@ td.r,th.r{text-align:right}
     <div style="font-size:24px;font-weight:800;margin-bottom:4px;color:#1e293b">Invoice App</div>
     <div style="font-size:12px;color:#94a3b8;margin-bottom:6px;letter-spacing:.5px">INVOICE MANAGER</div>
     <div style="width:40px;height:3px;background:linear-gradient(90deg,#FF6B00,#ff8c38);border-radius:99px;margin:0 auto 20px"></div>
-    <div style="font-size:13px;color:#64748b;margin-bottom:20px" id="loginSubtitle">Enter your password to continue</div>
+    <div style="font-size:13px;color:#64748b;margin-bottom:20px" id="loginSubtitle">পাসওয়ার্ড দিয়ে প্রবেশ করুন</div>
 
-    <!-- Set Password (first time) -->
+    <!-- প্রথমবার: নতুন পাসওয়ার্ড -->
     <div id="setPassStep" style="display:none">
       <div style="background:#fff7ed;border-radius:10px;padding:12px;margin-bottom:16px;font-size:13px;color:#92400e">
-        🔐 প্রথমবার — পাসওয়ার্ড তৈরি করুন
+        🔐 প্রথমবার — নতুন পাসওয়ার্ড তৈরি করুন
       </div>
-      <input id="newPass1" type="password" placeholder="New password" style="margin-bottom:10px;font-size:16px;text-align:center"/>
-      <input id="newPass2" type="password" placeholder="Confirm password" style="margin-bottom:16px;font-size:16px;text-align:center"/>
-      <button onclick="createPassword()" style="background:var(--or);color:#fff;width:100%;padding:14px;font-size:16px;border-radius:12px" id="createPassBtn">Create Password →</button>
+      <input id="newPass1" type="password" placeholder="নতুন পাসওয়ার্ড" style="margin-bottom:10px;font-size:16px;text-align:center"/>
+      <input id="newPass2" type="password" placeholder="পাসওয়ার্ড আবার দিন" style="margin-bottom:16px;font-size:16px;text-align:center"/>
+      <button onclick="createPassword()" style="background:var(--or);color:#fff;width:100%;padding:14px;font-size:16px;border-radius:12px">পাসওয়ার্ড তৈরি করুন →</button>
     </div>
 
-    <!-- Enter Password -->
+    <!-- পাসওয়ার্ড দিন -->
     <div id="enterPassStep" style="display:none">
-      <input id="enterPass" type="password" placeholder="Enter Password" data-ph-bn="পাসওয়ার্ড লিখুন" data-ph-en="Enter Password" style="margin-bottom:16px;font-size:18px;text-align:center;letter-spacing:4px" onkeydown="if(event.key==='Enter')checkPassword()"/>
-      <button onclick="checkPassword()" style="background:var(--or);color:#fff;width:100%;padding:14px;font-size:16px;border-radius:12px" id="enterPassBtn">Login →</button>
-      <button onclick="forgotPassSimple()" style="background:none;color:#94a3b8;width:100%;padding:10px;margin-top:8px;font-size:12px" id="forgotPassBtn">Forgot password?</button>
+      <input id="enterPass" type="password" placeholder="পাসওয়ার্ড লিখুন" style="margin-bottom:16px;font-size:18px;text-align:center;letter-spacing:4px" onkeydown="if(event.key==='Enter')checkPassword()"/>
+      <button onclick="checkPassword()" style="background:var(--or);color:#fff;width:100%;padding:14px;font-size:16px;border-radius:12px">প্রবেশ করুন →</button>
+      <button onclick="forgotPassSimple()" style="background:none;color:#94a3b8;width:100%;padding:10px;margin-top:8px;font-size:12px;border:none">পাসওয়ার্ড ভুলে গেছেন?</button>
     </div>
 
-      <span style="font-size:12px;color:#94a3b8">or, continue with</span>
-      <div style="flex:1;height:1px;background:#e2e8f0"></div>
-    </div>
-
-    <div class="logo-box" id="topLogoBox">₹</div>
-  <div class="co-name" id="topCoName">Invoice App</div>
-  <button id="newBtn" onclick="openNew()" style="background:var(--or);color:#fff;padding:8px 14px;font-size:13px">+ New</button>
+    <div id="loginErr" style="color:var(--red);font-size:13px;margin-top:10px;min-height:20px"></div>
+  </div>
 </div>
 
-<!-- ══ LIST VIEW ══ -->
+<!-- ══ TOPBAR ══ -->
+<div id="topbar">
+  <button class="menu-btn" onclick="openMenu()">☰</button>
+  <div class="logo-box" id="topLogoBox">₹</div>
+  <div class="co-name" id="topCoName">Invoice App</div>
+  <button id="newBtn" onclick="openNew()" style="background:var(--or);color:#fff;padding:8px 16px;font-size:13px">+ New</button>
+</div>
 <div class="view" id="view-list">
   <div class="stats" id="statsGrid"></div>
   <input id="search-input" type="text" oninput="renderList()" style="margin-bottom:14px;padding:11px 16px;border-radius:12px"/>
