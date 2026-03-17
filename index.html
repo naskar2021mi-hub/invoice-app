@@ -104,7 +104,7 @@ td.r,th.r{text-align:right}
 <!-- LOADING -->
 <div id="loadingScreen">
   <div class="spinner"></div>
-  <div style="font-size:16px;font-weight:600;opacity:.9">Loading...</div>
+  <div style="font-size:16px;font-weight:600;opacity:.9"><span id="loadingText" data-i18n="Loading...">Loading...</span></div>
 </div>
 
 <!-- SLIDE MENU OVERLAY -->
@@ -149,21 +149,21 @@ td.r,th.r{text-align:right}
     <div style="font-size:24px;font-weight:800;margin-bottom:4px;color:#1e293b">Invoice App</div>
     <div style="font-size:12px;color:#94a3b8;margin-bottom:6px;letter-spacing:.5px">INVOICE MANAGER</div>
     <div style="width:40px;height:3px;background:linear-gradient(90deg,#FF6B00,#ff8c38);border-radius:99px;margin:0 auto 20px"></div>
-    <div style="font-size:13px;color:#64748b;margin-bottom:20px" id="loginSubtitle">Enter your password to continue</div>
+    <div style="font-size:13px;color:#64748b;margin-bottom:20px" id="loginSubtitle"><span data-i18n="Enter your password to continue">Enter your password to continue</span></div>
 
     <!-- First time: New password -->
     <div id="setPassStep" style="display:none">
       <div style="background:#fff7ed;border-radius:10px;padding:12px;margin-bottom:16px;font-size:13px;color:#92400e">
         🔐 First time — create a password
       </div>
-      <input id="newPass1" type="password" placeholder="New password" style="margin-bottom:10px;font-size:16px;text-align:center"/>
-      <input id="newPass2" type="password" placeholder="Confirm password" style="margin-bottom:16px;font-size:16px;text-align:center"/>
+      <input id="newPass1" type="password" placeholder="New password" data-i18n-ph="New password" style="margin-bottom:10px;font-size:16px;text-align:center"/>
+      <input id="newPass2" type="password" placeholder="Confirm password" data-i18n-ph="Confirm password" style="margin-bottom:16px;font-size:16px;text-align:center"/>
       <button onclick="createPassword()" style="background:var(--or);color:#fff;width:100%;padding:14px;font-size:16px;border-radius:12px">Create Password →</button>
     </div>
 
     <!-- Enter password -->
     <div id="enterPassStep" style="display:none">
-      <input id="enterPass" type="password" placeholder="Enter password" style="margin-bottom:16px;font-size:18px;text-align:center;letter-spacing:4px" onkeydown="if(event.key==='Enter')checkPassword()"/>
+      <input id="enterPass" type="password" placeholder="Enter password" data-i18n-ph="Enter password" style="margin-bottom:16px;font-size:18px;text-align:center;letter-spacing:4px" onkeydown="if(event.key==='Enter')checkPassword()"/>
       <button onclick="checkPassword()" style="background:var(--or);color:#fff;width:100%;padding:14px;font-size:16px;border-radius:12px">Login →</button>
       <button onclick="forgotPassSimple()" style="background:none;color:#94a3b8;width:100%;padding:10px;margin-top:8px;font-size:12px;border:none">Forgot password?</button>
     </div>
@@ -386,12 +386,12 @@ td.r,th.r{text-align:right}
     <div id="addCustDue" style="padding:14px 16px;background:#f5f3ff;border-bottom:1px solid #e2e8f0">
       <div style="font-size:12px;font-weight:700;color:#7c3aed;margin-bottom:8px">➕ <span>Add New Due</span></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
-        <input id="lcd-name" placeholder="Customer Name *" data-ph-en="Customer Name *" style="font-size:13px;padding:9px 11px"/>
-        <input id="lcd-phone" type="tel" placeholder="Phone Number" data-ph-en="Phone Number" style="font-size:13px;padding:9px 11px"/>
+        <input id="lcd-name" placeholder="Customer Name *" data-i18n-ph="Customer Name *" data-i18n-ph="Customer Name *" data-ph-en="Customer Name *" style="font-size:13px;padding:9px 11px"/>
+        <input id="lcd-phone" type="tel" placeholder="Phone Number" data-i18n-ph="Phone Number" data-ph-en="Phone Number" style="font-size:13px;padding:9px 11px"/>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px">
-        <input id="lcd-amt" type="number" placeholder="Due Amount ₹" data-ph-en="Due Amount ₹" style="font-size:13px;padding:9px 11px"/>
-        <input id="lcd-note" placeholder="Note (optional)" data-ph-en="Note (optional)" style="font-size:13px;padding:9px 11px"/>
+        <input id="lcd-amt" type="number" placeholder="Due Amount ₹" data-i18n-ph="Due Amount ₹" data-ph-en="Due Amount ₹" style="font-size:13px;padding:9px 11px"/>
+        <input id="lcd-note" placeholder="Note (optional)" data-i18n-ph="Note (optional)" data-ph-en="Note (optional)" style="font-size:13px;padding:9px 11px"/>
         <button onclick="addCustomerDue()" style="background:#7c3aed;color:#fff;padding:9px 14px;border-radius:9px;font-size:13px;white-space:nowrap"><span>+ Add</span></button>
       </div>
     </div>
@@ -409,7 +409,7 @@ td.r,th.r{text-align:right}
     <!-- Total due breakdown -->
     <div id="payModalBreakdown" style="background:#fff7ed;border-radius:10px;padding:10px 14px;margin-bottom:14px;text-align:left;font-size:13px"></div>
     <!-- Amount input -->
-    <input id="payAmt" type="number" placeholder="₹ Enter amount" style="font-size:20px;text-align:center;font-weight:700;margin-bottom:10px;color:var(--or)"/>
+    <input id="payAmt" type="number" placeholder="₹ Enter amount" data-i18n-ph="Enter amount" style="font-size:20px;text-align:center;font-weight:700;margin-bottom:10px;color:var(--or)"/>
     <div style="display:flex;gap:8px;margin-bottom:12px">
       <button id="payFullBtn" onclick="setPayFull()" style="background:#f1f5f9;color:#64748b;flex:1;padding:9px;font-size:12px;border-radius:8px">Full payment</button>
       <button id="payThisBtn" onclick="setPayThis()" style="background:#f1f5f9;color:#64748b;flex:1;padding:9px;font-size:12px;border-radius:8px">Invoice only</button>
@@ -506,6 +506,151 @@ function googleLogout(){
   localStorage.removeItem('inv_google_name');
 }
 
+const T = {
+  'Enter your password to continue': {en:'Enter your password to continue', bn:'পাসওয়ার্ড দিয়ে প্রবেশ করুন', hi:'पासवर्ड डालें'},
+  'First time — create a password': {en:'First time — create a password', bn:'প্রথমবার — পাসওয়ার্ড তৈরি করুন', hi:'पहली बार — पासवर्ड बनाएं'},
+  'New password': {en:'New password', bn:'নতুন পাসওয়ার্ড', hi:'नया पासवर्ड'},
+  'Confirm password': {en:'Confirm password', bn:'পাসওয়ার্ড নিশ্চিত করুন', hi:'पासवर्ड की पुष्टि करें'},
+  'Create Password →': {en:'Create Password →', bn:'পাসওয়ার্ড তৈরি করুন →', hi:'पासवर्ड बनाएं →'},
+  'Enter password': {en:'Enter password', bn:'পাসওয়ার্ড লিখুন', hi:'पासवर्ड डालें'},
+  'Login →': {en:'Login →', bn:'প্রবেশ করুন →', hi:'लॉगिन →'},
+  'Forgot password?': {en:'Forgot password?', bn:'পাসওয়ার্ড ভুলে গেছেন?', hi:'पासवर्ड भूल गए?'},
+  'or continue with': {en:'or continue with', bn:'অথবা চালিয়ে যান', hi:'या जारी रखें'},
+  'Sign in with Google': {en:'Sign in with Google', bn:'Google দিয়ে প্রবেশ করুন', hi:'Google से साइन इन करें'},
+  'Company Info': {en:'Company Info', bn:'কোম্পানি তথ্য', hi:'कंपनी जानकारी'},
+  'Report': {en:'Report', bn:'রিপোর্ট', hi:'रिपोर्ट'},
+  'Language': {en:'Language', bn:'ভাষা', hi:'भाषा'},
+  'Change Password': {en:'Change Password', bn:'পাসওয়ার্ড পরিবর্তন', hi:'पासवर्ड बदलें'},
+  'Logout': {en:'Logout', bn:'লগআউট', hi:'लॉगआउट'},
+  'Total Invoices': {en:'Total Invoices', bn:'মোট ইনভয়েস', hi:'कुल इनवॉइस'},
+  'Sales': {en:'Sales', bn:'বিক্রয়', hi:'बिक्री'},
+  'Collected': {en:'Collected', bn:'আদায়', hi:'वसूली'},
+  'Due': {en:'Due', bn:'বকেয়া', hi:'बकाया'},
+  'Previous Due': {en:'Previous Due', bn:'আগের বাকি', hi:'पिछला बकाया'},
+  'Pending': {en:'Pending', bn:'বাকি আছে', hi:'बाकी है'},
+  'Cleared': {en:'Cleared', bn:'পরিশোধিত', hi:'चुकाया गया'},
+  'Net Due': {en:'Net Due', bn:'নেট বাকি', hi:'नेट बकाया'},
+  'No invoices yet': {en:'No invoices yet', bn:'কোনো ইনভয়েস নেই', hi:'कोई इनवॉइस नहीं'},
+  '"+ New" to create': {en:'"+ New" to create', bn:'"+ New" বাটনে চাপুন', hi:'"+ New" दबाएं'},
+  'Nothing found': {en:'Nothing found', bn:'কিছু পাওয়া যায়নি', hi:'कुछ नहीं मिला'},
+  'Search by name or invoice...': {en:'Search by name or invoice...', bn:'🔍 নাম বা ইনভয়েস খুঁজুন...', hi:'🔍 नाम या इनवॉइस खोजें...'},
+  'Invoice Details': {en:'Invoice Details', bn:'ইনভয়েস বিবরণ', hi:'इनवॉइस विवरण'},
+  'Customer Info': {en:'Customer Info', bn:'ক্রেতার তথ্য', hi:'ग्राहक जानकारी'},
+  'Pick Contact': {en:'Pick Contact', bn:'Contact বেছে নিন', hi:'Contact चुनें'},
+  'Customer Name *': {en:'Customer Name *', bn:'কাস্টমার নাম *', hi:'ग्राहक का नाम *'},
+  'Phone': {en:'Phone', bn:'ফোন নম্বর', hi:'फोन'},
+  'Items': {en:'Items', bn:'পণ্য / সেবা', hi:'सामान / सेवा'},
+  '+ Add Item': {en:'+ Add Item', bn:'+ আইটেম যোগ', hi:'+ आइटम जोड़ें'},
+  'Subtotal': {en:'Subtotal', bn:'বিক্রয় মোট', hi:'उप-कुल'},
+  'Grand Total': {en:'Grand Total', bn:'সর্বমোট', hi:'कुल योग'},
+  'Return': {en:'Return', bn:'রিটার্ন মাল', hi:'वापसी'},
+  'Returns': {en:'Returns', bn:'রিটার্ন', hi:'वापसी'},
+  '+ Add Return': {en:'+ Add Return', bn:'+ রিটার্ন যোগ', hi:'+ वापसी जोड़ें'},
+  'Due (₹)': {en:'Due (₹)', bn:'বাকি (₹)', hi:'बकाया (₹)'},
+  'Due Date': {en:'Due Date', bn:'বাকির তারিখ', hi:'देय तिथि'},
+  '← Cancel': {en:'← Cancel', bn:'← বাতিল', hi:'← रद्द करें'},
+  'Save →': {en:'Save →', bn:'সংরক্ষণ →', hi:'सहेजें →'},
+  'Customer': {en:'Customer', bn:'ক্রেতা', hi:'ग्राहक'},
+  'Prev Due': {en:'Prev Due', bn:'আগের বাকি', hi:'पिछला बकाया'},
+  'Received': {en:'Received', bn:'পেয়েছি', hi:'प्राप्त'},
+  'Still Due': {en:'Still Due', bn:'এখনো বাকি', hi:'अभी बकाया'},
+  'Paid': {en:'Paid', bn:'পরিশোধিত', hi:'चुकाया'},
+  '← Back': {en:'← Back', bn:'← ফিরে যান', hi:'← वापस'},
+  'Edit': {en:'Edit', bn:'সম্পাদনা', hi:'संपादन'},
+  'Receive Payment': {en:'Receive Payment', bn:'পেমেন্ট নিন', hi:'भुगतान लें'},
+  'Print': {en:'Print', bn:'প্রিন্ট', hi:'प्रिंट'},
+  'Send': {en:'Send', bn:'পাঠান', hi:'भेजें'},
+  'How much received?': {en:'How much received?', bn:'কত টাকা পেয়েছেন?', hi:'कितना मिला?'},
+  'Full payment': {en:'Full payment', bn:'সব দিয়েছে', hi:'पूरा भुगतान'},
+  'Invoice only': {en:'Invoice only', bn:'শুধু এটা', hi:'सिर्फ यह'},
+  '✓ Confirm': {en:'✓ Confirm', bn:'✓ নিশ্চিত করুন', hi:'✓ पुष्टि करें'},
+  'Cancel': {en:'Cancel', bn:'বাতিল', hi:'रद्द करें'},
+  'Already received:': {en:'Already received:', bn:'আগে পেয়েছেন:', hi:'पहले मिला:'},
+  'Now due:': {en:'Now due:', bn:'এখন বাকি:', hi:'अभी बकाया:'},
+  'Cash / Offline': {en:'Cash / Offline', bn:'নগদ / অফলাইন', hi:'नकद / ऑफलाइन'},
+  'Tap to mark Online': {en:'Tap to mark Online', bn:'টিক করলে Online হবে', hi:'Online मार्क करें'},
+  'Upload Logo': {en:'Upload Logo', bn:'লোগো আপলোড', hi:'लोगो अपलोड करें'},
+  'Company Name *': {en:'Company Name *', bn:'কোম্পানির নাম *', hi:'कंपनी का नाम *'},
+  'Address': {en:'Address', bn:'ঠিকানা', hi:'पता'},
+  'Save': {en:'Save', bn:'সংরক্ষণ করুন', hi:'सहेजें'},
+  'Back': {en:'Back', bn:'ফিরে যান', hi:'वापस'},
+  'Company Setup': {en:'Company Setup', bn:'কোম্পানি সেটআপ', hi:'कंपनी सेटअप'},
+  'Enter your business info': {en:'Enter your business info', bn:'আপনার ব্যবসার তথ্য দিন', hi:'अपनी व्यापार जानकारी दें'},
+  'Name *': {en:'Name *', bn:'নাম *', hi:'नाम *'},
+  'Get Started →': {en:'Get Started →', bn:'শুরু করুন →', hi:'शुरू करें →'},
+  'Due Ledger': {en:'Due Ledger', bn:'বাকি খাতা', hi:'बकाया खाता'},
+  'Add New Due': {en:'Add New Due', bn:'নতুন বাকি যোগ', hi:'नया बकाया जोड़ें'},
+  'Phone Number': {en:'Phone Number', bn:'ফোন নম্বর', hi:'फोन नंबर'},
+  'Due Amount ₹': {en:'Due Amount ₹', bn:'বাকির পরিমাণ ₹', hi:'बकाया राशि ₹'},
+  'Note (optional)': {en:'Note (optional)', bn:'নোট (ঐচ্ছিক)', hi:'नोट (वैकल्पिक)'},
+  '+ Add': {en:'+ Add', bn:'+ যোগ', hi:'+ जोड़ें'},
+  'Total Due': {en:'Total Due', bn:'মোট বাকি', hi:'कुल बकाया'},
+  'Balance': {en:'Balance', bn:'বাকি', hi:'शेष'},
+  'Record Payment': {en:'Record Payment', bn:'পেমেন্ট নিন', hi:'भुगतान दर्ज करें'},
+  '✓ Done': {en:'✓ Done', bn:'✓ নিলাম', hi:'✓ हो गया'},
+  'Transaction History': {en:'Transaction History', bn:'হিসাবের খাতা', hi:'लेन-देन इतिहास'},
+  'No dues yet': {en:'No dues yet', bn:'কোনো বাকি নেই', hi:'कोई बकाया नहीं'},
+  'Due List': {en:'Due List', bn:'বকেয়া তালিকা', hi:'बकाया सूची'},
+  'No dues!': {en:'No dues!', bn:'কোনো বকেয়া নেই!', hi:'कोई बकाया नहीं!'},
+  'Paid Invoices': {en:'Paid Invoices', bn:'পরিশোধিত তালিকা', hi:'चुकाए गए इनवॉइस'},
+  'Total Collected': {en:'Total Collected', bn:'মোট আদায়', hi:'कुल वसूली'},
+  'No paid invoices yet': {en:'No paid invoices yet', bn:'কোনো পরিশোধিত invoice নেই', hi:'कोई चुकाया गया इनवॉइस नहीं'},
+  'Send?': {en:'Send?', bn:'পাঠাবেন?', hi:'भेजें?'},
+  'Share Link': {en:'Share Link', bn:'লিংক শেয়ার', hi:'लिंक शेयर करें'},
+  'Skip': {en:'Skip', bn:'বাদ দিন', hi:'छोड़ें'},
+  'Invoices': {en:'Invoices', bn:'ইনভয়েস', hi:'इनवॉइस'},
+  'Total Sales': {en:'Total Sales', bn:'মোট বিক্রয়', hi:'कुल बिक्री'},
+  'No sales on this date': {en:'No sales on this date', bn:'এই দিনে কোনো বিক্রয় নেই', hi:'इस दिन कोई बिक्री नहीं'},
+  'Saved!': {en:'Saved!', bn:'সংরক্ষিত!', hi:'सहेजा गया!'},
+  'Saved': {en:'Saved', bn:'সংরক্ষিত', hi:'सहेजा गया'},
+  'Delete?': {en:'Delete?', bn:'মুছে দেবেন?', hi:'हटाएं?'},
+  'Deleted': {en:'Deleted', bn:'মুছে দেওয়া হয়েছে', hi:'हटाया गया'},
+  'Due added!': {en:'Due added!', bn:'বাকি যোগ হয়েছে!', hi:'बकाया जोड़ा गया!'},
+  'Payment added!': {en:'Payment added!', bn:'পেমেন্ট যোগ হয়েছে!', hi:'भुगतान जोड़ा गया!'},
+  'Fully paid!': {en:'Fully paid!', bn:'সম্পূর্ণ পরিশোধিত!', hi:'पूरा चुका दिया!'},
+  'Enter amount!': {en:'Enter amount!', bn:'পরিমাণ দিন!', hi:'राशि डालें!'},
+  'Enter name!': {en:'Enter name!', bn:'নাম দিন!', hi:'नाम डालें!'},
+  'Enter customer name!': {en:'Enter customer name!', bn:'ক্রেতার নাম দিন!', hi:'ग्राहक का नाम डालें!'},
+  'Contact added!': {en:'Contact added!', bn:'Contact যোগ হয়েছে!', hi:'Contact जोड़ा गया!'},
+  'Logout?': {en:'Logout?', bn:'লগআউট করবেন?', hi:'लॉगआउट करें?'},
+  'Reset password? (your data will be kept)': {en:'Reset password? (your data will be kept)', bn:'পাসওয়ার্ড reset করবেন? (data থাকবে)', hi:'पासवर्ड रीसेट करें? (डेटा रहेगा)'},
+  'Minimum 4 characters!': {en:'Minimum 4 characters!', bn:'কমপক্ষে ৪ অক্ষর দিন!', hi:'कम से कम 4 अक्षर!'},
+  'Passwords do not match!': {en:'Passwords do not match!', bn:'পাসওয়ার্ড মিলছে না!', hi:'पासवर्ड मेल नहीं खाता!'},
+  '❌ Wrong password! Try again': {en:'❌ Wrong password! Try again', bn:'❌ ভুল পাসওয়ার্ড! আবার চেষ্টা করুন', hi:'❌ गलत पासवर्ड! फिर कोशिश करें'},
+  'Wrong old password!': {en:'Wrong old password!', bn:'পুরনো পাসওয়ার্ড ভুল!', hi:'पुराना पासवर्ड गलत!'},
+  'Password changed!': {en:'Password changed!', bn:'পাসওয়ার্ড পরিবর্তন হয়েছে!', hi:'पासवर्ड बदल दिया!'},
+  'Min 4 characters!': {en:'Min 4 characters!', bn:'কমপক্ষে ৪ অক্ষর!', hi:'कम से कम 4 अक्षर!'},
+  'Enter password!': {en:'Enter password!', bn:'পাসওয়ার্ড দিন!', hi:'पासवर्ड डालें!'},
+  'No password set': {en:'No password set', bn:'পাসওয়ার্ড নেই', hi:'पासवर्ड नहीं है'},
+  'Started!': {en:'Started!', bn:'শুরু হয়েছে!', hi:'शुरू हो गया!'},
+  'Entry deleted': {en:'Entry deleted', bn:'Entry মুছে দেওয়া হয়েছে', hi:'Entry हटाया गया'},
+  'Unpaid': {en:'Unpaid', bn:'বকেয়া', hi:'अदत्त'},
+  'Partial': {en:'Partial', bn:'আংশিক', hi:'आंशिक'},
+  'Loading...': {en:'Loading...', bn:'লোড হচ্ছে...', hi:'लोड हो रहा है...'},
+  'Invoice App': {en:'Invoice App', bn:'ইনভয়েস অ্যাপ', hi:'इनवॉइस ऐप'},
+  'Old password': {en:'Old password', bn:'পুরনো পাসওয়ার্ড', hi:'पुराना पासवर्ड'},
+  'Confirm new password': {en:'Confirm new password', bn:'নতুন পাসওয়ার্ড আবার', hi:'नया पासवर्ड दोबारा'},
+  'Change': {en:'Change', bn:'পরিবর্তন করুন', hi:'बदलें'},
+  'App Language': {en:'App Language', bn:'ভাষা বেছে নিন', hi:'भाषा चुनें'},
+};
+
+function t(key){ return (T[key] && T[key][lang]) || (T[key] && T[key]['en']) || key; }
+
+function applyLang(){
+  // Update all data-i18n elements
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key = el.getAttribute('data-i18n');
+    el.textContent = t(key);
+  });
+  // Update placeholders
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{
+    el.placeholder = t(el.getAttribute('data-i18n-ph'));
+  });
+  // Loading screen
+  const ls = document.getElementById('loadingText');
+  if(ls) ls.textContent = t('Loading...');
+}
+
 function hashPass(p){ let h=0;for(let i=0;i<p.length;i++){h=(Math.imul(31,h)+p.charCodeAt(i))|0;}return h.toString(36); }
 
 function initLogin(){
@@ -522,10 +667,10 @@ function initLogin(){
     return;
   }
   if(!stored){
-    document.getElementById('loginSubtitle').textContent='First time — create a password';
+    document.getElementById('loginSubtitle').textContent=t('First time — create a password');
     document.getElementById('setPassStep').style.display='block';
   } else {
-    document.getElementById('loginSubtitle').textContent='Enter your password to continue';
+    document.getElementById('loginSubtitle').textContent=t('Enter your password to continue');
     document.getElementById('enterPassStep').style.display='block';
     document.getElementById('enterPass').value='';
     setTimeout(()=>document.getElementById('enterPass').focus(),300);
@@ -533,7 +678,7 @@ function initLogin(){
 }
 
 function forgotPassSimple(){
-  if(confirm('Reset password? (your data will be kept)')){
+  if(confirm(t('Reset password? (your data will be kept)'))){
     const co = localStorage.getItem('inv_co');
     const li = localStorage.getItem('inv_list');
     const lcu = localStorage.getItem('inv_customers');
@@ -553,8 +698,8 @@ function forgotPassSimple(){
 function createPassword(){
   const p1=document.getElementById('newPass1').value;
   const p2=document.getElementById('newPass2').value;
-  if(p1.length<4){document.getElementById('loginErr').textContent='Min 4 characters!';return;}
-  if(p1!==p2){document.getElementById('loginErr').textContent='Passwords do not match!';return;}
+  if(p1.length<4){document.getElementById('loginErr').textContent=t('Min 4 characters!');return;}
+  if(p1!==p2){document.getElementById('loginErr').textContent=t('Passwords do not match!');return;}
   localStorage.setItem('inv_pass',hashPass(p1));
   const rc = Math.random().toString(36).slice(2,8).toUpperCase();
   localStorage.setItem('inv_recovery', rc);
@@ -564,14 +709,14 @@ function createPassword(){
 
 function checkPassword(){
   const p=document.getElementById('enterPass').value;
-  if(!p){document.getElementById('loginErr').textContent='Enter password!';return;}
+  if(!p){document.getElementById('loginErr').textContent=t('Enter password!');return;}
   const stored=localStorage.getItem('inv_pass');
-  if(!stored){document.getElementById('loginErr').textContent='No password set';return;}
+  if(!stored){document.getElementById('loginErr').textContent=t('No password set');return;}
   if(hashPass(p)===stored){
     document.getElementById('loginErr').textContent='';
     enterApp();
   } else {
-    document.getElementById('loginErr').textContent='❌ Wrong password! Try again';
+    document.getElementById('loginErr').textContent=t('❌ Wrong password! Try again');
     document.getElementById('enterPass').value='';
     document.getElementById('enterPass').focus();
   }
@@ -591,7 +736,7 @@ function changePassword(){
   const stored=localStorage.getItem('inv_pass');
   if(hashPass(old)!==stored){showToast('❌ Wrong old password!');return;}
   if(a.length<4){showToast('Min 4 chars!');return;}
-  if(a!==b){showToast('Passwords do not match!');return;}
+  if(a!==b){showToast(t('Passwords do not match!'));return;}
   localStorage.setItem('inv_pass',hashPass(a));
   document.getElementById('oldPass').value='';
   document.getElementById('newPassA').value='';
@@ -625,7 +770,7 @@ async function pickContact(){
 }
 
 function doLogout(){
-  if(!confirm('Logout?'))return;
+  if(!confirm(t('Logout?')))return;
   sessionStorage.removeItem('inv_loggedin');
   localStorage.removeItem('inv_google_email');
   localStorage.removeItem('inv_google_name');
@@ -644,7 +789,7 @@ function openMenu(){
   document.getElementById('menuOverlay').classList.add('open');
   const ml=document.getElementById('menuLogo');
   ml.innerHTML=company.logo?`<img src="${company.logo}" style="width:100%;height:100%;object-fit:contain;border-radius:10px"/>`:company.name?`<span style="font-size:28px;font-weight:800">${company.name[0].toUpperCase()}</span>`:'🏢';
-  document.getElementById('menuCoName').textContent=company.name||'Invoice App';
+  document.getElementById('menuCoName').textContent=company.name||t('Invoice App');
   document.getElementById('menuCoSub').textContent=company.phone||company.address||'';
 }
 function closeMenu(){
@@ -678,6 +823,7 @@ function enterApp(){
   document.getElementById('topbar').style.display='flex';
   // Step 3: language + views
   setLang(lang);
+  applyLang();
   showView('list');
   updateTopBar();
   renderList();
@@ -738,10 +884,13 @@ async function save(){
 function setLang(l){
   lang=l;
   localStorage.setItem('inv_lang',l);
-  document.body.className=l==='en'?'en':'';
+  document.body.className=l==='en'?'en':(l==='hi'?'hi':'');
   document.getElementById('btnBn').className='lang-btn'+(l==='bn'?' active':'');
   document.getElementById('btnEn').className='lang-btn'+(l==='en'?' active':'');
+  document.getElementById('btnHi').className='lang-btn'+(l==='hi'?' active':'');
+  applyLang();
   renderList();
+  updateTopBar();
 }
 
 // ══ TOAST ══
@@ -792,15 +941,15 @@ function renderDailyReport2(){
   const ti=invoices.filter(i=>i.date===date);
   const el = document.getElementById('dailyReport2');
   if(!el)return;
-  if(ti.length===0){el.innerHTML=`<div style="text-align:center;color:#94a3b8;padding:20px">${'No sales on this date'}</div>`;return;}
+  if(ti.length===0){el.innerHTML=`<div style="text-align:center;color:#94a3b8;padding:20px">${t('No sales on this date')}</div>`;return;}
   const ts=ti.reduce((s,i)=>s+i.total,0);
   const tp=ti.filter(i=>i.status==='paid').reduce((s,i)=>s+(i.paidAmt||i.net),0);
   const td=ti.filter(i=>i.status!=='paid').reduce((s,i)=>s+(i.remainingDue||i.net),0);
   el.innerHTML=`
-    <div class="rep-row"><span>${'Invoices'}</span><strong>${ti.length}</strong></div>
-    <div class="rep-row"><span>${'Total Sales'}</span><strong class="mono">${fmtINR(ts)}</strong></div>
-    <div class="rep-row"><span>${'Collected'}</span><strong class="mono" style="color:var(--green)">${fmtINR(tp)}</strong></div>
-    <div class="rep-row" style="border:none"><span>${'Pending'}</span><strong class="mono" style="color:var(--red)">${fmtINR(td)}</strong></div>
+    <div class="rep-row"><span>${t('Invoices')}</span><strong>${ti.length}</strong></div>
+    <div class="rep-row"><span>${t('Total Sales')}</span><strong class="mono">${fmtINR(ts)}</strong></div>
+    <div class="rep-row"><span>${t('Collected')}</span><strong class="mono" style="color:var(--green)">${fmtINR(tp)}</strong></div>
+    <div class="rep-row" style="border:none"><span>${t('Pending')}</span><strong class="mono" style="color:var(--red)">${fmtINR(td)}</strong></div>
     <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:10px">
       ${ti.map(inv=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f8fafc;font-size:13px;cursor:pointer" onclick="showView('detail');openDetail('${inv.id}')">
         <div><span style="font-weight:600">${inv.cname}</span> <span style="font-size:11px;color:#94a3b8">${inv.no}</span></div>
@@ -815,13 +964,13 @@ function renderDailyReport2(){
 // ══ COMPANY ══
 function saveCompany(){
   const n=document.getElementById('s-name').value.trim();
-  if(!n){showToast('Enter name!');return;}
+  if(!n){showToast(t('Enter name!'));return;}
   company.name=n;company.phone=document.getElementById('s-phone').value.trim();company.address=document.getElementById('s-addr').value.trim();
   save();updateTopBar();showToast('✅ '+('Saved'));
 }
 function saveFirstSetup(){
   const n=document.getElementById('fs-name').value.trim();
-  if(!n){showToast('Enter name!');return;}
+  if(!n){showToast(t('Enter name!'));return;}
   company.name=n;company.phone=document.getElementById('fs-phone').value.trim();company.address=document.getElementById('fs-addr').value.trim();
   save();updateTopBar();document.getElementById('firstSetup').style.display='none';showToast('✅ '+('Started!'));
 }
@@ -964,7 +1113,7 @@ function autoFillPrevDue(){
 
 function saveInvoice(){
   const cname=document.getElementById('f-cname').value.trim();
-  if(!cname){showToast('Enter customer name!');return;}
+  if(!cname){showToast(t('Enter customer name!'));return;}
   const sub=calcTotal(items);
   const prevDue=parseFloat(document.getElementById('f-due-amt').value)||0;
   const retAmt=returnItems.reduce((s,r)=>{const qty=+r.qty||0;const price=+r.price>0?+r.price:(()=>{const m=items.find(it=>it.desc&&r.desc&&it.desc.trim().toLowerCase()===r.desc.trim().toLowerCase());return m?+m.rate||0:0;})();return s+qty*price;},0);
@@ -1012,9 +1161,9 @@ function renderList(){
   const hasPrevDue = invoices.some(i=>i.prevDue>0);
 
   document.getElementById('statsGrid').innerHTML=`
-    <div class="stat-card"><div class="stat-label">${'Total Invoices'}</div><div class="stat-val">${invoices.length}${''}</div></div>
+    <div class="stat-card"><div class="stat-label">${t('Total Invoices')}</div><div class="stat-val">${invoices.length}${''}</div></div>
     <div class="stat-card" style="border:1.5px solid #fed7aa">
-      <div class="stat-label">📅 ${mn} ${'Sales'}</div>
+      <div class="stat-label">📅 ${mn} ${t('Sales')}</div>
       <div class="stat-val mono" style="font-size:15px;color:var(--or)">${fmtINR(mRev)}</div>
       <div style="display:flex;justify-content:space-between;margin-top:6px;padding-top:6px;border-top:1px dashed #e2e8f0">
         <div style="font-size:10px;color:#94a3b8">${pn}: <span style="font-weight:700;color:#64748b">${fmtINR(pRev)}</span></div>
@@ -1026,35 +1175,35 @@ function renderList(){
       <div class="stat-val mono" style="color:var(--green);font-size:15px">${fmtINR(paid)}</div>
     </div>
     <div class="stat-card" onclick="showDueList()" style="cursor:pointer;border:1.5px solid ${due>0?'#fecaca':'var(--border)'};background:${due>0?'#fff5f5':'#fff'}">
-      <div class="stat-label" style="color:${due>0?'var(--red)':'#94a3b8'};display:flex;align-items:center;gap:4px">💰 ${'Due'} ${due>0?'<span style="font-size:16px">👆</span>':''}</div>
+      <div class="stat-label" style="color:${due>0?'var(--red)':'#94a3b8'};display:flex;align-items:center;gap:4px">💰 ${t('Due')} ${due>0?'<span style="font-size:16px">👆</span>':''}</div>
       <div class="stat-val mono" style="color:${due>0?'var(--red)':'var(--green)'};font-size:15px">${fmtINR(due)}</div>
     </div>
     ${hasPrevDue?`
     <div class="stat-card" onclick="showPrevDueList()" style="grid-column:span 2;cursor:pointer;border:1.5px solid #e0e7ff;background:#f5f3ff">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div>
-          <div class="stat-label" style="color:#7c3aed;display:flex;align-items:center;gap:4px">📒 ${'Previous Due'} <span style="font-size:16px">👆</span></div>
+          <div class="stat-label" style="color:#7c3aed;display:flex;align-items:center;gap:4px">📒 ${t('Previous Due')} <span style="font-size:16px">👆</span></div>
           <div style="display:flex;align-items:center;gap:16px;margin-top:4px">
             <div>
-              <div style="font-size:10px;color:#94a3b8;margin-bottom:2px">${'Pending'}</div>
+              <div style="font-size:10px;color:#94a3b8;margin-bottom:2px">${t('Pending')}</div>
               <div class="mono" style="font-size:16px;font-weight:700;color:var(--red)">+ ${fmtINR(totalPrevDue)}</div>
             </div>
             <div style="font-size:20px;color:#94a3b8">|</div>
             <div>
-              <div style="font-size:10px;color:#94a3b8;margin-bottom:2px">${'Cleared'}</div>
+              <div style="font-size:10px;color:#94a3b8;margin-bottom:2px">${t('Cleared')}</div>
               <div class="mono" style="font-size:16px;font-weight:700;color:var(--green)">- ${fmtINR(totalPrevDuePaid)}</div>
             </div>
           </div>
         </div>
         <div style="text-align:right">
-          <div style="font-size:10px;color:#94a3b8;margin-bottom:4px">${'Net Due'}</div>
+          <div style="font-size:10px;color:#94a3b8;margin-bottom:4px">${t('Net Due')}</div>
           <div class="mono" style="font-size:18px;font-weight:700;color:${netPrevDue>0?'var(--red)':'var(--green)'}">₹${netPrevDue.toFixed(2)}</div>
         </div>
       </div>
     </div>`:''}`;
 
   if(filtered.length===0){
-    document.getElementById('invList').innerHTML=`<div class="empty"><div class="icon">🧾</div><div style="font-size:16px;font-weight:600;color:var(--gray);margin-bottom:6px">${invoices.length===0?('No invoices yet'):('Nothing found')}</div><p>${invoices.length===0?('"+ New" to create'):''}  </p></div>`;
+    document.getElementById('invList').innerHTML=`<div class="empty"><div class="icon">🧾</div><div style="font-size:16px;font-weight:600;color:var(--gray);margin-bottom:6px">${invoices.length===0?(t('No invoices yet')):(t('Nothing found'))}</div><p>${invoices.length===0?('" + t('"+ New" to create')'):''}  </p></div>`;
     return;
   }
   document.getElementById('invList').innerHTML=filtered.map(inv=>{
@@ -1068,13 +1217,13 @@ function renderList(){
       <div style="flex:1">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
           <span class="mono" style="font-size:12px;color:#94a3b8">${inv.no}</span>
-          ${inv.status==='paid'?`<span class="badge paid" style="cursor:pointer" onclick="event.stopPropagation();showPaidList()">${'✓ Paid'}</span>`:inv.status==='partial'?`<span class="badge" style="background:#fff7ed;color:#92400e;cursor:pointer" onclick="event.stopPropagation();showDueList()">${'⏳ Partial'}</span>`:`<span class="badge unpaid" style="cursor:pointer" onclick="event.stopPropagation();showDueList()">${'Unpaid'}</span>`}
+          ${inv.status==='paid'?`<span class="badge paid" style="cursor:pointer" onclick="event.stopPropagation();showPaidList()">${'✓ Paid'}</span>`:inv.status==='partial'?`<span class="badge" style="background:#fff7ed;color:#92400e;cursor:pointer" onclick="event.stopPropagation();showDueList()">${'⏳ Partial'}</span>`:`<span class="badge unpaid" style="cursor:pointer" onclick="event.stopPropagation();showDueList()">${t('Unpaid')}</span>`}
           <span style="font-size:11px;color:#94a3b8">${inv.date}</span>
         </div>
         <div style="font-weight:700;font-size:15px">${inv.cname}</div>
         ${inv.cphone?`<div style="font-size:12px;color:#94a3b8;margin-top:2px">📞 ${inv.cphone}</div>`:''}
         ${totalDue>0?`<div style="margin-top:6px;display:inline-block;background:#fef2f2;border:1.5px solid #fecaca;border-radius:8px;padding:3px 10px">
-          <span style="font-size:11px;font-weight:700;color:var(--red)">⏳ ${'Total Due'}: </span>
+          <span style="font-size:11px;font-weight:700;color:var(--red)">⏳ ${t('Total Due')}: </span>
           <span class="mono" style="font-size:13px;font-weight:700;color:var(--red)">${fmtINR(totalDue)}</span>
           ${custBal>0&&invDue>0?`<span style="font-size:10px;color:#b91c1c;margin-left:4px">(${'Invoice'}: ${fmtINR(invDue)} + ${'Prev'}: ${fmtINR(custBal)})</span>`:''}
         </div>`:''}
@@ -1093,10 +1242,10 @@ function openDetail(id){
   document.getElementById('detailHeader').innerHTML=`${headerHTML()}<div style="text-align:right;flex-shrink:0">
     <div style="font-size:11px;opacity:.8">${'Invoice'}</div>
     <div class="mono" style="font-size:17px;font-weight:700">${inv.no}</div>
-    ${inv.status==='paid'?`<div style="margin-top:5px"><span style="background:#ecfdf5;color:var(--green);border-radius:99px;padding:3px 10px;font-size:11px;font-weight:700">✓ ${'Paid'}</span></div>`:''}</div>`;
+    ${inv.status==='paid'?`<div style="margin-top:5px"><span style="background:#ecfdf5;color:var(--green);border-radius:99px;padding:3px 10px;font-size:11px;font-weight:700">✓ ${t('Paid')}</span></div>`:''}</div>`;
 
   const rows=inv.items.map(it=>{const a=(+it.qty||0)*(+it.rate||0);return `<tr><td>${it.desc||'—'}</td><td class="r">${it.qty}</td><td class="r">₹${(+it.rate||0).toFixed(2)}</td><td class="r mono" style="font-weight:600">₹${a.toFixed(2)}</td></tr>`;}).join('');
-  const retRows=(inv.returnItems||[]).filter(r=>r.desc||r.qty).map(r=>`<tr style="background:#fff5f5"><td style="color:var(--red)">↩ ${r.desc||'—'}</td><td class="r" style="color:var(--red)">${r.qty||0}</td><td class="r" style="font-size:12px;color:#94a3b8">${r.date||'—'}</td><td class="r mono" style="color:var(--red)">${'Return'}</td></tr>`).join('');
+  const retRows=(inv.returnItems||[]).filter(r=>r.desc||r.qty).map(r=>`<tr style="background:#fff5f5"><td style="color:var(--red)">↩ ${r.desc||'—'}</td><td class="r" style="color:var(--red)">${r.qty||0}</td><td class="r" style="font-size:12px;color:#94a3b8">${r.date||'—'}</td><td class="r mono" style="color:var(--red)">${t('Return')}</td></tr>`).join('');
 
   document.getElementById('detailContent').innerHTML=`
     ${inv.status==='partial'?`<div style="background:#fff7ed;border:1.5px solid #fed7aa;border-radius:14px;padding:14px 16px;margin-bottom:14px">
@@ -1115,7 +1264,7 @@ function openDetail(id){
       </div>`).join('')}
     </div>`:''}
     <div class="card">
-      <div class="sec-title">👤 ${'Customer'}</div>
+      <div class="sec-title">👤 ${t('Customer')}</div>
       <div style="font-size:16px;font-weight:700;margin-bottom:4px">${inv.cname}</div>
       ${inv.cphone?`<div style="color:var(--gray)">📞 ${inv.cphone}</div>`:''}
       <div style="margin-top:10px;display:flex;gap:20px">
@@ -1124,16 +1273,16 @@ function openDetail(id){
       </div>
     </div>
     <div class="card">
-      <div class="sec-title">📦 ${'Items'}</div>
+      <div class="sec-title">📦 ${t('Items')}</div>
       <div class="table-scroll"><table>
         <thead><tr><th>${'Description'}</th><th class="r">${'Qty'}</th><th class="r">${'Price'}</th><th class="r">${'Total'}</th></tr></thead>
         <tbody>${rows}${retRows}</tbody>
       </table></div>
       <div style="display:flex;justify-content:flex-end;margin-top:14px"><div style="min-width:240px">
-        <div class="total-row"><span>${'Subtotal'}</span><span class="mono">${fmtINR(inv.total)}</span></div>
-        ${(inv.retAmt||0)>0?`<div class="total-row"><span>${'Return'}</span><span class="mono" style="color:var(--red)">- ${fmtINR(inv.retAmt)}</span></div>`:''}
-        ${inv.prevDue>0?`<div class="total-row"><span>${'Prev Due'}</span><span class="mono" style="color:var(--or)">+ ${fmtINR(inv.prevDue)}</span></div>`:''}
-        <div class="total-row total-final"><span>${'Grand Total'}</span><span class="mono">${fmtINR(inv.net)}</span></div>
+        <div class="total-row"><span>${t('Subtotal')}</span><span class="mono">${fmtINR(inv.total)}</span></div>
+        ${(inv.retAmt||0)>0?`<div class="total-row"><span>${t('Return')}</span><span class="mono" style="color:var(--red)">- ${fmtINR(inv.retAmt)}</span></div>`:''}
+        ${inv.prevDue>0?`<div class="total-row"><span>${t('Prev Due')}</span><span class="mono" style="color:var(--or)">+ ${fmtINR(inv.prevDue)}</span></div>`:''}
+        <div class="total-row total-final"><span>${t('Grand Total')}</span><span class="mono">${fmtINR(inv.net)}</span></div>
         
       </div></div>
     </div>`;
@@ -1199,11 +1348,11 @@ function openPayModal(id){
   const prevAmt = +inv.prevDue||0;
   const alreadyPaid = inv.paidAmt||0;
 
-  document.getElementById('payModalTitle').textContent = 'How much received?';
+  document.getElementById('payModalTitle').textContent = t('How much received?');
   document.getElementById('payModalSub').textContent = inv.cname + (inv.cphone?' • '+inv.cphone:'');
   document.getElementById('payModalBreakdown').innerHTML = `
     ${alreadyPaid>0?`<div style="display:flex;justify-content:space-between;padding:3px 0">
-      <span style="color:var(--green)">${'Already received:'}</span>
+      <span style="color:var(--green)">${t('Already received:')}</span>
       <span class="mono" style="color:var(--green);font-weight:700">₹${alreadyPaid.toFixed(2)}</span>
     </div>`:''}
     ${inv.status!=='partial'&&prevAmt>0?`
@@ -1216,7 +1365,7 @@ function openPayModal(id){
       <span class="mono" style="color:var(--red);font-weight:700">+ ₹${prevAmt.toFixed(2)}</span>
     </div>`:''}
     <div style="display:flex;justify-content:space-between;padding:5px 0;border-top:2px solid #fecaca;margin-top:4px">
-      <span style="font-weight:700;color:var(--red)">${'Now due:'}</span>
+      <span style="font-weight:700;color:var(--red)">${t('Now due:')}</span>
       <span class="mono" style="font-weight:700;color:var(--red);font-size:20px">₹${currentDue.toFixed(2)}</span>
     </div>`;
 
@@ -1273,7 +1422,7 @@ async function confirmPayment(){
   const inv = invoices.find(i=>i.id===_payInvId);
   if(!inv){_payProcessing=false;return;}
   const newPayment = parseFloat(document.getElementById('payAmt').value)||0;
-  if(newPayment<=0){document.getElementById('payError').textContent='Enter amount!';_payProcessing=false;return;}
+  if(newPayment<=0){document.getElementById('payError').textContent=t('Enter amount!');_payProcessing=false;return;}
   const currentDue = inv.status==='partial' ? (inv.remainingDue||0) : inv.net;
   const alreadyPaid = inv.paidAmt||0;
   const totalPaid = alreadyPaid + newPayment;
@@ -1294,7 +1443,7 @@ async function confirmPayment(){
         customers[key].history.unshift({type:'payment',amt:extra,date:todayStr(),id:Math.random().toString(36).slice(2)});
       }
     }
-    showToast('✅ '+('Fully paid!'));
+    showToast('✅ '+(t('Fully paid!')));
   } else {
     invoices = invoices.map(i=>i.id===_payInvId?{...i,
       status:'partial',
@@ -1313,13 +1462,13 @@ async function confirmPayment(){
   renderList();
   openDetail(_payInvId);
 }
-function deleteInv(id){if(!confirm('Delete?'))return;invoices=invoices.filter(i=>i.id!==id);save();goList();}
+function deleteInv(id){if(!confirm(t('Delete?')))return;invoices=invoices.filter(i=>i.id!==id);save();goList();}
 
 // ══ DUE LIST ══
 function showDueList(){
   const up=invoices.filter(i=>i.status==='unpaid'||i.status==='partial'||(!i.status&&true));
   document.getElementById('dueListContent').innerHTML=up.length===0?
-    `<div class="empty"><div class="icon">🎉</div><div style="font-weight:600;color:var(--green)">${'No dues!'}</div></div>`:
+    `<div class="empty"><div class="icon">🎉</div><div style="font-weight:600;color:var(--green)">${t('No dues!')}</div></div>`:
     up.map(inv=>`<div id="di-${inv.id}" style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:12px;border:1.5px solid #fecaca;margin-bottom:10px;background:#fff5f5;transition:all .3s">
       <div style="flex:1">
         <div style="font-weight:700;font-size:15px">${inv.cname}</div>
@@ -1328,7 +1477,7 @@ function showDueList(){
       </div>
       <div style="text-align:right;margin-left:10px">
         <div style="font-size:17px;font-weight:700;color:var(--red)">${fmtINR(inv.net)}</div>
-        <button onclick="mpDue('${inv.id}')" style="background:#ecfdf5;color:var(--green);padding:5px 10px;font-size:11px;margin-top:5px;border-radius:8px">✓ ${'Paid'}</button>
+        <button onclick="mpDue('${inv.id}')" style="background:#ecfdf5;color:var(--green);padding:5px 10px;font-size:11px;margin-top:5px;border-radius:8px">✓ ${t('Paid')}</button>
       </div>
     </div>`).join('');
   document.getElementById('dueModal').style.display='flex';
@@ -1410,9 +1559,9 @@ async function shareInvImage(inv, ph){
         <tbody>${il}${retRows}</tbody>
       </table>
       <div style="margin-top:10px;padding-top:8px;border-top:1px solid #e2e8f0">
-        <div style="display:flex;justify-content:space-between;font-size:12px;color:#64748b;margin-bottom:4px"><span>${'Subtotal'}</span><span>₹${inv.total.toFixed(2)}</span></div>
-        ${(inv.retAmt||0)>0?`<div style="display:flex;justify-content:space-between;font-size:12px;color:#dc2626;margin-bottom:4px"><span>↩ ${'Return'}</span><span>-₹${inv.retAmt.toFixed(2)}</span></div>`:''}
-        ${(inv.prevDue||0)>0?`<div style="display:flex;justify-content:space-between;font-size:12px;color:#FF6B00;margin-bottom:4px"><span>⚠️ ${'Prev Due'} (${inv.dueDate||inv.date})</span><span>+₹${inv.prevDue.toFixed(2)}</span></div>`:''}
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:#64748b;margin-bottom:4px"><span>${t('Subtotal')}</span><span>₹${inv.total.toFixed(2)}</span></div>
+        ${(inv.retAmt||0)>0?`<div style="display:flex;justify-content:space-between;font-size:12px;color:#dc2626;margin-bottom:4px"><span>↩ ${t('Return')}</span><span>-₹${inv.retAmt.toFixed(2)}</span></div>`:''}
+        ${(inv.prevDue||0)>0?`<div style="display:flex;justify-content:space-between;font-size:12px;color:#FF6B00;margin-bottom:4px"><span>⚠️ ${t('Prev Due')} (${inv.dueDate||inv.date})</span><span>+₹${inv.prevDue.toFixed(2)}</span></div>`:''}
         ${(inv.payments||[]).map(p=>`<div style="display:flex;justify-content:space-between;font-size:12px;color:#16a34a;margin-bottom:4px;padding:4px 8px;background:${p.method==='online'?'#eff6ff':'#f0fdf4'};border-radius:6px">
           <span>${p.method==='online'?'📱':'💵'} ${'Received'} (${p.date})</span>
           <span style="font-weight:700;color:${p.method==='online'?'#2563eb':'#16a34a'}">-₹${p.amt.toFixed(2)} • ${p.method==='online'?'Online':'Cash'}</span>
@@ -1471,8 +1620,8 @@ function addCustomerDue(){
   const phone = document.getElementById('lcd-phone').value.trim();
   const amt = parseFloat(document.getElementById('lcd-amt').value)||0;
   const note = document.getElementById('lcd-note').value.trim();
-  if(!name){showToast('Enter name!');return;}
-  if(amt<=0){showToast('Enter amount!');return;}
+  if(!name){showToast(t('Enter name!'));return;}
+  if(amt<=0){showToast(t('Enter amount!'));return;}
   const key = getCustKey(name,phone);
   if(!customers[key]) customers[key]={name,phone,balance:0,history:[]};
   customers[key].balance += amt;
@@ -1507,13 +1656,13 @@ function renderLedger(){
   const totalBal = keys.reduce((s,k)=>s+customers[k].balance,0);
 
   if(keys.length===0){
-    document.getElementById('prevDueContent').innerHTML=`<div class="empty"><div class="icon">📒</div><div style="font-weight:600;color:#94a3b8">${'No dues yet'}</div><div style="font-size:12px;color:#94a3b8;margin-top:6px">${'Add a due above'}</div></div>`;
+    document.getElementById('prevDueContent').innerHTML=`<div class="empty"><div class="icon">📒</div><div style="font-weight:600;color:#94a3b8">${t('No dues yet')}</div><div style="font-size:12px;color:#94a3b8;margin-top:6px">${'Add a due above'}</div></div>`;
     return;
   }
 
   document.getElementById('prevDueContent').innerHTML=`
     <div style="background:${totalBal>0?'#fef2f2':'#f0fdf4'};border-radius:10px;padding:12px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center">
-      <div style="font-size:13px;font-weight:600;color:${totalBal>0?'#92400e':'#166534'}">${'Total Due'}</div>
+      <div style="font-size:13px;font-weight:600;color:${totalBal>0?'#92400e':'#166534'}">${t('Total Due')}</div>
       <div class="mono" style="font-size:20px;font-weight:700;color:${totalBal>0?'var(--red)':'var(--green)'}">${fmtINR(totalBal)}</div>
     </div>
     ${keys.map(key=>{
@@ -1529,28 +1678,28 @@ function renderLedger(){
             </div>
             <div style="display:flex;align-items:center;gap:10px">
               <div style="text-align:right">
-                <div style="font-size:10px;color:#94a3b8">${'Balance'}</div>
+                <div style="font-size:10px;color:#94a3b8">${t('Balance')}</div>
                 <div class="mono" style="font-size:20px;font-weight:700;color:${isCleared?'var(--green)':'var(--red)'}">${isCleared?'✅':fmtINR(bal)}</div>
               </div>
               <button onclick="deleteCustomer('${key}')" style="background:#fef2f2;color:var(--red);padding:6px 10px;border-radius:8px;font-size:16px;line-height:1" title="${'Delete'}">🗑</button>
             </div>
           </div>
           ${!isCleared?`<div style="margin-top:10px">
-            <button onclick="showPaymentInput('${key}')" style="background:#ecfdf5;color:var(--green);padding:7px 14px;font-size:12px;border-radius:8px;width:100%">💵 ${'Record Payment'}</button>
+            <button onclick="showPaymentInput('${key}')" style="background:#ecfdf5;color:var(--green);padding:7px 14px;font-size:12px;border-radius:8px;width:100%">💵 ${t('Record Payment')}</button>
             <div id="pay-input-${key}" style="display:none;gap:8px;margin-top:8px;align-items:center">
               <input id="pay-amt-${key}" type="number" placeholder="₹" style="font-size:14px;padding:9px;flex:1"/>
-              <button onclick="const a=parseFloat(document.getElementById('pay-amt-${key}').value)||0;if(a>0)addCustomerPayment('${key}',a);" style="background:var(--green);color:#fff;padding:9px 14px;border-radius:8px;font-size:13px">${'✓ Done'}</button>
+              <button onclick="const a=parseFloat(document.getElementById('pay-amt-${key}').value)||0;if(a>0)addCustomerPayment('${key}',a);" style="background:var(--green);color:#fff;padding:9px 14px;border-radius:8px;font-size:13px">${t('✓ Done')}</button>
             </div>
           </div>`:''}
         </div>
         <div style="padding:0 14px 8px;background:#fff">
-          <div style="font-size:11px;color:#94a3b8;font-weight:700;padding:8px 0 4px">${'Transaction History'}</div>
+          <div style="font-size:11px;color:#94a3b8;font-weight:700;padding:8px 0 4px">${t('Transaction History')}</div>
           ${(c.history||[]).slice(0,8).map((h,hi)=>`
             <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f8fafc;font-size:13px">
               <div style="flex:1">
                 <span style="font-size:11px;color:#94a3b8">${h.date}</span>
                 ${h.note?`<span style="font-size:11px;color:#64748b;margin-left:6px">${h.note}</span>`:''}
-                <span style="font-size:11px;color:#94a3b8;margin-left:4px">${h.type==='due'?'Due':'Payment'}</span>
+                <span style="font-size:11px;color:#94a3b8;margin-left:4px">${h.type==='due'?t('Due'):'Payment'}</span>
               </div>
               <div style="display:flex;align-items:center;gap:8px">
                 <span class="mono" style="font-weight:700;color:${h.type==='due'?'var(--red)':'var(--green)'}">
@@ -1580,21 +1729,21 @@ function deleteHistoryEntry(key, idx){
   else customers[key].balance += h.amt;
   customers[key].history.splice(idx,1);
   save();renderLedger();renderList();
-  showToast('✅ Entry deleted');
+  showToast('✅ '+t('Entry deleted'));
 }
 
 function showPaidList(){
   const paid = invoices.filter(i=>i.status==='paid');
   let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-    <div style="font-size:18px;font-weight:700">✅ ${'Paid Invoices'}</div>
+    <div style="font-size:18px;font-weight:700">✅ ${t('Paid Invoices')}</div>
     <button onclick="document.getElementById('paidListModal').style.display='none'" style="background:#f1f5f9;color:#64748b;padding:6px 12px;border-radius:8px">✕</button>
   </div>`;
   if(paid.length===0){
-    html+=`<div class="empty"><div class="icon">📋</div><div style="color:#94a3b8">${'No paid invoices yet'}</div></div>`;
+    html+=`<div class="empty"><div class="icon">📋</div><div style="color:#94a3b8">${t('No paid invoices yet')}</div></div>`;
   } else {
     const total = paid.reduce((s,i)=>s+(i.paidAmt||i.net),0);
     html+=`<div style="background:#f0fdf4;border-radius:10px;padding:10px 14px;margin-bottom:14px;display:flex;justify-content:space-between">
-      <span style="font-weight:600;color:#166534">${'Total Collected'}</span>
+      <span style="font-weight:600;color:#166534">${t('Total Collected')}</span>
       <span class="mono" style="font-weight:700;color:var(--green)">${fmtINR(total)}</span>
     </div>`;
     html += paid.map(inv=>`
