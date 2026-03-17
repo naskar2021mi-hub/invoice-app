@@ -568,13 +568,12 @@ async function pickContact(){
 
 function doLogout(){
   if(!confirm(lang==='bn'?'লগআউট করবেন?':'Logout?'))return;
-  // inv_dkey রাখো — cloud data খুঁজে পাওয়ার জন্য দরকার
+  sessionStorage.removeItem('inv_loggedin');
   const dkey = localStorage.getItem('inv_dkey');
   const pass = localStorage.getItem('inv_pass');
   localStorage.clear();
   if(dkey) localStorage.setItem('inv_dkey', dkey);
   if(pass) localStorage.setItem('inv_pass', pass);
-  sessionStorage.clear();
   location.reload();
 }
 
@@ -603,6 +602,8 @@ function showHome(){
 }
 
 function enterApp(){
+  // session mark করো — এই tab বন্ধ না হলে আর password চাইবে না
+  sessionStorage.setItem('inv_loggedin','1');
   // Step 1: localStorage থেকে data load
   try{
     const lc=localStorage.getItem('inv_co');
@@ -1631,8 +1632,16 @@ if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js',{sco
 
 // ══ INIT ══
 document.addEventListener('DOMContentLoaded', function(){
-  // সবসময় login screen দেখাবে — প্রতিবার password দিতে হবে
-  initLogin();
+  const hasPass = localStorage.getItem('inv_pass');
+  const loggedIn = sessionStorage.getItem('inv_loggedin'); // tab বন্ধ হলে clear হয়
+
+  if(loggedIn){
+    // এই session-এ আগে login করেছে → সরাসরি home (refresh হলেও)
+    enterApp();
+  } else {
+    // নতুন session বা browser বন্ধ ছিল → password চাও
+    initLogin();
+  }
 });
 </script>
 </body>
